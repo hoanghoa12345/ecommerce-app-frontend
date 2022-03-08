@@ -1,0 +1,33 @@
+header {
+  font-family: Arial,Helvetica,sans-serif;
+  font-size: 14px;
+}
+header input[type=text] {
+  font-size: inherit;
+}
+header .navbar-text {
+  color: white !important;
+  padding-right: 1rem;
+}
+
+header .nav-link {
+  color: white !important;
+}
+
+header .search-form {
+  padding-right: 4rem;
+  width: 30rem;
+  display: flex;
+  position: relative;
+}
+
+.search-form .search-button {
+  border: none;
+  position: absolute;
+  top: 0;
+  right: 63px;
+}
+
+header .cart-button {
+  background-color: #037540;
+}
