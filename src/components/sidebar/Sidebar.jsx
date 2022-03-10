@@ -12,11 +12,11 @@ import "./sidebar.css";
 const Sidebar = () => {
   return (
     <aside>
-      <Card>
+      <Card className="mt-2 ms-5 me-2">
         <CardTitle>DANH MỤC SẢN PHẨM</CardTitle>
         <CardBody>
           <ListGroup>
-            <li style={{fontWeight: "bold"}}>KHUYẾN MẠI HOT</li>
+            <li style={{ fontWeight: "bold" }}>KHUYẾN MẠI HOT</li>
             <li>Bột giặt, nước giặt</li>
             <li>Nước xả, nước tẩy</li>
             <li>Nước rửa chén</li>

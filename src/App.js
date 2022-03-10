@@ -3,19 +3,17 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Admin from "./layouts/Admin";
 import Index from "./layouts/Index";
 import Home from "./pages/Home";
+import Dashboard from "./pages/Admin/Dashboard/Dashboard.jsx";
 const App = () => {
   return (
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Index />}>
           <Route index element={<Home />} />
-          {/*<Route path="teams" element={<Teams />}>
-          <Route path=":teamId" element={<Team />} />
-          <Route path="new" element={<NewTeamForm />} />
-          <Route index element={<LeagueStandings />} />
-          </Route>*/}
         </Route>
-        <Route path="/admin" element={<Admin />}></Route>
+        <Route path="/admin" element={<Admin />}>
+          <Route path="dashboard" element={<Dashboard />} />
+        </Route>
       </Routes>
     </BrowserRouter>
   );
