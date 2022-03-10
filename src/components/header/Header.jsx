@@ -23,7 +23,7 @@ const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   return (
     <header>
-      <Navbar container color="success" expand="md" dark fixed="top" className="py-1">
+      <Navbar container color="success" expand="md" dark className="py-1">
         <NavbarBrand tag={Link} to="/">Home Clean</NavbarBrand>
         <NavbarToggler
           onClick={() => {
