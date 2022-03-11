@@ -4,6 +4,7 @@ import Admin from "./layouts/Admin";
 import Index from "./layouts/Index";
 import Home from "./pages/Home";
 import Dashboard from "./pages/Admin/Dashboard/Dashboard.jsx";
+import AdminLogin from "./pages/Admin/Login/Login";
 const App = () => {
   return (
     <BrowserRouter>
@@ -14,6 +15,7 @@ const App = () => {
         <Route path="/admin" element={<Admin />}>
           <Route path="dashboard" element={<Dashboard />} />
         </Route>
+        <Route path="/login" element={<AdminLogin />} />
       </Routes>
     </BrowserRouter>
   );

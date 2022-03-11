@@ -1,10 +1,11 @@
 import React from "react";
 import { NavItem, NavLink, Nav } from "reactstrap";
 import { Link } from "react-router-dom";
-
-import SubMenu from "./SubMenu";
-import { HiHome, HiLogout } from "react-icons/hi";
+import { HiUsers, HiLogout } from "react-icons/hi";
+import { FaBox } from "react-icons/fa";
 import { AiFillDashboard } from "react-icons/ai";
+import { BiCategory } from "react-icons/bi";
+import { RiInboxArchiveFill } from "react-icons/ri";
 
 const SideBar = ({ isOpen, toggle }) => (
   <div className={`sidebar ${isOpen && "is-open"}`}>
@@ -19,35 +20,37 @@ const SideBar = ({ isOpen, toggle }) => (
         <p>Xin chào! Admin</p>
         <NavItem>
           <NavLink tag={Link} to={"/admin/dashboard"}>
-            <AiFillDashboard className="me-2" />
+            <AiFillDashboard className="me-4" />
             Dashboard
           </NavLink>
         </NavItem>
-        <SubMenu
-          title="Home"
-          icon={<HiHome className="me-2" />}
-          items={submenus[0]}
-        />
-        <SubMenu
-          title="Pages"
-          icon={<HiHome className="me-2" />}
-          items={submenus[1]}
-        />
         <NavItem>
-          <NavLink tag={Link} to={"/pages"}>
-            <HiHome className="me-2" />
-            Portfolio
+          <NavLink tag={Link} to={"/admin/dashboard"}>
+            <FaBox className="me-4" />
+            Sản phẩm
           </NavLink>
         </NavItem>
         <NavItem>
-          <NavLink tag={Link} to={"/faq"}>
-            <HiHome className="me-2" />
-            FAQ
+          <NavLink tag={Link} to={"/admin/dashboard"}>
+            <BiCategory className="me-4" />
+            Danh mục
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink tag={Link} to={"/admin/dashboard"}>
+            <RiInboxArchiveFill className="me-4" />
+            Đơn hàng
+          </NavLink>
+        </NavItem>
+        <NavItem>
+          <NavLink tag={Link} to={"/admin/dashboard"}>
+            <HiUsers className="me-4" />
+            Khách hàng
           </NavLink>
         </NavItem>
         <NavItem>
           <NavLink tag={Link} to={"/logout"}>
-            <HiLogout className="me-2" />
+            <HiLogout className="me-4" />
             Đăng xuất
           </NavLink>
         </NavItem>
@@ -55,32 +58,5 @@ const SideBar = ({ isOpen, toggle }) => (
     </div>
   </div>
 );
-
-const submenus = [
-  [
-    {
-      title: "Dashboard",
-      target: "dashboard",
-    },
-    {
-      title: "Home 2",
-      target: "Home-2",
-    },
-    {
-      itle: "Home 3",
-      target: "Home-3",
-    },
-  ],
-  [
-    {
-      title: "Page 1",
-      target: "Page-1",
-    },
-    {
-      title: "Page 2",
-      target: "Page-2",
-    },
-  ],
-];
 
 export default SideBar;

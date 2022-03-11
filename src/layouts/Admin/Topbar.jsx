@@ -5,15 +5,19 @@ import {
   NavbarToggler,
   Collapse,
   Nav,
-  NavItem,
-  NavLink,
+  Dropdown,
+  DropdownToggle,
+  DropdownMenu,
+  DropdownItem,
 } from "reactstrap";
 import { MdOutlineMenu } from "react-icons/md";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const Topbar = ({ toggleSidebar }) => {
   const [topbarIsOpen, setTopbarOpen] = useState(true);
   const toggleTopbar = () => setTopbarOpen(!topbarIsOpen);
+  const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const navigate = useNavigate();
 
   return (
     <Navbar
@@ -27,28 +31,25 @@ const Topbar = ({ toggleSidebar }) => {
       </Button>
       <NavbarToggler onClick={toggleTopbar} />
       <Collapse isOpen={topbarIsOpen} navbar>
-        <Nav className="ml-auto" navbar>
-          <NavItem>
-            <NavLink tag={Link} to={"/page-1"}>
-              page 1
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink tag={Link} to={"/page-2"}>
-              page 2
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink tag={Link} to={"/page-3"}>
-              page 3
-            </NavLink>
-          </NavItem>
-          <NavItem>
-            <NavLink tag={Link} to={"/page-4"}>
-              page 4
-            </NavLink>
-          </NavItem>
+        <Nav className="me-auto" navbar>
+          {/*Nav Item */}
         </Nav>
+        <Dropdown
+          toggle={() => setMenuIsOpen((prevState) => !prevState)}
+          isOpen={menuIsOpen}
+        >
+          <DropdownToggle caret nav>
+            Admin
+          </DropdownToggle>
+          <DropdownMenu container="body">
+            <DropdownItem onClick={() => navigate("/admin/profile")}>
+              Profile
+            </DropdownItem>
+            <DropdownItem onClick={() => navigate("/admin/logout")}>
+              Logout
+            </DropdownItem>
+          </DropdownMenu>
+        </Dropdown>
       </Collapse>
     </Navbar>
   );

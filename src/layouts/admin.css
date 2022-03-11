@@ -48,7 +48,8 @@ a:focus {
 }
 
 .sidebar a {
-  color: white !important;
+  color: white;
+  padding: 1rem;
 }
 
 .menu-open {
