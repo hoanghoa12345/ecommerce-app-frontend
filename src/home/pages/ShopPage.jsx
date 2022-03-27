@@ -1,90 +1,99 @@
+import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/outline";
 import React from "react";
-import Breadcrumb from "../components/breadcrumb/Breadcrumb";
-import HeroSection from "../components/hero-section/HeroSection";
-import Product from "../components/products/Product";
-import ShopSlidebar from "../components/shop-sidebar/ShopSlidebar";
+import StoreNavigation from "../components/StoreNavigation";
 
 const ShopPage = () => {
-  const shopProduct = [
-    {
-      name: "Nước xả vải",
-      price: 225000,
-      image:
-        "https://th.bing.com/th/id/OIP.SZs4Fo5kkKXc7FvfLgMiPgAAAA?pid=ImgDet&rs=1",
-    },
-    {
-      name: "Nước xả vải",
-      price: 225000,
-      image:
-        "https://th.bing.com/th/id/OIP.SZs4Fo5kkKXc7FvfLgMiPgAAAA?pid=ImgDet&rs=1",
-    },
-    {
-      name: "Nước xả vải",
-      price: 225000,
-      image:
-        "https://th.bing.com/th/id/OIP.SZs4Fo5kkKXc7FvfLgMiPgAAAA?pid=ImgDet&rs=1",
-    },
-    {
-      name: "Nước xả vải",
-      price: 225000,
-      image:
-        "https://th.bing.com/th/id/OIP.SZs4Fo5kkKXc7FvfLgMiPgAAAA?pid=ImgDet&rs=1",
-    },
-    {
-      name: "Nước xả vải",
-      price: 225000,
-      image:
-        "https://th.bing.com/th/id/OIP.SZs4Fo5kkKXc7FvfLgMiPgAAAA?pid=ImgDet&rs=1",
-    },
-    {
-      name: "Nước xả vải",
-      price: 225000,
-      image:
-        "https://th.bing.com/th/id/OIP.SZs4Fo5kkKXc7FvfLgMiPgAAAA?pid=ImgDet&rs=1",
-    },
-    {
-      name: "Nước xả vải",
-      price: 225000,
-      image:
-        "https://th.bing.com/th/id/OIP.SZs4Fo5kkKXc7FvfLgMiPgAAAA?pid=ImgDet&rs=1",
-    },
-    {
-      name: "Nước xả vải",
-      price: 225000,
-      image:
-        "https://th.bing.com/th/id/OIP.SZs4Fo5kkKXc7FvfLgMiPgAAAA?pid=ImgDet&rs=1",
-    },
-  ];
   return (
-    <React.Fragment>
-      <HeroSection />
-      <Breadcrumb
-        background="url(https://homefixituae.com/wp-content/uploads/2018/04/cleaning-services-banner.jpg)"
-        currentPage="Shop"
-      />
-      <section className="product spad">
-        <div className="container">
-          <div className="row">
-            <ShopSlidebar />
-            <div className="col-lg-9 col-md-7">
-              <div className="row">
-                {shopProduct.map((item, index) => (
-                  <Product key={index} product={item} />
-                ))}
-              </div>
-              <div className="product__pagination">
-                <a href="#">1</a>
-                <a href="#">2</a>
-                <a href="#">3</a>
-                <a href="#">
-                  <i className="fa fa-long-arrow-right"></i>
-                </a>
-              </div>
-            </div>
+    <>
+      <StoreNavigation />
+      <div className="bg-white px-4 py-3 flex items-center justify-between border-t border-gray-200 sm:px-6">
+        <div className="flex-1 flex justify-between sm:hidden">
+          <a
+            href="#"
+            className="relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            Previous
+          </a>
+          <a
+            href="#"
+            className="ml-3 relative inline-flex items-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50"
+          >
+            Next
+          </a>
+        </div>
+        <div className="hidden sm:flex-1 sm:flex sm:items-center sm:justify-between">
+          <div>
+            <p className="text-sm text-gray-700">
+              Showing <span className="font-medium">1</span> to{" "}
+              <span className="font-medium">10</span> of{" "}
+              <span className="font-medium">97</span> results
+            </p>
+          </div>
+          <div>
+            <nav
+              className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px"
+              aria-label="Pagination"
+            >
+              <a
+                href="#"
+                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <span className="sr-only">Previous</span>
+                <ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
+              </a>
+              {/* Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" */}
+              <a
+                href="#"
+                aria-current="page"
+                className="z-10 bg-indigo-50 border-indigo-500 text-indigo-600 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+              >
+                1
+              </a>
+              <a
+                href="#"
+                className="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+              >
+                2
+              </a>
+              <a
+                href="#"
+                className="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium"
+              >
+                3
+              </a>
+              <span className="relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium text-gray-700">
+                ...
+              </span>
+              <a
+                href="#"
+                className="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 hidden md:inline-flex relative items-center px-4 py-2 border text-sm font-medium"
+              >
+                8
+              </a>
+              <a
+                href="#"
+                className="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+              >
+                9
+              </a>
+              <a
+                href="#"
+                className="bg-white border-gray-300 text-gray-500 hover:bg-gray-50 relative inline-flex items-center px-4 py-2 border text-sm font-medium"
+              >
+                10
+              </a>
+              <a
+                href="#"
+                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
+              >
+                <span className="sr-only">Next</span>
+                <ChevronRightIcon className="h-5 w-5" aria-hidden="true" />
+              </a>
+            </nav>
           </div>
         </div>
-      </section>
-    </React.Fragment>
+      </div>
+    </>
   );
 };
 

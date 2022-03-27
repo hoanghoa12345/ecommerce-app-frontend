@@ -6,11 +6,9 @@ import AppFooter from "../components/footer/Footer";
 import AppHeader from "../components/header/Header";
 const HomeLayout = () => {
   return (
-    <div>
-      <AppHeader />
+    <>
       <Outlet />
-      <AppFooter />
-    </div>
+    </>
   );
 };
 
