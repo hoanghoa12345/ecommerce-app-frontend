@@ -1,14 +1,16 @@
-import React, { Fragment, useCallback, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
-import { useMutation, useQuery } from "react-query";
-import { getAllCategory, createProduct } from "../api/api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { getAllCategory, createProduct, BASE_URL, updateProduct } from "../../api/api";
 import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const AddProductModal = ({ open, setOpen }) => {
+const AddProductModal = ({ open, setOpen, editItem }) => {
   const schema = yup
     .object({
       name: yup.string().min(5).required(),
@@ -16,7 +18,7 @@ const AddProductModal = ({ open, setOpen }) => {
       description: yup.string().min(5).required(),
       price: yup.number().integer().required(),
       quantity: yup.number().integer().positive().required(),
-      image: yup.mixed().required("You need to provide a file"),
+      //image: yup.mixed().required("You need to provide a file"),
     })
     .required();
   const {
@@ -27,36 +29,41 @@ const AddProductModal = ({ open, setOpen }) => {
   } = useForm({
     resolver: yupResolver(schema),
   });
-  const { mutateAsync, isLoading } = useMutation(createProduct);
+  //React Hook Form init
+  const queryClient = useQueryClient();
+  const { mutateAsync } = useMutation(createProduct);
+  const { mutateAsync: updateMutateAsync } = useMutation(updateProduct);
   const onSubmit = async (data) => {
-    await mutateAsync(data);
+    if (editItem === null) {
+      await mutateAsync(data);
+    }
+    if (editItem) {
+      await updateMutateAsync({ ...data, id: editItem.id });
+    }
+    setOpen(false);
+    queryClient.invalidateQueries("products");
+    toast.success("Update product successful!");
   };
 
-  const [formData, setFormData] = useState({});
+  const [image, setImage] = useState(null);
 
   const { data } = useQuery("categories", getAllCategory);
   const onDrop = useCallback(
     (acceptedFiles) => {
       setValue("image", acceptedFiles[0]);
-      setFormData({ ...formData, image: acceptedFiles[0] });
+      setImage(acceptedFiles[0]);
     },
-    [formData]
+    [image]
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   // const submitHandler = (e) => {
   //   e.preventDefault();
   // };
+
   return (
     <Transition.Root show={open} as={Fragment}>
-      <Dialog
-        as="div"
-        className="fixed z-10 inset-0 overflow-y-auto"
-        onClose={setOpen}
-      >
-        <div
-          className="flex min-h-screen text-center md:block md:px-2 lg:px-4"
-          style={{ fontSize: 0 }}
-        >
+      <Dialog as="div" className="fixed z-10 inset-0 overflow-y-auto" onClose={setOpen}>
+        <div className="flex min-h-screen text-center md:block md:px-2 lg:px-4" style={{ fontSize: 0 }}>
           <Transition.Child
             as={Fragment}
             enter="ease-out duration-300"
@@ -70,10 +77,7 @@ const AddProductModal = ({ open, setOpen }) => {
           </Transition.Child>
 
           {/* This element is to trick the browser into centering the modal contents. */}
-          <span
-            className="hidden md:inline-block md:align-middle md:h-screen"
-            aria-hidden="true"
-          >
+          <span className="hidden md:inline-block md:align-middle md:h-screen" aria-hidden="true">
             &#8203;
           </span>
           <Transition.Child
@@ -97,16 +101,10 @@ const AddProductModal = ({ open, setOpen }) => {
                 </button>
 
                 <div className="w-full grid grid-cols-1 gap-y-8 gap-x-6 items-start sm:grid-cols-12 lg:gap-x-8">
-                  <form
-                    className="col-span-12"
-                    onSubmit={handleSubmit(onSubmit)}
-                  >
+                  <form className="col-span-12" onSubmit={handleSubmit(onSubmit)}>
                     <div>
                       <div className="px-4 py-4 bg-white space-y-4 sm:p-6">
-                        <label
-                          htmlFor="productName"
-                          className="block text-sm font-medium text-gray-700"
-                        >
+                        <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
                           Name
                         </label>
                         <div className="mt-1 relative rounded-md shadow-sm">
@@ -114,24 +112,21 @@ const AddProductModal = ({ open, setOpen }) => {
                             type="text"
                             name="name"
                             id="name"
+                            defaultValue={editItem?.name}
                             className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 rounded-md"
                             placeholder="Product"
                             {...register("name")}
                           />
                         </div>
-                        <span className="text-xs text-red-600 dark:text-red-400">
-                          {errors.name?.message}
-                        </span>
+                        <span className="text-xs text-red-600 dark:text-red-400">{errors.name?.message}</span>
                         <div>
-                          <label
-                            htmlFor="category_id"
-                            className="block text-sm font-medium text-gray-700"
-                          >
+                          <label htmlFor="category_id" className="block text-sm font-medium text-gray-700">
                             Category
                           </label>
                           <select
                             id="category_id"
                             name="category_id"
+                            defaultValue={editItem?.category_id}
                             className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 rounded-md"
                             {...register("category_id")}
                           >
@@ -144,15 +139,10 @@ const AddProductModal = ({ open, setOpen }) => {
                               ))}
                           </select>
                         </div>
-                        <span className="text-xs text-red-600 dark:text-red-400">
-                          {errors.category_id?.message}
-                        </span>
+                        <span className="text-xs text-red-600 dark:text-red-400">{errors.category_id?.message}</span>
 
                         <div>
-                          <label
-                            htmlFor="description"
-                            className="block text-sm font-medium text-gray-700"
-                          >
+                          <label htmlFor="description" className="block text-sm font-medium text-gray-700">
                             Description
                           </label>
                           <div className="mt-1">
@@ -160,19 +150,15 @@ const AddProductModal = ({ open, setOpen }) => {
                               id="description"
                               name="description"
                               rows={3}
+                              defaultValue={editItem?.description}
                               className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
                               placeholder="Description"
                               {...register("description")}
                             />
                           </div>
                         </div>
-                        <span className="text-xs text-red-600 dark:text-red-400">
-                          {errors.description?.message}
-                        </span>
-                        <label
-                          htmlFor="price"
-                          className="block text-sm font-medium text-gray-700"
-                        >
+                        <span className="text-xs text-red-600 dark:text-red-400">{errors.description?.message}</span>
+                        <label htmlFor="price" className="block text-sm font-medium text-gray-700">
                           Price
                         </label>
                         <div className="mt-1 relative rounded-md shadow-sm">
@@ -180,6 +166,7 @@ const AddProductModal = ({ open, setOpen }) => {
                             type="text"
                             name="price"
                             id="price"
+                            defaultValue={editItem?.price}
                             className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
                             placeholder="0"
                             {...register("price")}
@@ -188,13 +175,8 @@ const AddProductModal = ({ open, setOpen }) => {
                             <span className="text-gray-500 sm:text-sm">₫</span>
                           </div>
                         </div>
-                        <span className="text-xs text-red-600 dark:text-red-400">
-                          {errors.price?.message}
-                        </span>
-                        <label
-                          htmlFor="quantity"
-                          className="block text-sm font-medium text-gray-700"
-                        >
+                        <span className="text-xs text-red-600 dark:text-red-400">{errors.price?.message}</span>
+                        <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
                           Quantity
                         </label>
                         <div className="mt-1 relative rounded-md shadow-sm">
@@ -202,24 +184,19 @@ const AddProductModal = ({ open, setOpen }) => {
                             type="text"
                             name="quantity"
                             id="quantity"
+                            defaultValue={editItem?.quantity}
                             className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
                             placeholder="0"
                             {...register("quantity")}
                           />
                         </div>
-                        <span className="text-xs text-red-600 dark:text-red-400">
-                          {errors.quantity?.message}
-                        </span>
+                        <span className="text-xs text-red-600 dark:text-red-400">{errors.quantity?.message}</span>
                         <div>
-                          <label className="block text-sm font-medium text-gray-700">
-                            Picture
-                          </label>
+                          <label className="block text-sm font-medium text-gray-700">Picture</label>
                           <div
                             {...getRootProps()}
                             className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 ${
-                              isDragActive
-                                ? "border-indigo-600"
-                                : "border-gray-300"
+                              isDragActive ? "border-indigo-600" : "border-gray-300"
                             } border-dashed rounded-md`}
                           >
                             <div className="space-y-1 text-center ">
@@ -255,24 +232,15 @@ const AddProductModal = ({ open, setOpen }) => {
                                 </label>
                                 <p className="pl-1">or drag and drop</p>
                               </div>
-                              <p className="text-xs text-gray-500">
-                                PNG, JPG, GIF up to 10MB
-                              </p>
-                              {formData.image && (
-                                <img
-                                  className="h-24 w-auto mx-auto"
-                                  src={URL.createObjectURL(formData.image)}
-                                  alt="preview"
-                                />
+                              <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                              {image?.path && <img className="h-24 w-auto mx-auto" src={URL.createObjectURL(image)} alt="preview" />}
+                              {editItem?.image && (
+                                <img className="h-24 w-auto mx-auto" src={`${BASE_URL}/${editItem.image}`} alt="preview" />
                               )}
                             </div>
                           </div>
-                          <div className="text-xs text-gray-500">
-                            {formData.image?.name}
-                          </div>
-                          <span className="text-xs text-red-600 dark:text-red-400">
-                            {errors.image?.message}
-                          </span>
+                          <div className="text-xs text-gray-500">{image?.name}</div>
+                          <span className="text-xs text-red-600 dark:text-red-400">{errors.image?.message}</span>
                         </div>
                       </div>
                       <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">

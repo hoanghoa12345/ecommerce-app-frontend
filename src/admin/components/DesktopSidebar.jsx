@@ -52,17 +52,12 @@ export default function DesktopSidebar() {
           </SidebarLink>
           <SidebarLink to="/admin/products">
             <ClipboardListIcon className="w-5 h-5" />
-            <span className="ml-4">Product</span>
+            <span className="ml-4">Products</span>
           </SidebarLink>
-          <li className="relative px-6 py-3">
-            <a
-              className="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
-              href="cards.html"
-            >
-              <CollectionIcon className="w-5 h-5" />
-              <span className="ml-4">Cards</span>
-            </a>
-          </li>
+          <SidebarLink to="/admin/categories">
+            <CollectionIcon className="w-5 h-5" />
+            <span className="ml-4">Categories</span>
+          </SidebarLink>
           <li className="relative px-6 py-3">
             <a
               className="inline-flex items-center w-full text-sm font-semibold transition-colors duration-150 hover:text-gray-800 dark:hover:text-gray-200"
