@@ -7,19 +7,20 @@ import HomeLayout from "./home/layouts/HomeLayout";
 import HomePage from "./home/pages/HomePage";
 import ProductPage from "./home/pages/ProductPage";
 import ShopPage from "./home/pages/ShopPage";
+import CategoryPage from "./admin/pages/CategoryPage";
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<HomeLayout />}>
         <Route index element={<HomePage />}></Route>
         <Route path="shop" element={<ShopPage />}></Route>
-        <Route path="product/:id" element={<ProductPage />}></Route>
+        <Route path="products/:productSlug" element={<ProductPage />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" />} />
         <Route path="dashboard" element={<DashboardPage />}></Route>
-        <Route path="products" element={<ProductsPage />}></Route>
-        <Route path="categories" element={<DashboardPage />}></Route>
+        <Route path="products" element={<ProductsPage />} />
+        <Route path="categories" element={<CategoryPage />}></Route>
       </Route>
     </Routes>
   );

@@ -1,13 +1,14 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import "../../assets/css/bootstrap.min.css";
-import "../../assets/sass/style.scss";
-import AppFooter from "../components/footer/Footer";
-import AppHeader from "../components/header/Header";
+import Footer from "./Footer";
+import Navbar from "./Navbar";
+
 const HomeLayout = () => {
   return (
     <>
+      <Navbar />
       <Outlet />
+      <Footer />
     </>
   );
 };
