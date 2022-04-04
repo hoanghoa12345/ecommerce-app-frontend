@@ -8,6 +8,7 @@ import HomePage from "./home/pages/HomePage";
 import ProductPage from "./home/pages/ProductPage";
 import ShopPage from "./home/pages/ShopPage";
 import CategoryPage from "./admin/pages/CategoryPage";
+import CategoryListPage from "./home/pages/CategoryPage";
 const App = () => {
   return (
     <Routes>
@@ -15,6 +16,7 @@ const App = () => {
         <Route index element={<HomePage />}></Route>
         <Route path="shop" element={<ShopPage />}></Route>
         <Route path="products/:productSlug" element={<ProductPage />} />
+        <Route path="category/:categorySlug" element={<CategoryListPage />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" />} />

@@ -26,6 +26,15 @@ export const getAllCategory = async () => {
   }
 };
 
+export const getCategoryBySlug = async (slug) => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/categories/${slug}`);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const createProduct = async ({ name, category_id, description, price, quantity, image }) => {
   const formData = new FormData();
   formData.append("name", name);
@@ -112,6 +121,15 @@ export const getTopProduct = async () => {
 export const getProductBySlug = async (slug) => {
   try {
     const { data } = await Axios.get(`${BASE_URL}/api/v1/product/${slug}`);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getProductsByCategory = async (slug) => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/category/${slug}`);
     return data;
   } catch (error) {
     throw new Error(error);

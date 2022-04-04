@@ -1,6 +1,6 @@
 import { HeartIcon, MenuIcon, SearchIcon, ShoppingCartIcon } from "@heroicons/react/outline";
 import React, { useState, useEffect } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { getAllCategory } from "../../api/api";
 const Navbar = () => {
   const [openCategory, setOpenCategory] = useState(false);
@@ -83,7 +83,7 @@ const Navbar = () => {
               aria-label="show notifications"
             >
               <ShoppingCartIcon className="w-6 h-6" />
-              <span class="absolute -bottom-2 -right-3 px-1 text-xs text-white bg-blue-500 rounded-full">2</span>
+              <span className="absolute -bottom-2 -right-3 px-1 text-xs text-white bg-blue-500 rounded-full">2</span>
             </button>
             <button
               className="hidden mx-4 text-white transition-colors duration-200 transform md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none"
