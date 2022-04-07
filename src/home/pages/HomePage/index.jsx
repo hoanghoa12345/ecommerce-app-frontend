@@ -25,7 +25,7 @@ const HeroSlide = () => {
   ];
 
   return (
-    <div className="container w-full">
+    <div className="w-full">
       <Swiper modules={[Autoplay]} grabCursor={true} spaceBetween={0} slidesPerView={1} autoplay={{ delay: 3000 }}>
         {heroSlide.map((item, i) => (
           <SwiperSlide key={i}>
@@ -45,7 +45,7 @@ const HeroSlide = () => {
 const BannerBrand = () => {
   return (
     <section class="bg-white dark:bg-gray-900">
-      <div className="container max-w-6xl px-6 py-10 mx-auto">
+      <div className="container max-w-screen-xl px-6 py-10 mx-auto">
         <div className="grid grid-cols-1 gap-8 mt-6 xl:mt-12 xl:gap-12 md:grid-cols-2 lg:grid-cols-3">
           <div
             className="w-full p-8 space-y-8 text-center border border-gray-200 rounded-lg dark:border-gray-700 bg-cover relative h-[14rem]"
@@ -110,7 +110,7 @@ const Product = ({ product }) => {
       <img src={`${product.image}`} alt={product.name} />
       <div className="p-6">
         <p className="text-sm font-medium text-gray-600"> {formatPrice(product.price)}</p>
-        <h5 className="mt-1 text-lg font-bold max-h-14 overflow-hidden"> {product.name}</h5>
+        <h5 className="mt-1 text-lg font-bold h-14 overflow-hidden"> {product.name}</h5>
         <button name="add" type="button" className="flex items-center justify-center w-full px-8 py-4 mt-4 bg-orange-500 rounded-sm">
           <span className="text-sm font-medium"> Thêm vào giỏ hàng</span>
           <ShoppingBagIcon className="w-5 h-5 ml-1.5" />
