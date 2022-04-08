@@ -3,9 +3,7 @@ import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
 import { useEffect, useState } from "react";
 import { getTopProduct } from "../../../api/api";
-import { Link } from "react-router-dom";
-import { HeartIcon, ShoppingBagIcon } from "@heroicons/react/outline";
-import { formatPrice } from "../../../utils/formatType";
+import Product from "../../components/product/Product";
 const HomePage = () => {
   return (
     <div>
@@ -44,8 +42,8 @@ const HeroSlide = () => {
 
 const BannerBrand = () => {
   return (
-    <section class="bg-white dark:bg-gray-900">
-      <div className="container max-w-screen-xl px-6 py-10 mx-auto">
+    <section className="bg-white dark:bg-gray-900">
+      <div className="container max-w-6xl px-6 py-10 mx-auto">
         <div className="grid grid-cols-1 gap-8 mt-6 xl:mt-12 xl:gap-12 md:grid-cols-2 lg:grid-cols-3">
           <div
             className="w-full p-8 space-y-8 text-center border border-gray-200 rounded-lg dark:border-gray-700 bg-cover relative h-[14rem]"
@@ -98,25 +96,6 @@ const TopProducts = () => {
         </div>
       </div>
     </section>
-  );
-};
-
-const Product = ({ product }) => {
-  return (
-    <Link to={`/products/${product.slug}`} className="relative block border border-gray-100">
-      <button type="button" name="wishlist" className="absolute p-2 text-white bg-black rounded-full right-4 top-4">
-        <HeartIcon className="w-4 h-4" />
-      </button>
-      <img src={`${product.image}`} alt={product.name} />
-      <div className="p-6">
-        <p className="text-sm font-medium text-gray-600"> {formatPrice(product.price)}</p>
-        <h5 className="mt-1 text-lg font-bold h-14 overflow-hidden"> {product.name}</h5>
-        <button name="add" type="button" className="flex items-center justify-center w-full px-8 py-4 mt-4 bg-orange-500 rounded-sm">
-          <span className="text-sm font-medium"> Thêm vào giỏ hàng</span>
-          <ShoppingBagIcon className="w-5 h-5 ml-1.5" />
-        </button>
-      </div>
-    </Link>
   );
 };
 

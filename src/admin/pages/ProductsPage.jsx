@@ -1,8 +1,6 @@
 import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
-import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
 import { getAllProducts, deleteProduct, BASE_URL } from "../../api/api";
 import AddProductModal from "../components/AddProductModal";
 import DeleteModal from "../components/DeleteModal";
@@ -45,15 +43,15 @@ export default function ProductsPage() {
     queryClient.invalidateQueries("products");
   };
 
-  const [currentPage, setCurrentPage] = useState(1)
-  const [productPerPage, setProductPerPage] = useState(4)
+  const [currentPage, setCurrentPage] = useState(1);
+  const [productPerPage, setProductPerPage] = useState(4);
   const indexOfLastProduct = currentPage * productPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productPerPage
-  const currentProducts = data?.slice(indexOfFirstProduct, indexOfLastProduct)
-  const paginate = (pageNumber) => setCurrentPage(pageNumber)
-  const previousPaginate = () => setCurrentPage(currentPage - 1)
-  
-  const nextPaginate = () => setCurrentPage(currentPage + 1)
+  const indexOfFirstProduct = indexOfLastProduct - productPerPage;
+  const currentProducts = data?.slice(indexOfFirstProduct, indexOfLastProduct);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const previousPaginate = () => setCurrentPage(currentPage - 1);
+
+  const nextPaginate = () => setCurrentPage(currentPage + 1);
   if (isLoading) {
     return <p>Loading...</p>;
   }
@@ -89,14 +87,14 @@ export default function ProductsPage() {
         </div>
         {/*Show pagination */}
         <Pagination
-        indexOfFirstProduct={indexOfFirstProduct}
-        indexOfLastProduct={indexOfLastProduct}
-        currentPage={currentPage}
-        productsPerPage={productPerPage}
-        totalProducts={data.length}
-        paginate={paginate}
-        previousPaginate={previousPaginate}
-        nextPaginate={nextPaginate}
+          indexOfFirstProduct={indexOfFirstProduct}
+          indexOfLastProduct={indexOfLastProduct}
+          currentPage={currentPage}
+          productsPerPage={productPerPage}
+          totalProducts={data.length}
+          paginate={paginate}
+          previousPaginate={previousPaginate}
+          nextPaginate={nextPaginate}
         />
       </div>
     </div>

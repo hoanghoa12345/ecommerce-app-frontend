@@ -8,21 +8,25 @@ import HomePage from "./home/pages/HomePage";
 import ProductPage from "./home/pages/ProductPage";
 import ShopPage from "./home/pages/ShopPage";
 import CategoryPage from "./admin/pages/CategoryPage";
-import Login from "./auth/pages/login";
-import Register from "./auth/pages/register";
+import CategoryListPage from "./home/pages/CategoryPage";
+import SubscriptionPage from "./admin/pages/SubscriptionPage";
+import Register from './auth/pages/register/index';
+import Login from './auth/pages/login/index';
 const App = () => {
   return (
     <Routes>
       <Route path="/" element={<HomeLayout />}>
-        <Route index element={<HomePage />}></Route>
-        <Route path="shop" element={<ShopPage />}></Route>
+        <Route index element={<HomePage />} />
+        <Route path="shop" element={<ShopPage />} />
         <Route path="products/:productSlug" element={<ProductPage />} />
+        <Route path="category/:categorySlug" element={<CategoryListPage />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" />} />
-        <Route path="dashboard" element={<DashboardPage />}></Route>
+        <Route path="dashboard" element={<DashboardPage />} />
         <Route path="products" element={<ProductsPage />} />
-        <Route path="categories" element={<CategoryPage />}></Route>
+        <Route path="categories" element={<CategoryPage />} />
+        <Route path="subscriptions" element={<SubscriptionPage />} />
       </Route>
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
