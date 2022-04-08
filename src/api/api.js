@@ -135,3 +135,26 @@ export const getProductsByCategory = async (slug) => {
     throw new Error(error);
   }
 };
+
+export const getSubscriptionList = async () => {
+  try {
+    const { data } = await Axios.get(BASE_URL + "/api/v1/subscriptions");
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const createNewSubscription = async (formData) => {
+  try {
+    const { data } = await Axios.post(BASE_URL + "api/v1/subscriptions", formData, {
+      headers: {
+        "content-type": "application/json",
+        accept: "application/json",
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

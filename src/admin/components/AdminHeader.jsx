@@ -1,3 +1,4 @@
+import { Disclosure } from "@headlessui/react";
 import { MenuIcon, SearchIcon } from "@heroicons/react/outline";
 import { BellIcon } from "@heroicons/react/solid";
 import React from "react";
@@ -7,12 +8,9 @@ export default function AdminHeader() {
     <header className="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
       <div className="container flex items-center justify-between h-full px-6 mx-auto text-purple-600 dark:text-purple-300">
         {/* Mobile hamburger */}
-        <button
-          className="p-1 mr-5 -ml-1 rounded-md md:hidden focus:outline-none focus:shadow-outline-purple"
-          aria-label="Menu"
-        >
+        <Disclosure.Button className="p-1 mr-5 -ml-1 rounded-md focus:outline-none focus:shadow-outline-purple" aria-label="Menu">
           <MenuIcon className="w-6 h-6" />
-        </button>
+        </Disclosure.Button>
         {/* Search input */}
         <div className="flex justify-center flex-1 lg:mr-32">
           <div className="relative w-full max-w-xl mr-6 focus-within:text-purple-500">
@@ -30,10 +28,7 @@ export default function AdminHeader() {
         <ul className="flex items-center flex-shrink-0 space-x-6">
           {/* Theme toggler */}
           <li className="flex">
-            <button
-              className="rounded-md focus:outline-none focus:shadow-outline-purple"
-              aria-label="Toggle color mode"
-            ></button>
+            <button className="rounded-md focus:outline-none focus:shadow-outline-purple" aria-label="Toggle color mode"></button>
           </li>
           {/* Notifications menu */}
           <li className="relative">

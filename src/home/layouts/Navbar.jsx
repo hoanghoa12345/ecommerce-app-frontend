@@ -1,5 +1,6 @@
+import { Menu, Transition } from "@headlessui/react";
 import { HeartIcon, MenuIcon, SearchIcon, ShoppingCartIcon } from "@heroicons/react/outline";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment, useRef } from "react";
 import { Link } from "react-router-dom";
 import { getAllCategory } from "../../api/api";
 const Navbar = () => {
@@ -27,28 +28,38 @@ const Navbar = () => {
                 eClean
               </Link>
             </div>
-            <div className="hidden md:block relative ml-4">
-              <button
-                onClick={() => setOpenCategory(!openCategory)}
-                className="relative z-10 flex items-center p-2 uppercase align-middle text-white"
-              >
-                <MenuIcon className="w-5 h-5 text-white" />
-                <span className="mx-1">Tất cả danh mục</span>
-              </button>
-              {openCategory && (
-                <div className="absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800">
-                  {category.map(({ id, name, slug }) => (
-                    <Link
-                      key={id}
-                      to={`/category/${slug}`}
-                      className="uppercase block px-4 py-3 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b-gray-200 border-b-2"
-                    >
-                      {name}
-                    </Link>
-                  ))}
-                </div>
+            <Menu as="div" className="hidden md:block relative ml-4">
+              {({ open }) => (
+                <>
+                  <Menu.Button className="relative z-10 flex items-center p-2 uppercase align-middle text-white">
+                    <MenuIcon className="w-5 h-5 text-white" />
+                    <span className="mx-1">Tất cả danh mục</span>
+                  </Menu.Button>
+                  <Transition
+                    show={open}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800">
+                      {category.map(({ id, name, slug }) => (
+                        <Menu.Item
+                          as={Link}
+                          key={id}
+                          to={`/category/${slug}`}
+                          className="uppercase block px-4 py-3 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b-gray-200 border-b-2"
+                        >
+                          {name}
+                        </Menu.Item>
+                      ))}
+                    </Menu.Items>
+                  </Transition>
+                </>
               )}
-            </div>
+            </Menu>
             {/* Mobile menu button */}
             <div className="flex md:hidden">
               <button
