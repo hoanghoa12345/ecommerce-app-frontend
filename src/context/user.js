@@ -34,9 +34,9 @@ const reducer = (state = initialState, action) => {
     }
     case "SET_USER": {
         return {
-            name: action.payload.user.name,
-            email: action.payload.user.email,
-            roles: action.payload.user.roles,
+            name: action.payload.name,
+            email: action.payload.email,
+            roles: action.payload.roles,
             token: action.payload.token
         }
     }

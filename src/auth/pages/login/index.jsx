@@ -6,6 +6,7 @@ import { setUser } from "../../../action/user";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useForm } from 'react-hook-form'
+import { convertFromRes } from './../../../utils/convertFromRes';
 
 const schema = yup.object({
   email: yup.string().email().required(),
@@ -26,14 +27,19 @@ const Login = () => {
     resolver: yupResolver(schema)
   });
 
-  useEffect(() => {
-    console.log(user);
-    if (user.roles === "admin") {
+  const navigateByRole = (role) =>{
+    if (role === "admin") {
       navigate("/admin", { replace: true });
-    } else if (user.roles === 'user'){
+    } else if (role === 'user'){
       navigate("/", { replace: true });
     }
-  }, [navigate, user]);
+  };
+
+  useEffect(() => {
+    // console.log(user);
+    navigateByRole(user.roles);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
 
   const onSubmit = async (formData) => {
     //call api
@@ -53,12 +59,9 @@ const Login = () => {
     if (data.token) {
       // console.log('success',data);
       localStorage.setItem("user", JSON.stringify(data));
-      userDispatch(setUser(data));
-      if (data.user.roles === "admin") {
-        navigate("/admin", { replace: true });
-      } else {
-        navigate("/", { replace: true });
-      }
+      const dataContext = convertFromRes(data);
+      userDispatch(setUser(dataContext));
+      navigateByRole(data.user.roles);
     }
     else{
       // console.log('error',data);
@@ -82,7 +85,7 @@ const Login = () => {
         ></div>
 
         <div className="w-full px-6 py-8 md:px-8 lg:w-1/2">
-          <h2 className="text-2xl font-semibold text-center text-gray-700 dark:text-white">Brand</h2>
+          <h2 className="text-2xl font-semibold text-center text-gray-700 dark:text-white">eClean</h2>
 
           <p className="text-xl text-center text-gray-600 dark:text-gray-200">Welcome back!</p>
 
@@ -168,7 +171,7 @@ const Login = () => {
           <div className="flex items-center justify-between mt-4">
             <span className="w-1/5 border-b dark:border-gray-600 md:w-1/4"></span>
 
-            <Link to="/" className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline">
+            <Link to="/register" className="text-xs text-gray-500 uppercase dark:text-gray-400 hover:underline">
               or sign up
             </Link>
 
