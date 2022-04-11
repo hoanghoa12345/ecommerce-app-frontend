@@ -2,7 +2,7 @@ import { Menu, Transition } from "@headlessui/react";
 import { HeartIcon, LogoutIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/outline";
 import React, { useState, useEffect, Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllCategory } from "../../api/api";
+import { getAllCategory, getFullHeader } from "../../api/api";
 import Axios from 'axios';
 import { useUserContext } from "../../context/user";
 import { setUser } from "../../action/user";
@@ -22,11 +22,10 @@ const Navbar = () => {
   }, []);
 
   const handleLogout = async () =>{
+    const headers = getFullHeader(user.token);
+    console.log('headers', headers);
     const res = await Axios.post('/api/v1/logout',{},{
-      headers:{
-        accept: 'application/json',
-        Authorization: `Bearer ${user.token}`,
-      }
+      headers
     });
 
     if (res.status === 200){

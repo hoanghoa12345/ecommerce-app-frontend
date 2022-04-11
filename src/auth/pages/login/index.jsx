@@ -7,6 +7,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useForm } from 'react-hook-form'
 import { convertFromRes } from './../../../utils/convertFromRes';
+import { getFullHeader } from "../../../api/api";
 
 const schema = yup.object({
   email: yup.string().email().required(),
@@ -42,6 +43,7 @@ const Login = () => {
   }, [user]);
 
   const onSubmit = async (formData) => {
+    const headers = getFullHeader();
     //call api
     const { data } = await Axios.post(
       "/api/v1/login",
@@ -50,9 +52,7 @@ const Login = () => {
         password: formData.password,
       },
       {
-        headers: {
-          accept: "application/json",
-        },
+        headers
       }
     );
 

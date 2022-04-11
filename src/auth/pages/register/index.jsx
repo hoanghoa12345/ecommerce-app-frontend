@@ -1,23 +1,33 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useForm } from 'react-hook-form'
-import Axios from 'axios';
+import { useForm } from "react-hook-form";
+import Axios from "axios";
 import { useUserContext } from "../../../context/user";
+import { getFullHeader } from "../../../api/api";
 
-const schema = yup.object({
-  name: yup.string().min(3).required(),
-  email: yup.string().email().required(),
-  password: yup.string().min(6).required(),
-  password_confirmation: yup.string().oneOf([yup.ref('password'), null], 'Passwords must match').required(),
-}).required();
+const schema = yup
+  .object({
+    name: yup.string().min(3).required(),
+    email: yup.string().email().required(),
+    password: yup.string().min(6).required(),
+    password_confirmation: yup
+      .string()
+      .oneOf([yup.ref("password"), null], "Passwords must match")
+      .required(),
+  })
+  .required();
 
 const Register = () => {
-  const [messageErr, setMessageErr] = useState('');
-  const {user} = useUserContext();
-  const { register, handleSubmit, formState:{ errors } } = useForm({
-    resolver: yupResolver(schema)
+  const [messageErr, setMessageErr] = useState("");
+  const { user } = useUserContext();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
   });
 
   const navigate = useNavigate();
@@ -26,26 +36,21 @@ const Register = () => {
     // console.log(user);
     if (user.roles === "admin") {
       navigate("/admin", { replace: true });
-    } else if (user.roles === 'user'){
+    } else if (user.roles === "user") {
       navigate("/", { replace: true });
     }
   }, [navigate, user]);
 
-  const onSubmit = async (formdata) =>{
-    try{
-
-      const res = await Axios.post('/api/v1/register', formdata,{
-        headers: {
-          accept:'application/json'
-        }
-      });
+  const onSubmit = async (formdata) => {
+    try {
+      const headers = getFullHeader();
+      const res = await Axios.post("/api/v1/register", formdata, { headers });
       // console.log(data);
-      if (res.status === 201){
-        navigate('/login');
+      if (res.status === 201) {
+        navigate("/login");
       }
-    }
-    catch (e){
-      setMessageErr('Email already exists.');
+    } catch (e) {
+      setMessageErr("Email already exists.");
       throw e;
     }
   };
@@ -76,7 +81,7 @@ const Register = () => {
                     type="text"
                     placeholder="Name"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
-                    {...register('name')}
+                    {...register("name")}
                   />
                 </label>
               </label>
@@ -90,7 +95,7 @@ const Register = () => {
                     type="text"
                     placeholder="Email"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
-                    {...register('email')}
+                    {...register("email")}
                   />
                 </label>
               </label>
@@ -104,7 +109,7 @@ const Register = () => {
                     type="password"
                     placeholder="Password"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
-                    {...register('password')}
+                    {...register("password")}
                   />
                 </label>
               </label>
@@ -118,18 +123,20 @@ const Register = () => {
                     type="password"
                     placeholder="Password"
                     className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
-                    {...register('password_confirmation')}
+                    {...register("password_confirmation")}
                   />
                 </label>
               </label>
             </div>
             <span className="text-xs text-red-400">{errors.password_confirmation?.message}</span>
             <div className="flex">
-              <button type="submit" className="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">Create Account</button>
+              <button type="submit" className="w-full px-6 py-2 mt-4 text-white bg-blue-600 rounded-lg hover:bg-blue-900">
+                Create Account
+              </button>
             </div>
             <div className="mt-6 text-grey-dark">
               Already have an account?
-              <Link to='/login' className="text-blue-600 hover:underline">
+              <Link to="/login" className="text-blue-600 hover:underline">
                 Log in
               </Link>
             </div>

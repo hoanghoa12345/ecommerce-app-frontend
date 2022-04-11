@@ -1,5 +1,13 @@
 import Axios from "axios";
 export const BASE_URL = process.env.REACT_APP_BASE_URL || "";
+
+export const getFullHeader = (token = '') =>{
+  return {
+    accept: 'application/json',
+    Authorization: token ==='' ? token : `Bearer ${token}`,
+  }
+}; 
+
 export const getAllProducts = async () => {
   try {
     const { data } = await Axios.get(`${BASE_URL}/api/v1/products`, {
@@ -151,6 +159,20 @@ export const createNewSubscription = async (formData) => {
       headers: {
         "content-type": "application/json",
         accept: "application/json",
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getAllUsers = async (token = '') => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/users`, {
+      headers: {
+        Accept: "application/json",
+        Authorization: token ==='' ? token : `Bearer ${token}`,
       },
     });
     return data;

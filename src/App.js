@@ -12,6 +12,8 @@ import CategoryListPage from "./home/pages/CategoryPage";
 import SubscriptionPage from "./admin/pages/SubscriptionPage";
 import Register from './auth/pages/register/index';
 import Login from './auth/pages/login/index';
+import UserPage from './admin/pages/UserPage';
+import Page404 from './Page_404';
 const App = () => {
   return (
     <Routes>
@@ -26,10 +28,12 @@ const App = () => {
         <Route path="dashboard" element={<DashboardPage />} />
         <Route path="products" element={<ProductsPage />} />
         <Route path="categories" element={<CategoryPage />} />
+        <Route path="users" element={<UserPage />} />
         <Route path="subscriptions" element={<SubscriptionPage />} />
       </Route>
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
+      <Route path="*" element={<Page404 />} />
     </Routes>
   );
 };
