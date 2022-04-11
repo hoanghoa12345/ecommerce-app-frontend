@@ -6,21 +6,12 @@ import AddProductModal from "../components/AddProductModal";
 import DeleteModal from "../components/DeleteModal";
 import Pagination from "../components/Pagination";
 import { formatPrice } from "../../utils/formatType";
+import Loader from "../components/Loader";
 
 export default function ProductsPage() {
   const queryClient = useQueryClient();
   const [editItem, setEditItem] = useState(null);
   const { data, error, isLoading, isError } = useQuery("products", getAllProducts);
-  // const [products, setProducts] = useState([]);
-  // useEffect(() => {
-  //   axios
-  //     .get("/api/v1/products", {
-  //       headers: {
-  //         Accept: "application/json",
-  //       },
-  //     })
-  //     .then((res) => setProducts(res.data.data));
-  // }, []);
   const [open, setOpen] = useState(false);
   const [openDelete, setOpenDelete] = useState(false);
   const [deleteId, setDeleteId] = useState(0);
@@ -53,7 +44,7 @@ export default function ProductsPage() {
 
   const nextPaginate = () => setCurrentPage(currentPage + 1);
   if (isLoading) {
-    return <p>Loading...</p>;
+    return <Loader />;
   }
   if (isError) {
     return <p>{error.message}</p>;
@@ -70,7 +61,7 @@ export default function ProductsPage() {
           Add <div className="ml-2">+</div>
         </button>
       </div>
-      {open && <AddProductModal open={open} setOpen={setOpen} editItem={editItem} />}
+      <AddProductModal open={open} setOpen={setOpen} editItem={editItem} />
       {openDelete && (
         <DeleteModal
           title={`Delete Product ${deleteId}`}
@@ -119,7 +110,7 @@ const ProductTable = ({ data, onEdit, onDelete }) => {
             <td className="px-4 py-3">{item.name}</td>
             <td className="px-4 py-3 text-sm">{formatPrice(item.price)}</td>
             <td className="px-4 py-3 text-xs">
-              <img className="h-32" src={`${BASE_URL}/${item.image}`} alt={item.name} />
+              <img className="w-32 h-auto" src={`${BASE_URL}/${item.image}`} alt={item.name} />
             </td>
             <td className="px-4 py-3 text-sm">{item.created_at}</td>
             <td className="px-4 py-3">

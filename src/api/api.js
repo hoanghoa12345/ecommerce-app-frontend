@@ -147,9 +147,22 @@ export const getSubscriptionList = async () => {
 
 export const createNewSubscription = async (formData) => {
   try {
-    const { data } = await Axios.post(BASE_URL + "api/v1/subscriptions", formData, {
+    const { data } = await Axios.post(BASE_URL + "/api/v1/subscriptions", formData, {
       headers: {
         "content-type": "application/json",
+        accept: "application/json",
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const deleteSubcription = async (id) => {
+  try {
+    const { data } = await Axios.delete(BASE_URL + "/api/v1/subscriptions/" + id, {
+      headers: {
         accept: "application/json",
       },
     });
