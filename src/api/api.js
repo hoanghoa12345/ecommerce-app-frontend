@@ -1,5 +1,13 @@
-import Axios from "axios";
+import Axios from "./axios";
 export const BASE_URL = process.env.REACT_APP_BASE_URL || "";
+
+export const getFullHeader = (token = "") => {
+  return {
+    accept: "application/json",
+    Authorization: token === "" ? token : `Bearer ${token}`,
+  };
+};
+
 export const getAllProducts = async () => {
   try {
     const { data } = await Axios.get(`${BASE_URL}/api/v1/products`, {
@@ -167,6 +175,29 @@ export const deleteSubcription = async (id) => {
       },
     });
     return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getAllUsers = async (token = "") => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/users`, {
+      headers: {
+        Accept: "application/json",
+        Authorization: token === "" ? token : `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const bulkInsertProductSub = async (listProductSub) => {
+  try {
+    const { data } = await Axios.post(`${BASE_URL}/api/v1/subscription-details/bulk`);
+    return { data };
   } catch (error) {
     throw new Error(error);
   }

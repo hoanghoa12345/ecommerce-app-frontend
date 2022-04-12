@@ -23,7 +23,7 @@ const HeroSlide = () => {
   ];
 
   return (
-    <div className="container w-full">
+    <div className="w-full">
       <Swiper modules={[Autoplay]} grabCursor={true} spaceBetween={0} slidesPerView={1} autoplay={{ delay: 3000 }}>
         {heroSlide.map((item, i) => (
           <SwiperSlide key={i}>

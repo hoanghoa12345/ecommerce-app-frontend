@@ -1,7 +1,14 @@
 import { ClipboardListIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
-import React, { Fragment, useState, useRef } from "react";
+import React, { Fragment, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { BASE_URL, createNewSubscription, deleteSubcription, getAllProducts, getSubscriptionList } from "../../api/api";
+import {
+  BASE_URL,
+  bulkInsertProductSub,
+  createNewSubscription,
+  deleteSubcription,
+  getAllProducts,
+  getSubscriptionList,
+} from "../../api/api";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
@@ -38,7 +45,6 @@ const SubscriptionPage = () => {
     resolver: yupResolver(schema),
   });
   const onSubmit = async (data) => {
-    console.log(data);
     await mutateAsync({
       name: data.name,
       duration: data.duration,
@@ -108,6 +114,10 @@ const SubscriptionPage = () => {
   };
 
   //console.log(productsAdded);
+  const productsSubMutation = useMutation((listProductSub) => bulkInsertProductSub(listProductSub));
+  const submitProductSubscription = () => {
+    productsSubMutation.mutate(productsAdded);
+  };
 
   return (
     <div className="container grid px-6 mx-auto">
@@ -237,7 +247,7 @@ const SubscriptionPage = () => {
             ))}
             {productsAdded.length === 0 && <span>Please choose products</span>}
           </div>
-          <div className="flow-root mt-8 max-h-96 overflow-y-scroll">
+          <div className="flow-root mt-6 max-h-96 overflow-y-scroll border-t border-gray-200">
             <ul className="-my-6 divide-y divide-gray-200">
               {productsIsLoading ? (
                 <Loader />
@@ -266,6 +276,8 @@ const SubscriptionPage = () => {
                           className="input input-bordered border-gray-300 w-14 rounded-lg"
                           placeholder="1"
                           onChange={(e) => setInputQty(e.target.value)}
+                          min="1"
+                          max={product.quantity}
                         ></input>
                         <div className="flex">
                           <button
@@ -282,6 +294,21 @@ const SubscriptionPage = () => {
                 ))
               )}
             </ul>
+          </div>
+          <div className="flex items-center justify-end border-t border-gray-200 pt-2 space-x-2 rounded-b">
+            <button
+              type="button"
+              className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-purple-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
+            >
+              Cancel
+            </button>
+            <button
+              type="button"
+              onClick={submitProductSubscription}
+              className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800"
+            >
+              Create
+            </button>
           </div>
         </div>
       </Modal>

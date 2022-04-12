@@ -1,9 +1,29 @@
-import { Disclosure } from "@headlessui/react";
-import { MenuIcon, SearchIcon } from "@heroicons/react/outline";
+import { Disclosure, Menu, Transition } from "@headlessui/react";
+import { MenuIcon, SearchIcon, LogoutIcon, UserCircleIcon } from "@heroicons/react/outline";
+import { Link, useNavigate } from "react-router-dom";
 import { BellIcon } from "@heroicons/react/solid";
-import React from "react";
+import React, { Fragment } from "react";
+import Axios from "axios";
+import { useUserContext } from "../../context/user";
+import { getFullHeader } from "../../api/api";
+import { setUser } from "./../../action/user";
+import { initialUser } from "../../constants/initialUser";
 
 export default function AdminHeader() {
+  const navigate = useNavigate();
+  const { user, userDispatch } = useUserContext();
+
+  const handleLogout = async () => {
+    const headers = getFullHeader(user.token);
+    const res = await Axios.post("/api/v1/logout", {}, { headers });
+
+    if (res.status === 200) {
+      localStorage.removeItem("user");
+      userDispatch(setUser(initialUser));
+      navigate("/login");
+    }
+  };
+
   return (
     <header className="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
       <div className="container flex items-center justify-between h-full px-6 mx-auto text-purple-600 dark:text-purple-300">
@@ -47,18 +67,60 @@ export default function AdminHeader() {
           </li>
           {/* Profile menu */}
           <li className="relative">
-            <button
-              className="align-middle rounded-full focus:shadow-outline-purple focus:outline-none"
-              aria-label="Account"
-              aria-haspopup="true"
-            >
-              <img
-                className="object-cover w-8 h-8 rounded-full"
-                src="https://images.unsplash.com/photo-1502720705749-871143f0e671?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=b8377ca9f985d80264279f277f3a67f5"
-                alt=""
-                aria-hidden="true"
-              />
-            </button>
+            <Menu as="div" className="relative inline-block text-left">
+              <Menu.Button
+                type="button"
+                className="align-middle rounded-full focus:shadow-outline-purple focus:outline-none"
+                aria-label="Account"
+                aria-haspopup="true"
+              >
+                <img
+                  className="object-cover w-8 h-8 rounded-full"
+                  src="https://images.unsplash.com/photo-1502720705749-871143f0e671?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=b8377ca9f985d80264279f277f3a67f5"
+                  alt=""
+                  aria-hidden="true"
+                />
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute z-10 right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="px-1 py-1 ">
+                    <Menu.Item as={Link} to={"/"}>
+                      {({ active }) => (
+                        <button
+                          className={`${
+                            active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                          } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                        >
+                          <UserCircleIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                          Profile
+                        </button>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <button
+                          className={`${
+                            active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                          } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                          onClick={handleLogout}
+                        >
+                          <LogoutIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                          Logout
+                        </button>
+                      )}
+                    </Menu.Item>
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
           </li>
         </ul>
       </div>

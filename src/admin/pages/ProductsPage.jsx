@@ -6,6 +6,7 @@ import AddProductModal from "../components/AddProductModal";
 import DeleteModal from "../components/DeleteModal";
 import Pagination from "../components/Pagination";
 import { formatPrice } from "../../utils/formatType";
+import { formatDate } from "../../utils/date";
 import Loader from "../components/Loader";
 
 export default function ProductsPage() {
@@ -112,7 +113,7 @@ const ProductTable = ({ data, onEdit, onDelete }) => {
             <td className="px-4 py-3 text-xs">
               <img className="w-32 h-auto" src={`${BASE_URL}/${item.image}`} alt={item.name} />
             </td>
-            <td className="px-4 py-3 text-sm">{item.created_at}</td>
+            <td className="px-4 py-3 text-sm">{formatDate(item.created_at)}</td>
             <td className="px-4 py-3">
               <div className="flex items-center space-x-4 text-sm">
                 <button

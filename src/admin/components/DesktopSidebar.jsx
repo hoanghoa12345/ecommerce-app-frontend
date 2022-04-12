@@ -2,6 +2,7 @@ import React from "react";
 import { ClipboardListIcon, CollectionIcon, HomeIcon, ViewGridIcon } from "@heroicons/react/outline";
 import { Link, useMatch, useResolvedPath } from "react-router-dom";
 import { Disclosure } from "@headlessui/react";
+import { UserGroupIcon } from "@heroicons/react/solid";
 function SidebarLink({ children, to, ...props }) {
   let resolved = useResolvedPath(to);
   let match = useMatch({ path: resolved.pathname, end: true });
@@ -32,6 +33,10 @@ export default function DesktopSidebar() {
           <SidebarLink to="/admin/dashboard">
             <HomeIcon className="w-5 h-5" />
             <span className="ml-4">Dashboard</span>
+          </SidebarLink>
+          <SidebarLink to="/admin/users">
+            <UserGroupIcon className="w-5 h-5" />
+            <span className="ml-4">Users</span>
           </SidebarLink>
           <SidebarLink to="/admin/products">
             <ClipboardListIcon className="w-5 h-5" />

@@ -1,11 +1,17 @@
 import { Menu, Transition } from "@headlessui/react";
-import { HeartIcon, MenuIcon, SearchIcon, ShoppingCartIcon } from "@heroicons/react/outline";
-import React, { useState, useEffect, Fragment, useRef } from "react";
-import { Link } from "react-router-dom";
-import { getAllCategory } from "../../api/api";
+import { HeartIcon, LogoutIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/outline";
+import React, { useState, useEffect, Fragment } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { getAllCategory, getFullHeader } from "../../api/api";
+import Axios from 'axios';
+import { useUserContext } from "../../context/user";
+import { setUser } from "../../action/user";
+import { initialUser } from '../../constants/initialUser'
 const Navbar = () => {
-  const [openCategory, setOpenCategory] = useState(false);
   const [category, setCategory] = useState([]);
+  const navigate = useNavigate();
+  const {user, userDispatch} = useUserContext();
+
   useEffect(() => {
     const getListCategory = async () => {
       const data = await getAllCategory();
@@ -14,6 +20,20 @@ const Navbar = () => {
 
     getListCategory();
   }, []);
+
+  const handleLogout = async () =>{
+    const headers = getFullHeader(user.token);
+    console.log('headers', headers);
+    const res = await Axios.post('/api/v1/logout',{},{
+      headers
+    });
+
+    if (res.status === 200){
+      localStorage.removeItem('user');
+      userDispatch(setUser(initialUser));
+      navigate('/login');
+    }
+  };
 
   return (
     <nav className="bg-orange-600 shadow dark:bg-gray-800">
@@ -44,7 +64,7 @@ const Navbar = () => {
                     leaveFrom="transform opacity-100 scale-100"
                     leaveTo="transform opacity-0 scale-95"
                   >
-                    <Menu.Items className="absolute right-0 z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800">
+                    <Menu.Items className="absolute left-[10px] z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800">
                       {category.map(({ id, name, slug }) => (
                         <Menu.Item
                           as={Link}
@@ -102,16 +122,57 @@ const Navbar = () => {
             >
               <HeartIcon className="w-6 h-6" />
             </button>
-            <button type="button" className="flex items-center focus:outline-none" aria-label="toggle profile dropdown">
-              <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
-                <img
-                  src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
-                  className="object-cover w-full h-full"
-                  alt="avatar"
-                />
-              </div>
-              <h3 className="mx-2 text-sm font-medium text-gray-700 dark:text-gray-200 md:hidden">Khatab wedaa</h3>
-            </button>
+            <Menu as="div" className="relative inline-block text-left">
+              <Menu.Button type="button" className="flex items-center focus:outline-none" aria-label="toggle profile dropdown">
+                <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
+                  <img
+                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
+                    className="object-cover w-full h-full"
+                    alt="avatar"
+                  />
+                </div>
+                <h3 className="mx-2 text-sm font-medium text-white dark:text-gray-200">{user.name}</h3>
+              </Menu.Button>
+              <Transition
+                as={Fragment}
+                enter="transition ease-out duration-100"
+                enterFrom="transform opacity-0 scale-95"
+                enterTo="transform opacity-100 scale-100"
+                leave="transition ease-in duration-75"
+                leaveFrom="transform opacity-100 scale-100"
+                leaveTo="transform opacity-0 scale-95"
+              >
+                <Menu.Items className="absolute z-10 left-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <div className="px-1 py-1 ">
+                    <Menu.Item as={Link} to={'/'}>
+                      {({ active }) => (
+                        <button
+                          className={`${
+                            active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                          } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                        >
+                          <UserCircleIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                          Profile
+                        </button>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item>
+                      {({ active }) => (
+                        <button
+                          className={`${
+                            active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                          } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                          onClick={handleLogout}
+                        >
+                          <LogoutIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                          Logout
+                        </button>
+                      )}
+                    </Menu.Item>
+                  </div>
+                </Menu.Items>
+              </Transition>
+            </Menu>
           </div>
         </div>
       </div>
