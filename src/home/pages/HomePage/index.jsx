@@ -4,6 +4,8 @@ import "swiper/css";
 import { useEffect, useState } from "react";
 import { getTopProduct } from "../../../api/api";
 import Product from "../../components/product/Product";
+import { useQuery } from "react-query";
+import Loader from "../../components/loader/Loader";
 const HomePage = () => {
   return (
     <div>
@@ -82,6 +84,9 @@ const TopProducts = () => {
     fetchTopProducts();
   }, []);
 
+  const topProductsQuery = useQuery("topproducts", getTopProduct);
+
+  if (topProductsQuery.isLoading) return <Loader />;
   return (
     <section>
       <div className="max-w-screen-xl px-4 py-8 mx-auto">

@@ -20,6 +20,7 @@ import Loader from "../components/Loader";
 import Modal from "../components/Modal";
 import { XIcon } from "@heroicons/react/outline";
 import { formatPrice } from "../../utils/formatType";
+import Button from "../components/Button";
 
 const schema = yup.object({
   name: yup.string().required(),
@@ -34,6 +35,8 @@ const SubscriptionPage = () => {
   const [deleteItem, setDeleteItem] = useState({});
   const [openPreview, setOpenPreview] = useState(false);
   const [itemPreview, setItemPreview] = useState({});
+  const [openEditModal, setOpenEditModal] = useState(false);
+  const [itemEdit, setItemEdit] = useState({});
   const queryClient = useQueryClient();
   const { mutateAsync } = useMutation(createNewSubscription);
   const { mutateAsync: deleteMutateAsync } = useMutation(deleteSubcription);
@@ -116,7 +119,23 @@ const SubscriptionPage = () => {
   //console.log(productsAdded);
   const productsSubMutation = useMutation((listProductSub) => bulkInsertProductSub(listProductSub));
   const submitProductSubscription = () => {
-    productsSubMutation.mutate(productsAdded);
+    productsSubMutation.mutate(productsAdded, {
+      onSuccess: async () => {
+        toast.success("Create new subscription");
+        setOpenPreview(false);
+        setItemPreview(null);
+        setProductsAdded([]);
+        queryClient.invalidateQueries("subscriptions");
+      },
+      onError: async () => {
+        toast.error("Can not create subscription");
+      },
+    });
+  };
+
+  const handleEditItem = (item) => {
+    setOpenEditModal(true);
+    setItemEdit(item);
   };
 
   return (
@@ -124,7 +143,7 @@ const SubscriptionPage = () => {
       <ToastContainer />
       <DeleteModal
         title="Delete"
-        message={"Are you want delete?"}
+        message={`Are you want delete ${deleteItem.name}?`}
         open={isOpenDelete}
         setOpen={() => setIsOpenDelete(false)}
         onDelete={() => handleDelete()}
@@ -139,6 +158,7 @@ const SubscriptionPage = () => {
           Create
         </button>
       </div>
+      {productIsError && <li className="text-red-600 text-center">{productError}</li>}
       <table className="w-full whitespace-nowrap shadow sm:rounded-lg bg-white">
         <thead>
           <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
@@ -165,12 +185,16 @@ const SubscriptionPage = () => {
                 <tr className="text-gray-700">
                   <td className="px-4 py-3">{item.name}</td>
                   <td className="px-4 py-3">{item.duration}</td>
-                  <td className="px-4 py-3">{item.total_price}</td>
+                  <td className="px-4 py-3">{formatPrice(item.total_price)}</td>
                   <td className="px-4 py-3 flex items-center space-x-4">
                     <button className="flex items-center justify-between px-2 py-2 text-purple-600 text-sm hover:bg-gray-200 hover:border-gray-200 hover:rounded-full">
                       <ClipboardListIcon onClick={() => onPreviewList(item)} className="w-5 h-5" />
+                      {productsIsLoading && <Loader />}
                     </button>
-                    <button className="flex items-center justify-between px-2 py-2 text-purple-600 text-sm hover:bg-gray-200 hover:border-gray-200 hover:rounded-full">
+                    <button
+                      onClick={() => handleEditItem(item)}
+                      className="flex items-center justify-between px-2 py-2 text-purple-600 text-sm hover:bg-gray-200 hover:border-gray-200 hover:rounded-full"
+                    >
                       <PencilIcon className="w-5 h-5" />
                     </button>
                     <button
@@ -249,11 +273,7 @@ const SubscriptionPage = () => {
           </div>
           <div className="flow-root mt-6 max-h-96 overflow-y-scroll border-t border-gray-200">
             <ul className="-my-6 divide-y divide-gray-200">
-              {productsIsLoading ? (
-                <Loader />
-              ) : productIsError ? (
-                <li className="text-red-600">{productError}</li>
-              ) : (
+              {products &&
                 products.map((product, index) => (
                   <li key={product.id} className="flex py-6 px-4">
                     <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
@@ -291,8 +311,7 @@ const SubscriptionPage = () => {
                       </div>
                     </div>
                   </li>
-                ))
-              )}
+                ))}
             </ul>
           </div>
           <div className="flex items-center justify-end border-t border-gray-200 pt-2 space-x-2 rounded-b">
@@ -302,13 +321,32 @@ const SubscriptionPage = () => {
             >
               Cancel
             </button>
-            <button
-              type="button"
-              onClick={submitProductSubscription}
-              className="text-white bg-purple-700 hover:bg-purple-800 focus:ring-4 focus:outline-none focus:ring-purple-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-purple-600 dark:hover:bg-purple-700 dark:focus:ring-purple-800"
-            >
+            <Button onClick={submitProductSubscription} type="button" isLoading={productsSubMutation.isLoading}>
               Create
-            </button>
+            </Button>
+          </div>
+        </div>
+      </Modal>
+      <Modal show={openEditModal} title={itemEdit.name} maxWidth="3xl" onClose={() => setOpenEditModal(false)}>
+        <div className="bg-white">
+          <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+            <h2 className="sr-only">Products</h2>
+
+            <div className="grid grid-cols-1 gap-y-10 sm:grid-cols-2 gap-x-6 lg:grid-cols-3 xl:grid-cols-4 xl:gap-x-8">
+              {itemEdit.details?.map((item) => (
+                <div key={item.id} className="group">
+                  <div className="w-full aspect-w-1 aspect-h-1 bg-gray-200 rounded-lg overflow-hidden xl:aspect-w-7 xl:aspect-h-8">
+                    <img
+                      src={`${BASE_URL}/${item.product.image}`}
+                      alt={item.product.name}
+                      className="w-full h-full object-center object-cover group-hover:opacity-75"
+                    />
+                  </div>
+                  <h3 className="mt-4 text-sm text-gray-700 max-h-9 overflow-hidden">{item.product.name}</h3>
+                  <p className="mt-1 text-lg font-medium text-gray-900">{`${formatPrice(item.price)} x ${item.quantity}`}</p>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </Modal>

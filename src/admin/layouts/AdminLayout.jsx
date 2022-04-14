@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Disclosure } from "@headlessui/react";
 
 import { QueryClient, QueryClientProvider } from "react-query";
@@ -9,7 +9,10 @@ import Sidebar from "../components/DesktopSidebar";
 import { ReactQueryDevtools } from "react-query/devtools";
 
 const AdminLayout = () => {
-  document.title = "Admin Page";
+  useEffect(() => {
+    document.title = "Admin Page";
+  }, []);
+
   const queryClient = new QueryClient();
   return (
     <QueryClientProvider client={queryClient}>

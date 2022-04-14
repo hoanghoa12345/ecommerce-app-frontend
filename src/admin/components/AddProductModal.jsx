@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useState } from "react";
+import React, { Fragment, useCallback, useEffect, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Dialog, Transition } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
@@ -25,6 +25,7 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
     setValue,
   } = useForm({
     resolver: yupResolver(schema),
@@ -36,13 +37,14 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
   const onSubmit = async (data) => {
     if (editItem === null) {
       await mutateAsync(data);
+      toast.success("Created product successful!");
     }
     if (editItem) {
       await updateMutateAsync({ ...data, id: editItem.id });
+      toast.success("Updated product successful!");
     }
     setOpen(false);
     queryClient.invalidateQueries("products");
-    toast.success("Update product successful!");
   };
 
   const [image, setImage] = useState(null);
@@ -56,6 +58,10 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
     [image]
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
+
+  useEffect(() => {
+    reset(editItem);
+  }, [editItem, reset]);
 
   return (
     <Fragment>

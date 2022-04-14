@@ -10,10 +10,11 @@ import ShopPage from "./home/pages/ShopPage";
 import CategoryPage from "./admin/pages/CategoryPage";
 import CategoryListPage from "./home/pages/CategoryPage";
 import SubscriptionPage from "./admin/pages/SubscriptionPage";
-import Register from './auth/pages/register/index';
-import Login from './auth/pages/login/index';
-import UserPage from './admin/pages/UserPage';
-import Page404 from './Page_404';
+import Register from "./auth/pages/register/index";
+import Login from "./auth/pages/login/index";
+import UserPage from "./admin/pages/UserPage";
+import Page404 from "./Page_404";
+import SubscribeList from "./home/pages/SubscribeList";
 const App = () => {
   return (
     <Routes>
@@ -22,6 +23,7 @@ const App = () => {
         <Route path="shop" element={<ShopPage />} />
         <Route path="products/:productSlug" element={<ProductPage />} />
         <Route path="category/:categorySlug" element={<CategoryListPage />} />
+        <Route path="subscriptions" element={<SubscribeList />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" />} />

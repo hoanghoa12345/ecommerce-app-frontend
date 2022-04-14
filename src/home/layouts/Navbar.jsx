@@ -1,37 +1,45 @@
-import { Menu, Transition } from "@headlessui/react";
+import { Menu, Popover, Transition } from "@headlessui/react";
 import { HeartIcon, LogoutIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/outline";
-import React, { useState, useEffect, Fragment } from "react";
+import React, { useState, Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getAllCategory, getFullHeader } from "../../api/api";
-import Axios from 'axios';
+import { BASE_URL, getAllCategory, getFullHeader, getSearchResult } from "../../api/api";
+import Axios from "axios";
 import { useUserContext } from "../../context/user";
 import { setUser } from "../../action/user";
-import { initialUser } from '../../constants/initialUser'
+import { initialUser } from "../../constants/initialUser";
+import { useMutation, useQuery } from "react-query";
 const Navbar = () => {
-  const [category, setCategory] = useState([]);
+  const categoryQuery = useQuery("categories", getAllCategory);
   const navigate = useNavigate();
-  const {user, userDispatch} = useUserContext();
+  const { user, userDispatch } = useUserContext();
+  const [isShowing, setIsShowing] = useState(false);
 
-  useEffect(() => {
-    const getListCategory = async () => {
-      const data = await getAllCategory();
-      setCategory(data);
-    };
+  const resultsMutation = useMutation((search) => getSearchResult(search), {});
 
-    getListCategory();
-  }, []);
+  const handleInputChange = (e) => {
+    let query = e.target.value;
+    if (query.length > 1) {
+      if (query.length % 2 === 0) {
+        resultsMutation.mutateAsync(query);
+      }
+    }
+  };
 
-  const handleLogout = async () =>{
+  const handleLogout = async () => {
     const headers = getFullHeader(user.token);
-    console.log('headers', headers);
-    const res = await Axios.post('/api/v1/logout',{},{
-      headers
-    });
+    console.log("headers", headers);
+    const res = await Axios.post(
+      "/api/v1/logout",
+      {},
+      {
+        headers,
+      }
+    );
 
-    if (res.status === 200){
-      localStorage.removeItem('user');
+    if (res.status === 200) {
+      localStorage.removeItem("user");
       userDispatch(setUser(initialUser));
-      navigate('/login');
+      navigate("/login");
     }
   };
 
@@ -65,16 +73,17 @@ const Navbar = () => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute left-[10px] z-20 w-56 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-xl dark:bg-gray-800">
-                      {category.map(({ id, name, slug }) => (
-                        <Menu.Item
-                          as={Link}
-                          key={id}
-                          to={`/category/${slug}`}
-                          className="uppercase block px-4 py-3 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b-gray-200 border-b-2"
-                        >
-                          {name}
-                        </Menu.Item>
-                      ))}
+                      {categoryQuery.isFetched &&
+                        categoryQuery.data.map(({ id, name, slug }) => (
+                          <Menu.Item
+                            as={Link}
+                            key={id}
+                            to={`/category/${slug}`}
+                            className="uppercase block px-4 py-3 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b-gray-200 border-b-2"
+                          >
+                            {name}
+                          </Menu.Item>
+                        ))}
                     </Menu.Items>
                   </Transition>
                 </>
@@ -93,19 +102,59 @@ const Navbar = () => {
           </div>{" "}
           {/* Mobile Menu open: "block", Menu closed: "hidden" */}
           <div className="flex-1">
-            <div className="flex flex-col -mx-4 md:flex-row md:items-center md:mx-8">
-              <div className="hidden mx-10 md:block flex-1">
+            <div className="flex flex-col -mx-4 md:flex-row md:items-center ">
+              <Popover className="hidden mx-10 md:block flex-1">
                 <div className="relative">
                   <input
-                    type="text"
+                    type="search"
                     className="w-full py-2 pl-4 pr-10 text-gray-700 text-sm bg-white border-orange-600 rounded-full dark:bg-gray-800 dark:text-gray-300 dark:border-orange-700 focus:border-orange-400 dark:focus:border-orange-300 focus:outline-none focus:ring focus:ring-opacity-40 focus:ring-orange-300"
                     placeholder="Tìm sản phẩm mong muốn"
+                    onChange={handleInputChange}
+                    onFocus={() => setIsShowing(true)}
+                    onBlur={() => setIsShowing(false)}
                   />
-                  <span className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  <button className="absolute inset-y-0 right-0 flex items-center pr-3">
                     <SearchIcon className="w-5 h-5 text-gray-400" />
-                  </span>
+                  </button>
                 </div>
-              </div>
+                <Transition
+                  show={isShowing}
+                  as={Fragment}
+                  enter="transition ease-out duration-200"
+                  enterFrom="opacity-0 translate-y-1"
+                  enterTo="opacity-100 translate-y-0"
+                  leave="transition ease-in duration-150"
+                  leaveFrom="opacity-100 translate-y-0"
+                  leaveTo="opacity-0 translate-y-1"
+                >
+                  <Popover.Panel
+                    static
+                    className="absolute z-10 w-screen max-w-md px-4 mt-3 transform -translate-x-1/2 left-1/2 sm:px-0 lg:max-w-2xl"
+                  >
+                    <div className="overflow-hidden rounded-lg shadow-lg ring-1 ring-black ring-opacity-5">
+                      <div className="relative grid gap-8 bg-white p-7">
+                        {resultsMutation.isSuccess &&
+                          resultsMutation.data.map((item) => (
+                            <Link
+                              key={item.id}
+                              to={`/products/${item.slug}`}
+                              className="flex items-center p-2 -m-3 transition duration-150 ease-in-out rounded-lg hover:bg-gray-50 focus:outline-none focus-visible:ring focus-visible:ring-orange-500 focus-visible:ring-opacity-50"
+                            >
+                              <div className="flex items-center justify-center flex-shrink-0 w-10 h-10 text-white sm:h-12 sm:w-12">
+                                <img src={`${BASE_URL}/${item.image}`} alt={item.name} />
+                              </div>
+                              <div className="ml-4">
+                                <p className="text-sm font-medium text-gray-900">{item.name}</p>
+                                <p className="text-sm text-gray-500">{item.description.substring(0, 40)}...</p>
+                              </div>
+                            </Link>
+                          ))}
+                        {resultsMutation.isIdle && <p>Nhập từ khóa để tìm kiếm</p>}
+                      </div>
+                    </div>
+                  </Popover.Panel>
+                </Transition>
+              </Popover>
             </div>
           </div>
           <div className="flex items-center mt-4 md:mt-0">
@@ -144,7 +193,7 @@ const Navbar = () => {
               >
                 <Menu.Items className="absolute z-10 left-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="px-1 py-1 ">
-                    <Menu.Item as={Link} to={'/'}>
+                    <Menu.Item as={Link} to={"/"}>
                       {({ active }) => (
                         <button
                           className={`${

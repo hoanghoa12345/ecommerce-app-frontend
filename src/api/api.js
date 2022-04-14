@@ -196,8 +196,17 @@ export const getAllUsers = async (token = "") => {
 
 export const bulkInsertProductSub = async (listProductSub) => {
   try {
-    const { data } = await Axios.post(`${BASE_URL}/api/v1/subscription-details/bulk`);
-    return { data };
+    const { data } = await Axios.post(`${BASE_URL}/api/v1/subscription-details/bulk`, listProductSub);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getSearchResult = async (searchQuery) => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/products/search?q=${searchQuery}`);
+    return data;
   } catch (error) {
     throw new Error(error);
   }

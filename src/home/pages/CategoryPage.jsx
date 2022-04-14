@@ -1,38 +1,24 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { ChevronRightIcon } from "@heroicons/react/outline";
 import { getAllCategory, getCategoryBySlug, getProductsByCategory } from "../../api/api";
 import Product from "../components/product/Product";
+import { useQueries } from "react-query";
+import Loader from "../components/loader/Loader";
 
 const CategoryPage = () => {
   const { categorySlug } = useParams();
-  console.log(categorySlug);
-  const [categories, setCategories] = useState([]);
-  const [category, setCategory] = useState({});
-  const [categoryProducts, setCategoryProducts] = useState([]);
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const data = await getAllCategory();
-      setCategories(data);
-    };
-    fetchCategories();
-  }, []);
+  const [categoriesQuery, categoryQuery, categoryProductsQuery] = useQueries([
+    { queryKey: "categories", queryFn: getAllCategory },
+    { queryKey: `category_${categorySlug}`, queryFn: () => getCategoryBySlug(categorySlug) },
+    { queryKey: `categoryProducts_${categorySlug}`, queryFn: () => getProductsByCategory(categorySlug) },
+  ]);
 
-  useEffect(() => {
-    const fetchCategoryBySlug = async () => {
-      const data = await getCategoryBySlug(categorySlug);
-      setCategory(data);
-    };
-    fetchCategoryBySlug();
-  }, [categorySlug]);
+  const { data: categories } = categoriesQuery;
+  const { data: category } = categoryQuery;
+  const { data: categoryProducts } = categoryProductsQuery;
 
-  useEffect(() => {
-    const fetchProductsByCategory = async () => {
-      const data = await getProductsByCategory(categorySlug);
-      setCategoryProducts(data);
-    };
-    fetchProductsByCategory();
-  }, [categorySlug]);
+  if (categoriesQuery.isLoading || categoryQuery.isLoading || categoryProductsQuery.isLoading) return <Loader />;
   return (
     <div>
       <div className="mb-4 pt-4 border-t">

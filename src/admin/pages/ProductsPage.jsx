@@ -18,10 +18,12 @@ export default function ProductsPage() {
   const [deleteId, setDeleteId] = useState(0);
   const handleAddProduct = () => {
     setOpen(true);
+    setEditItem({});
   };
 
   const editProductHandler = (item) => {
     setOpen(true);
+    //if (editItem) setEditItem(null);
     setEditItem(item);
   };
   const { mutateAsync } = useMutation(deleteProduct);

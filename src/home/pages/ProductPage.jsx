@@ -1,25 +1,19 @@
 import { HeartIcon } from "@heroicons/react/solid";
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import React from "react";
+import { useNavigate, useParams } from "react-router-dom";
+import Loader from "../components/loader/Loader";
 import { BASE_URL, getProductBySlug } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import Product from "../components/product/Product";
+import { useQuery } from "react-query";
 
 export default function ProductPage() {
   const { productSlug } = useParams();
-  const [product, setProduct] = useState(null);
+  const navigate = useNavigate();
+  const { data: product, isError, isLoading, error } = useQuery(`product_${productSlug}`, () => getProductBySlug(productSlug));
 
-  useEffect(() => {
-    const getProductItem = async () => {
-      const data = await getProductBySlug(productSlug);
-
-      setProduct(data);
-    };
-
-    getProductItem();
-  }, [productSlug]);
-
-  if (!product) return <p>Loading...</p>;
+  if (isLoading) return <Loader />;
+  if (isError) return <p>{error}</p>;
   return (
     <section className="text-gray-600 body-font overflow-hidden">
       <div className="container px-5 py-24 mx-auto">
@@ -40,7 +34,10 @@ export default function ProductPage() {
             </div>
             <div className="flex mt-6 items-center pb-5 border-b-2 border-gray-100 mb-5">
               <div className="flex ml-6 items-center">
-                <button className="flex ml-auto text-white bg-orange-500 uppercase border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
+                <button
+                  onClick={() => navigate("/subscriptions")}
+                  className="flex ml-auto text-white bg-orange-500 uppercase border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+                >
                   Đăng ký mua gói sản phẩm
                 </button>
               </div>
