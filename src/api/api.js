@@ -211,3 +211,12 @@ export const getSearchResult = async (searchQuery) => {
     throw new Error(error);
   }
 };
+
+export const getSubscriptionById = async (id) => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/subscriptions/${id}`);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

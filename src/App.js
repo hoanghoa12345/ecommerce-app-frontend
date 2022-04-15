@@ -15,6 +15,7 @@ import Login from "./auth/pages/login/index";
 import UserPage from "./admin/pages/UserPage";
 import Page404 from "./Page_404";
 import SubscribeList from "./home/pages/SubscribeList";
+import SubscribeDetail from "./home/pages/SubscribeDetail";
 const App = () => {
   return (
     <Routes>
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="products/:productSlug" element={<ProductPage />} />
         <Route path="category/:categorySlug" element={<CategoryListPage />} />
         <Route path="subscriptions" element={<SubscribeList />} />
+        <Route path="subscriptions/:id" element={<SubscribeDetail />} />
       </Route>
       <Route path="/admin" element={<AdminLayout />}>
         <Route index element={<Navigate to="dashboard" />} />

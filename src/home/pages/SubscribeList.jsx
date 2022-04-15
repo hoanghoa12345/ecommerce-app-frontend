@@ -1,5 +1,6 @@
 import React from "react";
 import { useQuery } from "react-query";
+import { Link } from "react-router-dom";
 import { getSubscriptionList } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
@@ -25,10 +26,10 @@ const SubscribeList = () => {
               <div className="mt-4 flex justify-between">
                 <div>
                   <h3 className="text-sm text-gray-700">
-                    <a href="/">
+                    <Link to={`/subscriptions/${subItem.id}`}>
                       <span aria-hidden="true" className="absolute inset-0" />
                       {subItem.name}
-                    </a>
+                    </Link>
                   </h3>
                   <p className="mt-1 text-sm text-gray-500">{subItem.duration} tháng</p>
                 </div>
