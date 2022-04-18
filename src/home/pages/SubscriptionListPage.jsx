@@ -5,7 +5,7 @@ import { getSubscriptionList } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
 
-const SubscribeList = () => {
+const SubscriptionListPage = () => {
   const subscriptionList = useQuery("subscriptions", getSubscriptionList);
   if (subscriptionList.isLoading) return <Loader />;
   if (subscriptionList.isError) return <p className="text-red-600">{subscriptionList.error}</p>;
@@ -43,4 +43,4 @@ const SubscribeList = () => {
   );
 };
 
-export default SubscribeList;
+export default SubscriptionListPage;
