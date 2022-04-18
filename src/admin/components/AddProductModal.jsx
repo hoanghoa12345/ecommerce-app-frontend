@@ -31,6 +31,11 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
     resolver: yupResolver(schema),
   });
   //React Hook Form init
+
+  useEffect(() => {
+    setImage(null);
+  }, [open]);
+
   const queryClient = useQueryClient();
   const { mutateAsync } = useMutation(createProduct);
   const { mutateAsync: updateMutateAsync } = useMutation(updateProduct);
@@ -238,9 +243,12 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                                   <p className="pl-1">or drag and drop</p>
                                 </div>
                                 <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
-                                {image?.path && <img className="h-24 w-auto mx-auto" src={URL.createObjectURL(image)} alt="preview" />}
-                                {editItem?.image && (
-                                  <img className="h-24 w-auto mx-auto" src={`${BASE_URL}/${editItem.image}`} alt="preview" />
+                                {image?.path ? (
+                                  <img className="h-24 w-auto mx-auto" src={URL.createObjectURL(image)} alt="preview" />
+                                ) : (
+                                  editItem?.image && (
+                                    <img className="h-24 w-auto mx-auto" src={`${BASE_URL}/${editItem.image}`} alt="preview" />
+                                  )
                                 )}
                               </div>
                             </div>

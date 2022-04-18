@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { useQuery } from "react-query";
-import { useNavigate, useParams } from "react-router-dom";
+import { Navigate, useNavigate, useParams } from "react-router-dom";
 import { BASE_URL, getSubscriptionById } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import { useForm } from "react-hook-form";
@@ -24,7 +24,14 @@ const SubscriptionPaymentPage = () => {
     setValue,
     getValues,
   } = useForm({ resolver: yupResolver(schema) });
-  const { isLoading, data: subscription } = useQuery(`subscription_id_${id}`, () => getSubscriptionById(id));
+  const {
+    isLoading,
+    data: subscription,
+    isError,
+    error: queryError,
+  } = useQuery(`subscription_id_${id}`, () => getSubscriptionById(id), {
+    retry: false,
+  });
 
   useEffect(() => {
     const currentDate = new Date();
@@ -56,6 +63,7 @@ const SubscriptionPaymentPage = () => {
   const handleStartDateChange = (e) => {
     console.log("start_date: ", e.target.value);
   };
+
   return (
     <div className="w-full mt-10 container max-w-6xl mx-auto">
       <div className="mt-10 sm:mt-0">
@@ -74,6 +82,11 @@ const SubscriptionPaymentPage = () => {
                   </div>
                 </div>
               </div>
+            ) : isError ? (
+              <>
+                <p className="text-red-600 font-semibold text-sm">{queryError.message}</p>
+                <Navigate to="/404" />
+              </>
             ) : (
               <div className="w-full h-24 border-2 rounded-md mx-auto">
                 <div className="flex flex-row items-center h-full justify-center space-x-5">
@@ -234,9 +247,10 @@ const SubscriptionPaymentPage = () => {
                   </div>
                 </div>
                 <span className="text-left text-sm font-medium text-gray-700 py-2 px-6">Phương thức thanh toán: Vui lòng chọn</span>
-                <select className="text-sm border-0">
-                  <option>Thẻ ghi nợ nội địa</option>
-                  <option>Ví điện tử</option>
+                <select className="text-sm border-0" {...register("payment_method")}>
+                  <option value="atm_debit_card">Thẻ ghi nợ nội địa</option>
+                  <option value="online_wallet">Ví điện tử</option>
+                  <option value="visa_debit_card">Thẻ thanh toán quốc tế</option>
                 </select>
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button

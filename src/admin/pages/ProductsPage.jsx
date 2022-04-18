@@ -18,7 +18,7 @@ export default function ProductsPage() {
   const [deleteId, setDeleteId] = useState(0);
   const handleAddProduct = () => {
     setOpen(true);
-    setEditItem({});
+    setEditItem(null);
   };
 
   const editProductHandler = (item) => {
