@@ -6,7 +6,7 @@ import { setUser } from "../../../action/user";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import { useForm } from 'react-hook-form'
-import { convertFromRes } from './../../../utils/convertFromRes';
+import { convertUserFromRes } from './../../../utils/convertFromRes';
 import { getFullHeader } from "../../../api/api";
 
 const schema = yup.object({
@@ -59,7 +59,7 @@ const Login = () => {
     if (data.token) {
       // console.log('success',data);
       localStorage.setItem("user", JSON.stringify(data));
-      const dataContext = convertFromRes(data);
+      const dataContext = convertUserFromRes(data);
       userDispatch(setUser(dataContext));
       navigateByRole(data.user.roles);
     }
@@ -151,6 +151,7 @@ const Login = () => {
 
               <input
                 id="loggingPassword"
+                autoComplete="off"
                 className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
                 type="password"
                 {...register("password")}

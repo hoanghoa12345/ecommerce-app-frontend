@@ -3,6 +3,7 @@ import { createContext, useContext, useReducer } from "react";
 const userLocal = JSON.parse(localStorage.getItem("user")) || {
   token: "",
   user: {
+    id:'',
     name: "",
     email: "",
     roles: "",
@@ -11,9 +12,10 @@ const userLocal = JSON.parse(localStorage.getItem("user")) || {
 
 const {
   token,
-  user: { name, email, roles },
+  user: {id, name, email, roles },
 } = userLocal;
 const initialState = {
+  id,
   name,
   email,
   roles,
@@ -37,6 +39,7 @@ const reducer = (state = initialState, action) => {
     }
     case "SET_USER": {
       return {
+        id: action.payload.id,
         name: action.payload.name,
         email: action.payload.email,
         roles: action.payload.roles,

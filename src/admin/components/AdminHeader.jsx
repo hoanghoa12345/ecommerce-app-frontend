@@ -5,13 +5,15 @@ import { BellIcon } from "@heroicons/react/solid";
 import React, { Fragment } from "react";
 import Axios from "axios";
 import { useUserContext } from "../../context/user";
-import { getFullHeader } from "../../api/api";
+import { getFullHeader, getProfileByUserId, BASE_URL } from "../../api/api";
 import { setUser } from "./../../action/user";
 import { initialUser } from "../../constants/initialUser";
+import { useQuery } from 'react-query';
 
 export default function AdminHeader() {
   const navigate = useNavigate();
   const { user, userDispatch } = useUserContext();
+  const { data } = useQuery('profile', () => getProfileByUserId(user.id));
 
   const handleLogout = async () => {
     const headers = getFullHeader(user.token);
@@ -76,7 +78,7 @@ export default function AdminHeader() {
               >
                 <img
                   className="object-cover w-8 h-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1502720705749-871143f0e671?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=b8377ca9f985d80264279f277f3a67f5"
+                  src={data ? `${BASE_URL}/${data?.avatar}` : ''}
                   alt=""
                   aria-hidden="true"
                 />

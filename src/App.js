@@ -10,11 +10,14 @@ import ShopPage from "./home/pages/ShopPage";
 import CategoryPage from "./admin/pages/CategoryPage";
 import CategoryListPage from "./home/pages/CategoryPage";
 import SubscriptionPage from "./admin/pages/SubscriptionPage";
-import Register from './auth/pages/register/index';
-import Login from './auth/pages/login/index';
-import UserPage from './admin/pages/UserPage';
-import Page404 from './Page_404';
+import Register from "./auth/pages/register/index";
+import Login from "./auth/pages/login/index";
+import UserPage from "./admin/pages/UserPage";
+import Page404 from "./Page_404";
+import { useUserContext } from "./context/user";
+
 const App = () => {
+  const { user } = useUserContext();
   return (
     <Routes>
       <Route path="/" element={<HomeLayout />}>
@@ -23,14 +26,16 @@ const App = () => {
         <Route path="products/:productSlug" element={<ProductPage />} />
         <Route path="category/:categorySlug" element={<CategoryListPage />} />
       </Route>
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Navigate to="dashboard" />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="products" element={<ProductsPage />} />
-        <Route path="categories" element={<CategoryPage />} />
-        <Route path="users" element={<UserPage />} />
-        <Route path="subscriptions" element={<SubscriptionPage />} />
-      </Route>
+      {user.roles === "admin" && (
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<Navigate to="dashboard" />} />
+          <Route path="dashboard" element={<DashboardPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="categories" element={<CategoryPage />} />
+          <Route path="users" element={<UserPage />} />
+          <Route path="subscriptions" element={<SubscriptionPage />} />
+        </Route>
+      )}
       <Route path="/register" element={<Register />} />
       <Route path="/login" element={<Login />} />
       <Route path="*" element={<Page404 />} />
