@@ -9,6 +9,7 @@ import { formatPrice } from "../../utils/formatType";
 import { formatDate } from "../../utils/date";
 import Loader from "../components/Loader";
 
+let limitProduct = 4;
 export default function ProductsPage() {
   const queryClient = useQueryClient();
   const [editItem, setEditItem] = useState(null);
@@ -35,12 +36,12 @@ export default function ProductsPage() {
   const onDelete = async () => {
     await mutateAsync(deleteId);
     queryClient.invalidateQueries("products");
+    setOpenDelete(false);
   };
 
   const [currentPage, setCurrentPage] = useState(1);
-  const [productPerPage, setProductPerPage] = useState(4);
-  const indexOfLastProduct = currentPage * productPerPage;
-  const indexOfFirstProduct = indexOfLastProduct - productPerPage;
+  const indexOfLastProduct = currentPage * limitProduct;
+  const indexOfFirstProduct = indexOfLastProduct - limitProduct;
   const currentProducts = data?.slice(indexOfFirstProduct, indexOfLastProduct);
   const paginate = (pageNumber) => setCurrentPage(pageNumber);
   const previousPaginate = () => setCurrentPage(currentPage - 1);
@@ -53,6 +54,7 @@ export default function ProductsPage() {
     return <p>{error.message}</p>;
   }
   return (
+    <main className="h-full overflow-y-auto">
     <div className="container grid px-6 mx-auto">
       <h2 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Products</h2>
       <div className="flex items-center justify-between">
@@ -84,7 +86,7 @@ export default function ProductsPage() {
           indexOfFirstProduct={indexOfFirstProduct}
           indexOfLastProduct={indexOfLastProduct}
           currentPage={currentPage}
-          productsPerPage={productPerPage}
+          productsPerPage={limitProduct}
           totalProducts={data.length}
           paginate={paginate}
           previousPaginate={previousPaginate}
@@ -92,6 +94,7 @@ export default function ProductsPage() {
         />
       </div>
     </div>
+    </main>
   );
 }
 

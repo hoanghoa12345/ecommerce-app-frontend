@@ -5,24 +5,40 @@ import { BellIcon } from "@heroicons/react/solid";
 import React, { Fragment } from "react";
 import Axios from "axios";
 import { useUserContext } from "../../context/user";
-import { getFullHeader } from "../../api/api";
+import { getFullHeader, getProfileByUserId, BASE_URL } from "../../api/api";
 import { setUser } from "./../../action/user";
 import { initialUser } from "../../constants/initialUser";
+import { useMutation, useQuery } from "react-query";
 
 export default function AdminHeader() {
   const navigate = useNavigate();
   const { user, userDispatch } = useUserContext();
-
-  const handleLogout = async () => {
-    const headers = getFullHeader(user.token);
-    const res = await Axios.post("/api/v1/logout", {}, { headers });
-
-    if (res.status === 200) {
-      localStorage.removeItem("user");
-      userDispatch(setUser(initialUser));
-      navigate("/login");
+  const { data } = useQuery("profile", () => getProfileByUserId(user.id));
+  const logoutMutation = useMutation(
+    () => {
+      return Axios.post("/api/v1/logout");
+    },
+    {
+      onError: (error) => {
+        throw error;
+      },
+      onSuccess: () => {
+        localStorage.removeItem("user");
+        userDispatch(setUser(initialUser));
+        navigate("/login");
+      },
     }
-  };
+  );
+  // const handleLogout = async () => {
+  //   const headers = getFullHeader(user.token);
+  //   const res = await Axios.post("/api/v1/logout", {}, { headers });
+
+  //   if (res.status === 200) {
+  //     localStorage.removeItem("user");
+  //     userDispatch(setUser(initialUser));
+  //     navigate("/login");
+  //   }
+  // };
 
   return (
     <header className="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
@@ -76,7 +92,7 @@ export default function AdminHeader() {
               >
                 <img
                   className="object-cover w-8 h-8 rounded-full"
-                  src="https://images.unsplash.com/photo-1502720705749-871143f0e671?ixlib=rb-0.3.5&q=80&fm=jpg&crop=entropy&cs=tinysrgb&w=200&fit=max&s=b8377ca9f985d80264279f277f3a67f5"
+                  src={data ? `${BASE_URL}/${data?.avatar}` : ""}
                   alt=""
                   aria-hidden="true"
                 />
@@ -110,7 +126,7 @@ export default function AdminHeader() {
                           className={`${
                             active ? "bg-gray-100 text-gray-900" : "text-gray-900"
                           } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                          onClick={handleLogout}
+                          onClick={() => logoutMutation.mutate()}
                         >
                           <LogoutIcon className="w-5 h-5 mr-2" aria-hidden="true" />
                           Logout

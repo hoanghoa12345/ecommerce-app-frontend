@@ -1,4 +1,4 @@
-import Axios from "./axios";
+import Axios from "axios";
 export const BASE_URL = process.env.REACT_APP_BASE_URL || "";
 
 export const getFullHeader = (token = "") => {
@@ -180,12 +180,85 @@ export const deleteSubcription = async (id) => {
   }
 };
 
+// User - Profile
+
 export const getAllUsers = async (token = "") => {
   try {
     const { data } = await Axios.get(`${BASE_URL}/api/v1/users`, {
       headers: {
         Accept: "application/json",
         Authorization: token === "" ? token : `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getUserProfile = async (token = "") => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/usersprofile`, {
+      headers: {
+        Accept: "application/json",
+        Authorization: token === "" ? token : `Bearer ${token}`,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const createUser = async (formData) => {
+  const { data } = await Axios.post(`${BASE_URL}/api/v1/users`, formData, {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+  return data;
+};
+
+export const updateUser = async ({ id, ...formData }) => {
+  const { data } = await Axios.put(`${BASE_URL}/api/v1/users/${id}`, formData, {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+  return data;
+};
+
+export const deleteUser = async (id) => {
+  const { data } = await Axios.delete(`${BASE_URL}/api/v1/users/${id}`, {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+  return data;
+};
+
+export const getProfileByUserId = async (user_id) => {
+  const { data } = await Axios.get(`${BASE_URL}/api/v1/profiles/${user_id}`, {
+    headers: {
+      Accept: "application/json",
+    },
+  });
+  return data;
+};
+
+export const updateProfile = async ({ ...Data }) => {
+  const { description, address, phone, avatar, user_id } = Data;
+  const formData = new FormData();
+  formData.append("description", description);
+  formData.append("address", address);
+  formData.append("phone_number", phone);
+  formData.append("avatar", avatar);
+  formData.append("_method", "PUT");
+  try {
+    const { data } = await Axios.post(`${BASE_URL}/api/v1/profiles/${user_id}`, formData, {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
       },
     });
     return data;
@@ -215,6 +288,15 @@ export const getSearchResult = async (searchQuery) => {
 export const getSubscriptionById = async (id) => {
   try {
     const { data } = await Axios.get(`${BASE_URL}/api/v1/subscriptions/${id}`);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const postUserSubscription = async (formData) => {
+  try {
+    const { data } = await Axios.post(`${BASE_URL}/api/v1/user-subscription`, formData);
     return data;
   } catch (error) {
     throw new Error(error);

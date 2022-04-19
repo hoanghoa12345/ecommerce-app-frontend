@@ -1,5 +1,5 @@
-import React from "react";
-import { Route, Routes, Navigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import AdminLayout from "./admin/layouts/AdminLayout";
 import DashboardPage from "./admin/pages/DashboardPage";
 import ProductsPage from "./admin/pages/ProductsPage";
@@ -17,30 +17,64 @@ import Page404 from "./Page_404";
 import SubscriptionListPage from "./home/pages/SubscriptionListPage";
 import SubscriptionDetailsPage from "./home/pages/SubscriptionDetailsPage";
 import SubscriptionPaymentPage from "./home/pages/SubscriptionPaymentPage";
+import { useUserContext } from "./context/user";
+import axios from "axios";
+import { QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
+
 const App = () => {
+  const queryClient = new QueryClient();
+  //const navigate = useNavigate();
+  const { user } = useUserContext();
+  // axios.interceptors.response.use(
+  //   (res) => res,
+  //   (err) => {
+  //     if (err.response?.status === 401) {
+  //       localStorage.removeItem("user");
+  //       userDispatch(setUser(initialUser));
+  //       navigate("/login");
+  //       throw new Error(err.response?.statusText);
+  //     }
+  //     throw err;
+  //   }
+  // );
+  useEffect(() => {
+    console.log("Updated User context: ", user.name, user.token);
+    let token = user.token;
+    axios.interceptors.request.use((req) => {
+      req.headers.authorization = "Bearer " + token;
+      return req;
+    });
+  }, [user]);
+
   return (
-    <Routes>
-      <Route path="/" element={<HomeLayout />}>
-        <Route index element={<HomePage />} />
-        <Route path="shop" element={<ShopPage />} />
-        <Route path="products/:productSlug" element={<ProductPage />} />
-        <Route path="category/:categorySlug" element={<CategoryListPage />} />
-        <Route path="Subscriptions" element={<SubscriptionListPage />} />
-        <Route path="subscriptions/:id" element={<SubscriptionDetailsPage />} />
-        <Route path="subscription-payment/:id" element={<SubscriptionPaymentPage />} />
-      </Route>
-      <Route path="/admin" element={<AdminLayout />}>
-        <Route index element={<Navigate to="dashboard" />} />
-        <Route path="dashboard" element={<DashboardPage />} />
-        <Route path="products" element={<ProductsPage />} />
-        <Route path="categories" element={<CategoryPage />} />
-        <Route path="users" element={<UserPage />} />
-        <Route path="subscriptions" element={<SubscriptionPage />} />
-      </Route>
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="*" element={<Page404 />} />
-    </Routes>
+    <QueryClientProvider client={queryClient}>
+      <Routes>
+        <Route path="/" element={<HomeLayout />}>
+          <Route index element={<HomePage />} />
+          <Route path="shop" element={<ShopPage />} />
+          <Route path="products/:productSlug" element={<ProductPage />} />
+          <Route path="category/:categorySlug" element={<CategoryListPage />} />
+          <Route path="Subscriptions" element={<SubscriptionListPage />} />
+          <Route path="subscriptions/:id" element={<SubscriptionDetailsPage />} />
+          <Route path="subscription-payment/:id" element={<SubscriptionPaymentPage />} />
+        </Route>
+        {user.roles === "admin" && (
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="dashboard" />} />
+            <Route path="dashboard" element={<DashboardPage />} />
+            <Route path="products" element={<ProductsPage />} />
+            <Route path="categories" element={<CategoryPage />} />
+            <Route path="users" element={<UserPage />} />
+            <Route path="subscriptions" element={<SubscriptionPage />} />
+          </Route>
+        )}
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="*" element={<Page404 />} />
+      </Routes>
+      <ReactQueryDevtools initialIsOpen={false} />
+    </QueryClientProvider>
   );
 };
 

@@ -1,15 +1,24 @@
-import React, { useEffect } from "react";
-import { useQuery } from "react-query";
+import React, { useState, useEffect } from "react";
+import { useMutation, useQuery } from "react-query";
 import { Navigate, useNavigate, useParams } from "react-router-dom";
-import { BASE_URL, getSubscriptionById } from "../../api/api";
+import { BASE_URL, getSubscriptionById, postUserSubscription } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
+import { useUserContext } from "../../context/user";
+import { getProfileByUserId } from "../../api/api";
+import { setUser } from "../../action/user";
+import { initialUser } from "../../constants/initialUser";
+import { CheckCircleIcon } from "@heroicons/react/solid";
+import { XIcon } from "@heroicons/react/outline";
 
 const SubscriptionPaymentPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [message, setMessage] = useState(null);
+  const { user, userDispatch } = useUserContext();
+  const userProfileQuery = useQuery("profile", () => getProfileByUserId(user.id));
   const schema = yup
     .object({
       start_date: yup.string().required(),
@@ -36,10 +45,15 @@ const SubscriptionPaymentPage = () => {
   useEffect(() => {
     const currentDate = new Date();
     setValue("start_date", currentDate.toISOString().split("T")[0]);
-  }, []);
+    register("subscription_id", { value: id });
+  }, [id, register, setValue]);
+
+  const userSubscriptionMutation = useMutation((formData) => postUserSubscription(formData));
 
   const onSubmit = (data) => {
     console.log(data);
+    userSubscriptionMutation.mutate(data);
+    setMessage("Đăng ký gói thành công!");
   };
 
   const handleTimeChange = (e) => {
@@ -64,9 +78,39 @@ const SubscriptionPaymentPage = () => {
     console.log("start_date: ", e.target.value);
   };
 
+  if (userProfileQuery.isSuccess) {
+    //Log user profile
+    //console.log(userProfileQuery.data);
+    //Set user profile data to form
+    let data = userProfileQuery.data;
+    setValue("email", user.email);
+    setValue("address", data.address);
+    setValue("phone_number", data.phone_number);
+  }
+
+  const Alert = ({ message, bgColor = "blue", onClose }) => {
+    return (
+      <div className={`w-full text-white bg-${bgColor}-500`}>
+        <div className="container flex items-center justify-between px-6 py-4 mx-auto">
+          <div className="flex">
+            <CheckCircleIcon className="w-5 h-5" />
+            <p className="mx-3">{message}</p>
+          </div>
+          <button
+            onClick={onClose}
+            className="p-1 transition-colors duration-200 transform rounded-md hover:bg-opacity-25 hover:bg-gray-600 focus:outline-none"
+          >
+            <XIcon className="w-5 h-5" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="w-full mt-10 container max-w-6xl mx-auto">
       <div className="mt-10 sm:mt-0">
+        {message && <Alert message={message} bgColor="emerald" onClose={() => setMessage(null)} />}
         <div className="md:grid md:grid-cols-3 md:gap-6">
           <div className="md:col-span-1">
             <div className="px-4 sm:px-0">
@@ -184,9 +228,9 @@ const SubscriptionPaymentPage = () => {
                         name="delivery_schedule"
                         className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm"
                       >
-                        <option>8:00</option>
-                        <option>11:00</option>
-                        <option>16:00</option>
+                        <option value="08:00:00">8:00</option>
+                        <option value="11:00:00">11:00</option>
+                        <option value="16:00:00">16:00</option>
                       </select>
                       <span className="text-xs text-red-600 dark:text-red-400">{errors.delivery_schedule?.message}</span>
                     </div>
@@ -201,6 +245,7 @@ const SubscriptionPaymentPage = () => {
                         id="street-address"
                         autoComplete="street-address"
                         className="mt-1 focus:ring-orange-500 focus:border-orange-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
+                        {...register("address")}
                       />
                     </div>
 
@@ -247,7 +292,7 @@ const SubscriptionPaymentPage = () => {
                   </div>
                 </div>
                 <span className="text-left text-sm font-medium text-gray-700 py-2 px-6">Phương thức thanh toán: Vui lòng chọn</span>
-                <select className="text-sm border-0" {...register("payment_method")}>
+                <select className="text-sm border-0" {...register("payment_status")}>
                   <option value="atm_debit_card">Thẻ ghi nợ nội địa</option>
                   <option value="online_wallet">Ví điện tử</option>
                   <option value="visa_debit_card">Thẻ thanh toán quốc tế</option>

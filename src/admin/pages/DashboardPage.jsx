@@ -1,23 +1,12 @@
-import React, { useEffect } from "react";
+import React from "react";
 import {
   CashIcon,
   ChatAltIcon,
   UserGroupIcon,
   ShoppingCartIcon,
 } from "@heroicons/react/solid";
-import { useUserContext } from "../../context/user";
-import {useNavigate} from "react-router-dom"
+
 const DashboardPage = () => {
-  const { user } = useUserContext()
-  const navigate = useNavigate()
-  useEffect(() => {
-    // console.log(user);
-    if(!user.token) {
-      navigate("/login")
-    }else if(user.roles === 'user') {
-      navigate("/")
-    }
-  }, [navigate, user]);
   return (
     <main className="h-full overflow-y-auto">
       <div className="container px-6 mx-auto grid">

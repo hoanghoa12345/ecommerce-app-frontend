@@ -3,20 +3,23 @@ import { Link, useNavigate } from "react-router-dom";
 import Axios from "axios";
 import { useUserContext } from "../../../context/user";
 import { setUser } from "../../../action/user";
-import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import { useForm } from 'react-hook-form'
-import { convertFromRes } from './../../../utils/convertFromRes';
+import { useForm } from "react-hook-form";
+import { convertUserFromRes } from "./../../../utils/convertFromRes";
 import { getFullHeader } from "../../../api/api";
+import { useMutation } from "react-query";
 
-const schema = yup.object({
-  email: yup.string().email().required(),
-  password: yup.string().required(),
-}).required();
+const schema = yup
+  .object({
+    email: yup.string().email().required(),
+    password: yup.string().required(),
+  })
+  .required();
 
 const initMessageErr = {
-  email:'',
-  password:''
+  email: "",
+  password: "",
 };
 
 const Login = () => {
@@ -24,14 +27,18 @@ const Login = () => {
   const navigate = useNavigate();
   const { user, userDispatch } = useUserContext();
 
-  const { register, handleSubmit, formState:{ errors } } = useForm({
-    resolver: yupResolver(schema)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
   });
 
-  const navigateByRole = (role) =>{
+  const navigateByRole = (role) => {
     if (role === "admin") {
       navigate("/admin", { replace: true });
-    } else if (role === 'user'){
+    } else if (role === "user") {
       navigate("/", { replace: true });
     }
   };
@@ -39,40 +46,66 @@ const Login = () => {
   useEffect(() => {
     // console.log(user);
     navigateByRole(user.roles);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user]);
 
+  const loginMutation = useMutation(
+    (userCredentials) => {
+      return Axios.post("/api/v1/login", userCredentials);
+    },
+    {
+      onError: (error) => {
+        throw error;
+      },
+      onSuccess: (data) => {
+        if (data.data.token) {
+          localStorage.setItem("user", JSON.stringify(data.data));
+          const dataContext = convertUserFromRes(data.data);
+          userDispatch(setUser(dataContext));
+          navigateByRole(data.data.user.roles);
+        } else {
+          if (data.data.message.includes("The email")) {
+            setMessageErr({ email: data.data.message, password: "" });
+          } else {
+            setMessageErr({ email: "", password: data.data.message });
+          }
+        }
+      },
+    }
+  );
+
   const onSubmit = async (formData) => {
-    const headers = getFullHeader();
+    loginMutation.mutate({
+      email: formData.email,
+      password: formData.password,
+    });
     //call api
-    const { data } = await Axios.post(
+    /*const { data } = await Axios.post(
       "/api/v1/login",
       {
         email: formData.email,
         password: formData.password,
       },
       {
-        headers
+        headers,
       }
     );
 
     if (data.token) {
       // console.log('success',data);
       localStorage.setItem("user", JSON.stringify(data));
-      const dataContext = convertFromRes(data);
+      const dataContext = convertUserFromRes(data);
       userDispatch(setUser(dataContext));
       navigateByRole(data.user.roles);
-    }
-    else{
+    } else {
       // console.log('error',data);
-      if (data.message.includes('The email')){
-        setMessageErr({email: data.message, password: ''});
+      if (data.message.includes("The email")) {
+        setMessageErr({ email: data.message, password: "" });
+      } else {
+        setMessageErr({ email: "", password: data.message });
       }
-      else{
-        setMessageErr({email: '', password: data.message});
-      }
-    }
-  }
+    }*/
+  };
   return (
     <div className="h-screen flex items-center">
       <div className="lg:flex align-baseline max-w-md w-full mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
@@ -136,7 +169,7 @@ const Login = () => {
                 type="text"
                 {...register("email")}
               />
-              <span className="text-red-600 text-sm block h-5">{errors.email?.message||messageErr.email}</span>
+              <span className="text-red-600 text-sm block h-5">{errors.email?.message || messageErr.email}</span>
             </div>
 
             <div className="mt-4">
@@ -151,11 +184,12 @@ const Login = () => {
 
               <input
                 id="loggingPassword"
+                autoComplete="off"
                 className="block w-full px-4 py-2 text-gray-700 bg-white border rounded-md dark:bg-gray-800 dark:text-gray-300 dark:border-gray-600 focus:border-blue-400 focus:ring-opacity-40 dark:focus:border-blue-300 focus:outline-none focus:ring focus:ring-blue-300"
                 type="password"
                 {...register("password")}
               />
-              <span className="text-red-600 text-sm block h-5">{errors.password?.message||messageErr.password}</span>
+              <span className="text-red-600 text-sm block h-5">{errors.password?.message || messageErr.password}</span>
             </div>
 
             <div className="mt-8">
