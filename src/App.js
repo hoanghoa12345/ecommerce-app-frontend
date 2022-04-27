@@ -21,6 +21,7 @@ import { useUserContext } from "./context/user";
 import axios from "axios";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
+import CreateSubscriptionPage from "./home/pages/CreateSubscriptionPage";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -38,14 +39,14 @@ const App = () => {
   //     throw err;
   //   }
   // );
-  useEffect(() => {
-    console.log("Updated User context: ", user.name, user.token);
-    let token = user.token;
-    axios.interceptors.request.use((req) => {
-      req.headers.authorization = "Bearer " + token;
-      return req;
-    });
-  }, [user]);
+  // useEffect(() => {
+  //   console.log("Updated User context: ", user.name, user.token);
+  //   let token = user.token;
+  //   axios.interceptors.request.use((req) => {
+  //     req.headers.authorization = "Bearer " + token;
+  //     return req;
+  //   });
+  // }, [user]);
 
   return (
     <QueryClientProvider client={queryClient}>
@@ -55,9 +56,11 @@ const App = () => {
           <Route path="shop" element={<ShopPage />} />
           <Route path="products/:productSlug" element={<ProductPage />} />
           <Route path="category/:categorySlug" element={<CategoryListPage />} />
-          <Route path="Subscriptions" element={<SubscriptionListPage />} />
+          <Route path="subscriptions" element={<SubscriptionListPage />} />
           <Route path="subscriptions/:id" element={<SubscriptionDetailsPage />} />
           <Route path="subscription-payment/:id" element={<SubscriptionPaymentPage />} />
+          <Route path="create-subscription" element={<CreateSubscriptionPage />} />
+          <Route path="checkout" element={<p>Checkout</p>} />
         </Route>
         {user.roles === "admin" && (
           <Route path="/admin" element={<AdminLayout />}>

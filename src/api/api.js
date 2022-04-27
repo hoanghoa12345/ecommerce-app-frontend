@@ -1,4 +1,4 @@
-import Axios from "axios";
+import Axios from "./axios";
 export const BASE_URL = process.env.REACT_APP_BASE_URL || "";
 
 export const getFullHeader = (token = "") => {
@@ -237,10 +237,11 @@ export const deleteUser = async (id) => {
   return data;
 };
 
-export const getProfileByUserId = async (user_id) => {
+export const getProfileByUserId = async (user_id, token) => {
   const { data } = await Axios.get(`${BASE_URL}/api/v1/profiles/${user_id}`, {
     headers: {
       Accept: "application/json",
+      Authorization: "Bearer " + token,
     },
   });
   return data;

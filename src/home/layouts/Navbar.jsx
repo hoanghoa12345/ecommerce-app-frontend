@@ -8,6 +8,9 @@ import { useUserContext } from "../../context/user";
 import { setUser } from "../../action/user";
 import { initialUser } from "../../constants/initialUser";
 import { useMutation, useQuery } from "react-query";
+import useStore from "../states/state";
+import useCartStore from "../states/cartState";
+
 const Navbar = () => {
   const categoryQuery = useQuery("categories", getAllCategory);
   const navigate = useNavigate();
@@ -43,6 +46,9 @@ const Navbar = () => {
     }
   };
 
+  const openCartSlide = useStore((state) => state.setCartSlideOpen);
+  const cartItems = useCartStore((state) => state.cartItems);
+
   return (
     <nav className="bg-orange-600 shadow dark:bg-gray-800">
       <div className="container px-6 py-4 mx-auto max-w-6xl">
@@ -59,7 +65,7 @@ const Navbar = () => {
             <Menu as="div" className="hidden md:block relative ml-4">
               {({ open }) => (
                 <>
-                  <Menu.Button className="relative z-10 flex items-center p-2 uppercase align-middle text-white">
+                  <Menu.Button className="relative flex items-center p-2 uppercase align-middle text-white">
                     <MenuIcon className="w-5 h-5 text-white" />
                     <span className="mx-1">Tất cả danh mục</span>
                   </Menu.Button>
@@ -159,11 +165,12 @@ const Navbar = () => {
           </div>
           <div className="flex items-center mt-4 md:mt-0">
             <button
+              onClick={openCartSlide}
               className="relative hidden mx-4 text-white transition-colors duration-200 transform md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none"
               aria-label="show notifications"
             >
               <ShoppingCartIcon className="w-6 h-6" />
-              <span className="absolute -bottom-2 -right-3 px-1 text-xs text-white bg-blue-500 rounded-full">2</span>
+              <span className="absolute -bottom-2 -right-3 px-1 text-xs text-white bg-blue-500 rounded-full">{cartItems.length}</span>
             </button>
             <button
               className="hidden mx-4 text-white transition-colors duration-200 transform md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none"

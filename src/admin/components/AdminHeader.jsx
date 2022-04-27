@@ -5,7 +5,7 @@ import { BellIcon } from "@heroicons/react/solid";
 import React, { Fragment } from "react";
 import Axios from "axios";
 import { useUserContext } from "../../context/user";
-import { getFullHeader, getProfileByUserId, BASE_URL } from "../../api/api";
+import { getProfileByUserId, BASE_URL } from "../../api/api";
 import { setUser } from "./../../action/user";
 import { initialUser } from "../../constants/initialUser";
 import { useMutation, useQuery } from "react-query";
@@ -13,10 +13,20 @@ import { useMutation, useQuery } from "react-query";
 export default function AdminHeader() {
   const navigate = useNavigate();
   const { user, userDispatch } = useUserContext();
-  const { data } = useQuery("profile", () => getProfileByUserId(user.id));
+  const { data } = useQuery("profile", () => getProfileByUserId(user.id, user.token), {
+    retry: false,
+    retryOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });
   const logoutMutation = useMutation(
     () => {
-      return Axios.post("/api/v1/logout");
+      return Axios.post("/api/v1/logout", null, {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + user.token,
+        },
+      });
     },
     {
       onError: (error) => {
@@ -67,8 +77,8 @@ export default function AdminHeader() {
             <button className="rounded-md focus:outline-none focus:shadow-outline-purple" aria-label="Toggle color mode"></button>
           </li>
           {/* Notifications menu */}
-          <li className="relative">
-            <button
+          <Menu as="li" className="relative">
+            <Menu.Button
               className="relative align-middle rounded-md focus:outline-none focus:shadow-outline-purple"
               aria-label="Notifications"
               aria-haspopup="true"
@@ -79,8 +89,21 @@ export default function AdminHeader() {
                 aria-hidden="true"
                 className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
               />
-            </button>
-          </li>
+            </Menu.Button>
+            <Transition
+              as={Fragment}
+              enter="transition duration-100 ease-out"
+              enterFrom="transform scale-95 opacity-0"
+              enterTo="transform scale-100 opacity-100"
+              leave="transition duration-75 ease-out"
+              leaveFrom="transform scale-100 opacity-100"
+              leaveTo="transform scale-95 opacity-0"
+            >
+              <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <Menu.Item as="div">Not have notifications yet!</Menu.Item>
+              </Menu.Items>
+            </Transition>
+          </Menu>
           {/* Profile menu */}
           <li className="relative">
             <Menu as="div" className="relative inline-block text-left">
@@ -92,7 +115,7 @@ export default function AdminHeader() {
               >
                 <img
                   className="object-cover w-8 h-8 rounded-full"
-                  src={data ? `${BASE_URL}/${data?.avatar}` : ""}
+                  src={data ? `${BASE_URL}/${data.avatar}` : ""}
                   alt=""
                   aria-hidden="true"
                 />

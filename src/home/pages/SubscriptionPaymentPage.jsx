@@ -15,9 +15,9 @@ import { XIcon } from "@heroicons/react/outline";
 
 const SubscriptionPaymentPage = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const [message, setMessage] = useState(null);
-  const { user, userDispatch } = useUserContext();
+  const { user } = useUserContext();
   const userProfileQuery = useQuery("profile", () => getProfileByUserId(user.id));
   const schema = yup
     .object({

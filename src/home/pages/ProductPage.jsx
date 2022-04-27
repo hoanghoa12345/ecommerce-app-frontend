@@ -6,11 +6,24 @@ import { BASE_URL, getProductBySlug } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import Product from "../components/product/Product";
 import { useQuery } from "react-query";
+import useStore from "../states/cartState";
 
 export default function ProductPage() {
   const { productSlug } = useParams();
   const navigate = useNavigate();
-  const { data: product, isError, isLoading, error } = useQuery(`product_${productSlug}`, () => getProductBySlug(productSlug));
+  const {
+    data: product,
+    isError,
+    isLoading,
+    error,
+  } = useQuery(`product_${productSlug}`, () => getProductBySlug(productSlug), {
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    retry: false,
+    staleTime: 5 * 60 * 1000,
+  });
+  const { cartAddItem } = useStore();
 
   if (isLoading) return <Loader />;
   if (isError) return <p>{error}</p>;
@@ -44,7 +57,10 @@ export default function ProductPage() {
             </div>
 
             <div className="flex">
-              <button className="flex ml-5 text-white bg-orange-500 uppercase border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
+              <button
+                onClick={() => cartAddItem({ product, qty: 1 })}
+                className="flex ml-5 text-white bg-orange-500 uppercase border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
+              >
                 Thêm vào giỏ
               </button>
               <button className="flex ml-5 text-white bg-orange-500 uppercase border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded">
