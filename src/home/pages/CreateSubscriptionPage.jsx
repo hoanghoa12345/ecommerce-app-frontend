@@ -27,7 +27,6 @@ const CreateSubscriptionPage = () => {
           {subscriptions.map((item, i) => (
             <div
               key={i}
-              onClick={() => navigate("/create-subscription/" + item.id)}
               className="cursor-pointer group bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl h-40 rounded-md flex relative overflow-hidden"
             >
               <button

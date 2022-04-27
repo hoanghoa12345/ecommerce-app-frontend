@@ -1,8 +1,8 @@
-import { Menu, Popover, Transition } from "@headlessui/react";
+import { Disclosure, Menu, Popover, Transition } from "@headlessui/react";
 import { HeartIcon, LogoutIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/outline";
 import React, { useState, Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { BASE_URL, getAllCategory, getFullHeader, getSearchResult } from "../../api/api";
+import { BASE_URL, getAllCategory, getFullHeader, getProfileByUserId, getSearchResult } from "../../api/api";
 import Axios from "axios";
 import { useUserContext } from "../../context/user";
 import { setUser } from "../../action/user";
@@ -12,10 +12,17 @@ import useStore from "../states/state";
 import useCartStore from "../states/cartState";
 
 const Navbar = () => {
-  const categoryQuery = useQuery("categories", getAllCategory);
   const navigate = useNavigate();
   const { user, userDispatch } = useUserContext();
   const [isShowing, setIsShowing] = useState(false);
+
+  const categoryQuery = useQuery("categories", getAllCategory);
+  const { data: userProfile } = useQuery("profile", () => getProfileByUserId(user.id, user.token), {
+    retry: false,
+    retryOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnMount: false,
+  });
 
   const resultsMutation = useMutation((search) => getSearchResult(search), {});
 
@@ -50,7 +57,7 @@ const Navbar = () => {
   const cartItems = useCartStore((state) => state.cartItems);
 
   return (
-    <nav className="bg-orange-600 shadow dark:bg-gray-800">
+    <Disclosure as="nav" className="bg-orange-600 shadow dark:bg-gray-800">
       <div className="container px-6 py-4 mx-auto max-w-6xl">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex items-center justify-between">
@@ -97,13 +104,13 @@ const Navbar = () => {
             </Menu>
             {/* Mobile menu button */}
             <div className="flex md:hidden">
-              <button
+              <Disclosure.Button
                 type="button"
                 className="text-white dark:text-gray-200 hover:text-gray-600 dark:hover:text-gray-400 focus:outline-none focus:text-gray-600 dark:focus:text-gray-400"
                 aria-label="toggle menu"
               >
                 <MenuIcon className="w-6 h-6 fill-current" />
-              </button>
+              </Disclosure.Button>
             </div>
           </div>{" "}
           {/* Mobile Menu open: "block", Menu closed: "hidden" */}
@@ -163,7 +170,7 @@ const Navbar = () => {
               </Popover>
             </div>
           </div>
-          <div className="flex items-center mt-4 md:mt-0">
+          <div className="hidden md:flex items-center mt-4 md:mt-0">
             <button
               onClick={openCartSlide}
               className="relative hidden mx-4 text-white transition-colors duration-200 transform md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none"
@@ -178,61 +185,116 @@ const Navbar = () => {
             >
               <HeartIcon className="w-6 h-6" />
             </button>
-            <Menu as="div" className="relative inline-block text-left">
-              <Menu.Button type="button" className="flex items-center focus:outline-none" aria-label="toggle profile dropdown">
-                <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
-                  <img
-                    src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
-                    className="object-cover w-full h-full"
-                    alt="avatar"
-                  />
-                </div>
-                <h3 className="mx-2 text-sm font-medium text-white dark:text-gray-200">{user.name}</h3>
-              </Menu.Button>
-              <Transition
-                as={Fragment}
-                enter="transition ease-out duration-100"
-                enterFrom="transform opacity-0 scale-95"
-                enterTo="transform opacity-100 scale-100"
-                leave="transition ease-in duration-75"
-                leaveFrom="transform opacity-100 scale-100"
-                leaveTo="transform opacity-0 scale-95"
-              >
-                <Menu.Items className="absolute z-10 left-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                  <div className="px-1 py-1 ">
-                    <Menu.Item as={Link} to={"/"}>
-                      {({ active }) => (
-                        <button
-                          className={`${
-                            active ? "bg-gray-100 text-gray-900" : "text-gray-900"
-                          } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                        >
-                          <UserCircleIcon className="w-5 h-5 mr-2" aria-hidden="true" />
-                          Profile
-                        </button>
-                      )}
-                    </Menu.Item>
-                    <Menu.Item>
-                      {({ active }) => (
-                        <button
-                          className={`${
-                            active ? "bg-gray-100 text-gray-900" : "text-gray-900"
-                          } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
-                          onClick={handleLogout}
-                        >
-                          <LogoutIcon className="w-5 h-5 mr-2" aria-hidden="true" />
-                          Logout
-                        </button>
-                      )}
-                    </Menu.Item>
+            {user.id !== "" ? (
+              <Menu as="div" className="relative inline-block text-left">
+                <Menu.Button type="button" className="flex items-center focus:outline-none" aria-label="toggle profile dropdown">
+                  <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
+                    <img src={`${BASE_URL}/${userProfile?.avatar}`} className="object-cover w-full h-full" alt="avatar" />
                   </div>
-                </Menu.Items>
-              </Transition>
-            </Menu>
+                  <h3 className="mx-2 text-sm font-medium text-white dark:text-gray-200">{user.name}</h3>
+                </Menu.Button>
+                <Transition
+                  as={Fragment}
+                  enter="transition ease-out duration-100"
+                  enterFrom="transform opacity-0 scale-95"
+                  enterTo="transform opacity-100 scale-100"
+                  leave="transition ease-in duration-75"
+                  leaveFrom="transform opacity-100 scale-100"
+                  leaveTo="transform opacity-0 scale-95"
+                >
+                  <Menu.Items className="absolute z-10 left-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                    <div className="px-1 py-1 ">
+                      <Menu.Item as={Link} to={"/"}>
+                        {({ active }) => (
+                          <button
+                            className={`${
+                              active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                            } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                          >
+                            <UserCircleIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                            Profile
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item>
+                        {({ active }) => (
+                          <button
+                            className={`${
+                              active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                            } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                            onClick={handleLogout}
+                          >
+                            <LogoutIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                            Logout
+                          </button>
+                        )}
+                      </Menu.Item>
+                    </div>
+                  </Menu.Items>
+                </Transition>
+              </Menu>
+            ) : (
+              <button className="font-semibold text-sm text-white" onClick={() => navigate("/login")}>
+                Đăng nhập
+              </button>
+            )}
           </div>
         </div>
       </div>
-    </nav>
+
+      <Transition
+        as={Fragment}
+        enter="transition ease-out duration-100"
+        enterFrom="transform opacity-0 scale-95"
+        enterTo="transform opacity-100 scale-100"
+        leave="transition ease-in duration-75"
+        leaveFrom="transform opacity-100 scale-100"
+        leaveTo="transform opacity-0 scale-95"
+      >
+        <Disclosure.Panel>
+          <div className="px-2 pt-2 pb-3 space-y-1 md:hidden">
+            <p className="text-gray-100 uppercase text-sm font-semibold">Danh mục sản phẩm</p>
+            {categoryQuery.isFetched &&
+              categoryQuery.data.map(({ id, name, slug }) => (
+                <Link
+                  key={id}
+                  to={`/category/${slug}`}
+                  className="text-white hover:bg-orange-300 hover:text-white block px-3 py-2 rounded-md text-base font-medium"
+                >
+                  {name}
+                </Link>
+              ))}
+            <p className="text-gray-100 uppercase text-sm font-semibold">Tài khoản</p>
+            <div className="flex justify-between items-center">
+              <div>
+                {user.id !== "" ? (
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
+                      <img src={`${BASE_URL}/${userProfile?.avatar}`} className="object-cover w-full h-full" alt="avatar" />
+                    </div>
+                    <h3 className="mx-2 text-sm font-medium text-white dark:text-gray-200">{user.name}</h3>
+                  </div>
+                ) : (
+                  <button className="font-semibold text-sm text-white" onClick={() => navigate("/login")}>
+                    Đăng nhập
+                  </button>
+                )}
+              </div>
+              <div>
+                <button
+                  onClick={openCartSlide}
+                  className="mx-4 text-white transition-colors duration-200 transform md:block dark:text-gray-200 hover:text-gray-700 dark:hover:text-gray-400 focus:text-gray-700 dark:focus:text-gray-400 focus:outline-none"
+                  aria-label="show notifications"
+                >
+                  <ShoppingCartIcon className="w-6 h-6" />
+                  <span className="absolute -bottom-2 -right-3 px-1 text-xs text-white bg-blue-500 rounded-full">{cartItems.length}</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </Disclosure.Panel>
+      </Transition>
+    </Disclosure>
   );
 };
 
