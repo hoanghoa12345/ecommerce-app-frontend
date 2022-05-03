@@ -22,6 +22,7 @@ import axios from "axios";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import CreateSubscriptionPage from "./home/pages/CreateSubscriptionPage";
+import EditSubscriptionPage from "./home/pages/EditSubscriptionPage";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -60,6 +61,7 @@ const App = () => {
           <Route path="subscriptions/:id" element={<SubscriptionDetailsPage />} />
           <Route path="subscription-payment/:id" element={<SubscriptionPaymentPage />} />
           <Route path="create-subscription" element={<CreateSubscriptionPage />} />
+          <Route path="create-subscription/:id" element={<EditSubscriptionPage />} />
           <Route path="checkout" element={<p>Checkout</p>} />
         </Route>
         {user.roles === "admin" && (

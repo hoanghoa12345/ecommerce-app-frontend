@@ -303,3 +303,12 @@ export const postUserSubscription = async (formData) => {
     throw new Error(error);
   }
 };
+
+export const getListSubscriptionByUser = async (userId) => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/subscription-users/${userId}`);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

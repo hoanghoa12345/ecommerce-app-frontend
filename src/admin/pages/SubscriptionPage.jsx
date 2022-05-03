@@ -1,4 +1,4 @@
-import { ClipboardListIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
+import { ClipboardListIcon, EyeIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
 import React, { Fragment, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
@@ -64,6 +64,7 @@ const SubscriptionPage = () => {
   };
 
   const handleDelete = async () => {
+    //console.log("delete subscription", deleteItem.id);
     await deleteMutateAsync(deleteItem.id);
     toast.success("Deleted Item");
     setIsOpenDelete(false);
@@ -73,6 +74,18 @@ const SubscriptionPage = () => {
   const onPreviewList = (item) => {
     setOpenPreview(true);
     setItemPreview(item);
+    let productItemArr = [];
+    item.details.forEach((element) => {
+      let subscriptionDetail = {
+        subscription_id: element.subscription_id,
+        product_id: element.product.id,
+        name: element.product.name,
+        price: element.product.price,
+        quantity: element.quantity,
+      };
+      productItemArr.push(subscriptionDetail);
+    });
+    setProductsAdded(productItemArr);
   };
 
   const {
@@ -142,6 +155,7 @@ const SubscriptionPage = () => {
     <div className="container grid px-6 mx-auto">
       <ToastContainer />
       <DeleteModal
+        isDelete
         title="Delete"
         message={`Are you want delete ${deleteItem.name}?`}
         open={isOpenDelete}
@@ -163,7 +177,7 @@ const SubscriptionPage = () => {
         <thead>
           <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
             <th className="px-4 py-3">Name</th>
-            <th className="px-4 py-3">Duration</th>
+            <th className="px-4 py-3">Duration (Month)</th>
             <th className="px-4 py-3">Total Price</th>
             <th className="px-4 py-3">Actions</th>
           </tr>
@@ -195,7 +209,7 @@ const SubscriptionPage = () => {
                       onClick={() => handleEditItem(item)}
                       className="flex items-center justify-between px-2 py-2 text-purple-600 text-sm hover:bg-gray-200 hover:border-gray-200 hover:rounded-full"
                     >
-                      <PencilIcon className="w-5 h-5" />
+                      <EyeIcon className="w-5 h-5" />
                     </button>
                     <button
                       onClick={() => onDeleteItem(item)}
@@ -239,9 +253,11 @@ const SubscriptionPage = () => {
                 className="mt-1 block w-full py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-purple-500 focus:border-purple-500 sm:text-sm"
                 {...register("duration")}
               >
-                <option value={1}>1 month</option>
-                <option value={2}>2 mouth</option>
-                <option value={3}>3 mouth</option>
+                {[1, 2, 3, 4, 5, 6].map((mouth, i) => (
+                  <option key={i} value={mouth}>
+                    {mouth} month
+                  </option>
+                ))}
               </select>
               <span className="text-xs text-red-600 dark:text-red-400">{errors.duration?.message}</span>
             </div>

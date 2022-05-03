@@ -13,6 +13,7 @@ import { TrashIcon, PencilIcon } from "@heroicons/react/solid";
 import { isEmpty } from "./../../utils/isEmptyObj";
 import DeleteModal from "../components/DeleteModal";
 import { useDropzone } from "react-dropzone";
+import { useSearchParams } from "react-router-dom";
 
 const schema = yup
   .object({
@@ -40,6 +41,18 @@ export default function UserPage() {
   const [deleteId, setDeleteId] = useState(-1);
   const [isDelete, setIsDelete] = useState(true);
   const [isOpenDelete, setIsOpenDelete] = useState(false);
+
+  //Open create user model when url has createUser query
+  let [params] = useSearchParams();
+  useEffect(() => {
+    console.log(params.has("createUser"));
+    if (params.has("createUser")) {
+      setItemEdit({});
+      setAvatar(null);
+      setIsOpenEdit(true);
+      setIsAdd(true);
+    }
+  }, [params]);
 
   // React query vars
   const { data, error, isLoading, isError } = useQuery("users", () => getUserProfile(user.token));
@@ -424,7 +437,7 @@ const UserTable = ({ data, onEdit, onDelete }) => {
                   </div>
                   <div>
                     <p className="font-semibold">{item.name}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">10x Developer</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">{item.profile.description}</p>
                   </div>
                 </div>
               </td>

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useMutation, useQuery } from "react-query";
-import { Navigate, useNavigate, useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import { BASE_URL, getSubscriptionById, postUserSubscription } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import { useForm } from "react-hook-form";
@@ -8,10 +8,9 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useUserContext } from "../../context/user";
 import { getProfileByUserId } from "../../api/api";
-import { setUser } from "../../action/user";
-import { initialUser } from "../../constants/initialUser";
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import { XIcon } from "@heroicons/react/outline";
+import { toast, ToastContainer } from "react-toastify";
 
 const SubscriptionPaymentPage = () => {
   const { id } = useParams();
@@ -48,7 +47,10 @@ const SubscriptionPaymentPage = () => {
     register("subscription_id", { value: id });
   }, [id, register, setValue]);
 
-  const userSubscriptionMutation = useMutation((formData) => postUserSubscription(formData));
+  const userSubscriptionMutation = useMutation((formData) => postUserSubscription(formData), {
+    onSuccess: () => toast.success("Đăng ký gói thành công!"),
+    onError: () => toast.error("Không thể đăng ký gói này"),
+  });
 
   const onSubmit = (data) => {
     console.log(data);
@@ -109,6 +111,7 @@ const SubscriptionPaymentPage = () => {
 
   return (
     <div className="w-full mt-10 container max-w-6xl mx-auto">
+      <ToastContainer />
       <div className="mt-10 sm:mt-0">
         {message && <Alert message={message} bgColor="emerald" onClose={() => setMessage(null)} />}
         <div className="md:grid md:grid-cols-3 md:gap-6">

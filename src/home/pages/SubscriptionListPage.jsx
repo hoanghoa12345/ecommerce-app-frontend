@@ -21,7 +21,7 @@ const SubscriptionListPage = () => {
                   {{
                     0: (
                       <div className="relative col-span-2">
-                        <div className="text-white text-xl absolute inset-0  bg-slate-900/80 flex justify-center items-center">
+                        <div className="text-white text-xl absolute inset-0  bg-gray-400/80 flex justify-center items-center">
                           Không có sản phẩm
                         </div>
                       </div>
@@ -135,7 +135,7 @@ const SubscriptionListPage = () => {
                         />
                       </div>
                       <div className="bg-gray-400 col-span-1 overflow-hidden relative">
-                        <div className="text-white bg-slate-800/80 text-xl absolute inset-0 flex justify-center items-center">
+                        <div className="text-white bg-gray-400/80 text-xl absolute inset-0 flex justify-center items-center">
                           + {subItem.details.length - 3}
                         </div>
                         <img
