@@ -7,7 +7,6 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { convertUserFromRes } from "./../../../utils/convertFromRes";
-import { getFullHeader } from "../../../api/api";
 import { useMutation } from "react-query";
 
 const schema = yup

@@ -1,5 +1,5 @@
-import React, { useEffect } from "react";
-import { Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import React from "react";
+import { Route, Routes, Navigate } from "react-router-dom";
 import AdminLayout from "./admin/layouts/AdminLayout";
 import DashboardPage from "./admin/pages/DashboardPage";
 import ProductsPage from "./admin/pages/ProductsPage";
@@ -18,7 +18,6 @@ import SubscriptionListPage from "./home/pages/SubscriptionListPage";
 import SubscriptionDetailsPage from "./home/pages/SubscriptionDetailsPage";
 import SubscriptionPaymentPage from "./home/pages/SubscriptionPaymentPage";
 import { useUserContext } from "./context/user";
-import axios from "axios";
 import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import CreateSubscriptionPage from "./home/pages/CreateSubscriptionPage";

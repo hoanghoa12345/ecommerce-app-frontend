@@ -60,6 +60,7 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
       setValue("image", acceptedFiles[0]);
       setImage(acceptedFiles[0]);
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [image]
   );
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
