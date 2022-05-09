@@ -153,6 +153,15 @@ export const getSubscriptionList = async () => {
   }
 };
 
+export const getSubscriptionsByAdmin = async () => {
+  try {
+    const { data } = await Axios.get(BASE_URL + "/api/v1/subscriptions-by-admin");
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 export const createNewSubscription = async (formData) => {
   try {
     const { data } = await Axios.post(BASE_URL + "/api/v1/subscriptions", formData, {
@@ -307,6 +316,20 @@ export const postUserSubscription = async (formData) => {
 export const getListSubscriptionByUser = async (userId) => {
   try {
     const { data } = await Axios.get(`${BASE_URL}/api/v1/subscription-users/${userId}`);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getAdminDashboardInfo = async (token) => {
+  try {
+    const { data } = await Axios.get(BASE_URL + "/api/v1/admin/dashboard", {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
     return data;
   } catch (error) {
     throw new Error(error);
