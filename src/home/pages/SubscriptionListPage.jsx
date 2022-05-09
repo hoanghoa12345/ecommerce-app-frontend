@@ -1,12 +1,12 @@
 import React from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
-import { getSubscriptionList } from "../../api/api";
+import { getSubscriptionsByAdmin } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
 
 const SubscriptionListPage = () => {
-  const subscriptionList = useQuery("subscriptions", getSubscriptionList);
+  const subscriptionList = useQuery("subscriptions", getSubscriptionsByAdmin);
   if (subscriptionList.isLoading) return <Loader />;
   if (subscriptionList.isError) return <p className="text-red-600">{subscriptionList.error}</p>;
   return (
@@ -21,115 +21,50 @@ const SubscriptionListPage = () => {
                   {{
                     0: (
                       <div className="relative col-span-2">
-                        <div className="text-white text-xl absolute inset-0  bg-gray-400/80 flex justify-center items-center">
+                        <div className="text-white text-xl absolute inset-0 bg-gray-400/80 flex justify-center items-center">
                           Không có sản phẩm
                         </div>
                       </div>
                     ),
-                    1: (
-                      <div className="bg-gray-400 col-span-2 overflow-hidden">
-                        <img
-                          src={subItem.details[0]?.product.image}
-                          alt={subItem.name}
-                          className="w-full h-full object-center object-cover"
-                        />
+                    1: subItem?.details?.map((item, index) => (
+                      <div key={index} className="bg-gray-200 col-span-1 overflow-hidden">
+                        <img src={item.product.image} alt="" className="w-full h-1/2 object-center object-cover" />
                       </div>
-                    ),
-                    2: (
-                      <>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[0]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[1]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                        <div className="bg-white col-span-1 overflow-hidden h-1"></div>
-                      </>
-                    ),
-                    3: (
-                      <>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[0]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[1]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[2]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                      </>
-                    ),
-                    4: (
-                      <>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[0]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[1]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[2]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                        <div className="bg-gray-400 col-span-1 overflow-hidden">
-                          <img
-                            src={subItem.details[3]?.product.image}
-                            alt={subItem.name}
-                            className="w-full h-full object-center object-cover"
-                          />
-                        </div>
-                      </>
-                    ),
+                    )),
+                    2: subItem.details.map((item, index) => (
+                      <div key={index} className="bg-gray-200 col-span-1 row-span-1 overflow-hidden">
+                        <img src={item.product.image} alt="" className="w-full h-1/2 object-center object-cover" />
+                      </div>
+                    )),
+                    3: subItem.details.map((item, index) => (
+                      <div key={index} className="bg-gray-200 col-span-1 overflow-hidden">
+                        <img src={item.product.image} alt="" className="w-full h-full object-center object-cover" />
+                      </div>
+                    )),
+                    4: subItem.details.map((item, index) => (
+                      <div key={index} className="bg-gray-200 col-span-1 overflow-hidden">
+                        <img src={item.product.image} alt="" className="w-full h-full object-center object-cover" />
+                      </div>
+                    )),
                   }[subItem.details.length] || (
-                    <>
-                      <div className="bg-gray-400 col-span-1 overflow-hidden">
+                    <React.Fragment>
+                      <div className="bg-gray-200 col-span-1 overflow-hidden">
                         <img
-                          src={subItem.details[0]?.product.image}
+                          src={subItem.details[0].product.image}
                           alt={subItem.name}
                           className="w-full h-full object-center object-cover"
                         />
                       </div>
                       <div className="bg-gray-400 col-span-1 overflow-hidden">
                         <img
-                          src={subItem.details[1]?.product.image}
+                          src={subItem.details[1].product.image}
                           alt={subItem.name}
                           className="w-full h-full object-center object-cover"
                         />
                       </div>
                       <div className="bg-gray-400 col-span-1 overflow-hidden">
                         <img
-                          src={subItem.details[2]?.product.image}
+                          src={subItem.details[2].product.image}
                           alt={subItem.name}
                           className="w-full h-full object-center object-cover"
                         />
@@ -139,12 +74,12 @@ const SubscriptionListPage = () => {
                           + {subItem.details.length - 3}
                         </div>
                         <img
-                          src={subItem.details[3]?.product.image}
+                          src={subItem.details[3].product.image}
                           alt={subItem.name}
                           className="w-full h-full object-center object-cover"
                         />
                       </div>
-                    </>
+                    </React.Fragment>
                   )}
                 </div>
               </div>

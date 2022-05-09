@@ -1,4 +1,4 @@
-import { ClipboardListIcon, EyeIcon, TrashIcon } from "@heroicons/react/solid";
+import { ArchiveIcon, ClipboardListIcon, EyeIcon, TrashIcon } from "@heroicons/react/solid";
 import React, { Fragment, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
@@ -21,12 +21,13 @@ import Modal from "../components/Modal";
 import { XIcon } from "@heroicons/react/outline";
 import { formatPrice } from "../../utils/formatType";
 import Button from "../components/Button";
+import Pagination from "../components/Pagination";
 
 const schema = yup.object({
   name: yup.string().required(),
   duration: yup.number().required(),
 });
-
+let limitProduct = 8;
 const SubscriptionPage = () => {
   const { data, error, isLoading, isError } = useQuery("subscriptions", getSubscriptionList);
 
@@ -151,6 +152,15 @@ const SubscriptionPage = () => {
     setItemEdit(item);
   };
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const indexOfLastProduct = currentPage * limitProduct;
+  const indexOfFirstProduct = indexOfLastProduct - limitProduct;
+  const currentProducts = data?.slice(indexOfFirstProduct, indexOfLastProduct);
+  const paginate = (pageNumber) => setCurrentPage(pageNumber);
+  const previousPaginate = () => setCurrentPage(currentPage - 1);
+
+  const nextPaginate = () => setCurrentPage(currentPage + 1);
+
   return (
     <div className="container grid px-6 mx-auto">
       <ToastContainer />
@@ -179,13 +189,14 @@ const SubscriptionPage = () => {
             <th className="px-4 py-3">Name</th>
             <th className="px-4 py-3">Duration (Month)</th>
             <th className="px-4 py-3">Total Price</th>
+            <th className="px-4 py-3">User</th>
             <th className="px-4 py-3">Actions</th>
           </tr>
         </thead>
         <tbody className="bg-white divide-y">
           {isLoading ? (
             <tr>
-              <td colSpan={4}>
+              <td colSpan={5}>
                 <Loader />
               </td>
             </tr>
@@ -194,12 +205,14 @@ const SubscriptionPage = () => {
               <td>{error}</td>
             </tr>
           ) : (
-            data.map((item) => (
+            //Data for pagination
+            currentProducts.map((item) => (
               <Fragment key={item.id}>
                 <tr className="text-gray-700">
-                  <td className="px-4 py-3">{item.name}</td>
+                  <td className="px-4 py-3 flex">{item.name}</td>
                   <td className="px-4 py-3">{item.duration}</td>
                   <td className="px-4 py-3">{formatPrice(item.total_price)}</td>
+                  <td className="px-4 py-3">{item.user.name}</td>
                   <td className="px-4 py-3 flex items-center space-x-4">
                     <button className="flex items-center justify-between px-2 py-2 text-purple-600 text-sm hover:bg-gray-200 hover:border-gray-200 hover:rounded-full">
                       <ClipboardListIcon onClick={() => onPreviewList(item)} className="w-5 h-5" />
@@ -224,6 +237,16 @@ const SubscriptionPage = () => {
           )}
         </tbody>
       </table>
+      <Pagination
+        indexOfFirstProduct={indexOfFirstProduct}
+        indexOfLastProduct={indexOfLastProduct}
+        currentPage={currentPage}
+        productsPerPage={limitProduct}
+        totalProducts={data?.length}
+        paginate={paginate}
+        previousPaginate={previousPaginate}
+        nextPaginate={nextPaginate}
+      />
       <Modal show={isOpen} title="Create new subscription" maxWidth="2xl" onClose={() => setIsOpen(false)}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-2">
@@ -362,6 +385,7 @@ const SubscriptionPage = () => {
                   <p className="mt-1 text-lg font-medium text-gray-900">{`${formatPrice(item.price)} x ${item.quantity}`}</p>
                 </div>
               ))}
+              {itemEdit.details?.length === 0 && <p>Không có sản phẩm</p>}
             </div>
           </div>
         </div>

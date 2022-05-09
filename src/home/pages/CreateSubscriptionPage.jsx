@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { XIcon } from "@heroicons/react/outline";
 import { useNavigate } from "react-router-dom";
 import useStore from "../states/subscriptionState";
@@ -7,13 +7,35 @@ import { createNewSubscription, deleteSubcription, getListSubscriptionByUser } f
 import { useUserContext } from "../../context/user";
 import Loader from "../components/loader/Loader";
 import { TrashIcon } from "@heroicons/react/solid";
-
+import Modal from "../components/modal/Modal";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
+import { useForm } from "react-hook-form";
 const CreateSubscriptionPage = () => {
+  const schema = yup.object({
+    name: yup.string().required("Vui lòng nhập tên gói đăng ký"),
+    duration: yup
+      .number()
+      .integer("Vui lòng nhập số nguyên")
+      .positive("Vui lòng nhập số dương")
+      .required("Vui lòng nhập chu kỳ gói đăng ký"),
+  });
+  const {
+    register,
+    handleSubmit,
+    reset,
+    isSubmitSuccessful,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+  const [openModalCreate, setOpenModalCreate] = useState(false);
   const [isConfirmed, setIsConfirmed] = useState({
     confirm: false,
     id: 0,
   });
   const { user } = useUserContext();
+
   const { isLoading } = useQuery("subscriptions", () => getListSubscriptionByUser(user.id), {
     onSuccess: (data) => {
       setSubscriptions(data);
@@ -23,6 +45,12 @@ const CreateSubscriptionPage = () => {
   const { subscriptions, setSubscriptions } = useStore();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user.token === "") {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   const { mutateAsync: createMutateAsync } = useMutation(createNewSubscription, {
     onSuccess: (data) => setSubscriptions([...subscriptions, data]),
@@ -34,15 +62,20 @@ const CreateSubscriptionPage = () => {
     },
   });
 
-  const createSubscription = async () => {
+  const createSubscription = () => {
+    setOpenModalCreate(true);
+  };
+
+  const submitCreateSubscription = async (data) => {
     //Get lastest subId
-    let subId = subscriptions.length > 0 ? subscriptions[0].id + 1 : 1;
+    //let subId = subscriptions.length > 0 ? subscriptions[0].id + 1 : 1;
     await createMutateAsync({
-      name: `Gói sản phẩm ${subId}`,
-      duration: 1,
+      name: data.name,
+      duration: data.duration,
       total_price: 0,
     });
     queryClient.invalidateQueries("subscriptions");
+    setOpenModalCreate(false);
   };
 
   const handleDeleteSubscription = async (id) => {
@@ -57,6 +90,46 @@ const CreateSubscriptionPage = () => {
   if (isLoading) return <Loader />;
   return (
     <div className="w-full mt-10 container max-w-6xl mx-auto">
+      {/* Modal add subscriptions */}
+      <Modal isOpen={openModalCreate} setIsClose={() => setOpenModalCreate(!openModalCreate)} title="Tạo gói đăng ký mới">
+        <form onSubmit={handleSubmit(submitCreateSubscription)} className="space-y-4">
+          <div className="mt-4">
+            <label htmlFor="subscriptionName" className="block text-sm font-medium text-gray-700">
+              Tên gói đăng ký
+            </label>
+            <input
+              type="text"
+              name="susbcriptionName"
+              className="block w-8/12 shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 mt-2"
+              placeholder="Tên gói đăng ký"
+              {...register("name")}
+            />
+            <span className="text-red-500 text-sm">{errors.name?.message}</span>
+          </div>
+          <div className="mt-4">
+            <label htmlFor="subscriptionDuration" className="block text-sm font-medium text-gray-700">
+              Chu kỳ giao hàng (tháng)
+            </label>
+            <input
+              type="number"
+              name="subscriptionDuration"
+              max={10}
+              className="w-28 block shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 mt-2"
+              placeholder="Chu kỳ"
+              {...register("duration")}
+            />
+            <span className="text-red-500 text-sm">{errors.duration?.message}</span>
+          </div>
+          <div className="mt-4 flex justify-end">
+            <button
+              type="submit"
+              className="inline-flex justify-center px-4 py-2 text-sm font-medium text-white bg-orange-500 border border-transparent rounded-md hover:bg-orange-600 focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-orange-500"
+            >
+              Lưu lại
+            </button>
+          </div>
+        </form>
+      </Modal>
       <div className="mt-10 sm:mt-0">
         <div className="mt-2">
           <button

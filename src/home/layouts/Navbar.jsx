@@ -97,6 +97,20 @@ const Navbar = () => {
                             {name}
                           </Menu.Item>
                         ))}
+                      <Menu.Item
+                        as={Link}
+                        to="/subscriptions"
+                        className="uppercase block px-4 py-3 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b-gray-200 border-b-2"
+                      >
+                        Gói đăng ký
+                      </Menu.Item>
+                      <Menu.Item
+                        as={Link}
+                        to="/create-subscription"
+                        className="uppercase block px-4 py-3 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b-gray-200 border-b-2"
+                      >
+                        Quản lý đăng ký
+                      </Menu.Item>
                     </Menu.Items>
                   </Transition>
                 </>

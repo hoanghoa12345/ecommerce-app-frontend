@@ -45,7 +45,6 @@ export default function UserPage() {
   //Open create user model when url has createUser query
   let [params] = useSearchParams();
   useEffect(() => {
-    console.log(params.has("createUser"));
     if (params.has("createUser")) {
       setItemEdit({});
       setAvatar(null);
