@@ -22,6 +22,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import { ReactQueryDevtools } from "react-query/devtools";
 import CreateSubscriptionPage from "./home/pages/CreateSubscriptionPage";
 import EditSubscriptionPage from "./home/pages/EditSubscriptionPage";
+import UserSubscriptionPage from "./admin/pages/UserSubscriptionPage";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -71,6 +72,7 @@ const App = () => {
             <Route path="categories" element={<CategoryPage />} />
             <Route path="users" element={<UserPage />} />
             <Route path="subscriptions" element={<SubscriptionPage />} />
+            <Route path="user-subscriptions" element={<UserSubscriptionPage />} />
           </Route>
         )}
         <Route path="/register" element={<Register />} />

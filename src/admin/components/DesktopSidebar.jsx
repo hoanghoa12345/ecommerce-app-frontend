@@ -1,5 +1,5 @@
 import React from "react";
-import { ClipboardListIcon, CollectionIcon, HomeIcon, ViewGridIcon } from "@heroicons/react/outline";
+import { ClipboardListIcon, CollectionIcon, HomeIcon, UsersIcon, ViewGridIcon } from "@heroicons/react/outline";
 import { Link, useNavigate, useMatch, useResolvedPath } from "react-router-dom";
 import { Disclosure } from "@headlessui/react";
 import { UserGroupIcon } from "@heroicons/react/solid";
@@ -49,6 +49,10 @@ export default function DesktopSidebar() {
           <SidebarLink to="/admin/subscriptions">
             <ViewGridIcon className="w-5 h-5" />
             <span className="ml-4">Subscriptions</span>
+          </SidebarLink>
+          <SidebarLink to="/admin/user-subscriptions">
+            <UsersIcon className="w-5 h-5" />
+            <span className="ml-4">User Subs</span>
           </SidebarLink>
         </ul>
         <div className="px-6 my-6">

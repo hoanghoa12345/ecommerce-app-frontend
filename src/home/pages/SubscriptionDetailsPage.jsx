@@ -1,5 +1,5 @@
 import { ViewGridAddIcon, ViewListIcon } from "@heroicons/react/solid";
-import React, { useState } from "react";
+import React from "react";
 import { useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { BASE_URL, getSubscriptionById } from "../../api/api";

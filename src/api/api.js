@@ -370,3 +370,12 @@ export const getAdminDashboardInfo = async (token) => {
     throw new Error(error);
   }
 };
+
+export const getListUserSubscription = async () => {
+  try {
+    const { data } = await Axios.get(BASE_URL + "/api/v1/user-subscriptions");
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
