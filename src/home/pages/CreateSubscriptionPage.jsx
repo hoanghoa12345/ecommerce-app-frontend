@@ -23,8 +23,6 @@ const CreateSubscriptionPage = () => {
   const {
     register,
     handleSubmit,
-    reset,
-    isSubmitSuccessful,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),

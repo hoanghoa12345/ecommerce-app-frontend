@@ -1,5 +1,5 @@
 import { Disclosure, Menu, Popover, Transition } from "@headlessui/react";
-import { HeartIcon, LogoutIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/outline";
+import { CollectionIcon, HeartIcon, LogoutIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/outline";
 import React, { useState, Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL, getAllCategory, getFullHeader, getProfileByUserId, getSearchResult } from "../../api/api";
@@ -110,7 +110,7 @@ const Navbar = () => {
                         to="/create-subscription"
                         className="uppercase block px-4 py-3 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b-gray-200 border-b-2"
                       >
-                        Quản lý đăng ký
+                        Quản lý gói đăng ký
                       </Menu.Item>
                     </Menu.Items>
                   </Transition>
@@ -232,6 +232,18 @@ const Navbar = () => {
                           >
                             <UserCircleIcon className="w-5 h-5 mr-2" aria-hidden="true" />
                             Profile
+                          </button>
+                        )}
+                      </Menu.Item>
+                      <Menu.Item as={Link} to={"/"}>
+                        {({ active }) => (
+                          <button
+                            className={`${
+                              active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                            } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                          >
+                            <CollectionIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                            Gói đăng ký
                           </button>
                         )}
                       </Menu.Item>

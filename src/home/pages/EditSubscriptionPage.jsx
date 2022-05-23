@@ -1,14 +1,15 @@
 import { XIcon } from "@heroicons/react/solid";
 import React, { useEffect, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { BASE_URL, bulkInsertProductSub, getAllProducts, getSubscriptionById } from "../../api/api";
+import { BASE_URL, bulkInsertProductSub, deleteProductSubscription, getAllProducts, getSubscriptionById } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
 
 const EditSubscriptionPage = () => {
   const { id } = useParams();
+  const queryClient = useQueryClient();
   const [productsAdded, setProductsAdded] = useState([]);
   const [inputQty, setInputQty] = useState(1);
   const addProductToSub = (product) => {
@@ -45,9 +46,19 @@ const EditSubscriptionPage = () => {
     setInputQty(1);
   };
 
+  const deleteProductMutaion = useMutation((detailId) => deleteProductSubscription(detailId));
+
   const removeProductAdded = (index) => {
-    productsAdded.splice(index, 1);
-    setProductsAdded([...productsAdded]);
+    let productToDelete = productsAdded[index];
+    console.log(productToDelete);
+    //Hanle delete product from database
+
+    deleteProductMutaion.mutateAsync(productToDelete.id, {
+      onSuccess: () => {
+        productsAdded.splice(index, 1);
+        setProductsAdded([...productsAdded]);
+      },
+    });
   };
 
   const {
@@ -58,7 +69,11 @@ const EditSubscriptionPage = () => {
     isFetched: productIsFetched,
   } = useQuery("products", getAllProducts);
 
-  const { isSuccess, data: subscription } = useQuery(`subscription_id_${id}`, () => getSubscriptionById(id));
+  const {
+    isSuccess,
+    isLoading: subDetailsIsLoading,
+    data: subscription,
+  } = useQuery(`subscription_id_${id}`, () => getSubscriptionById(id));
 
   // Load product added to subscriptions
   useEffect(() => {
@@ -66,6 +81,7 @@ const EditSubscriptionPage = () => {
       let productItemArr = [];
       subscription.details.forEach((element) => {
         let subscriptionDetail = {
+          id: element.id,
           subscription_id: element.subscription_id,
           product_id: element.product.id,
           name: element.product.name,
@@ -84,6 +100,7 @@ const EditSubscriptionPage = () => {
     productsSubMutation.mutate(productsAdded, {
       onSuccess: async () => {
         toast.success("Cập nhật sản phẩm thành công!");
+        queryClient.invalidateQueries(`subscription_id_${id}`);
       },
       onError: async () => {
         toast.error("Không thể cập nhật gói đăng ký");
@@ -97,20 +114,38 @@ const EditSubscriptionPage = () => {
       <div>
         <h1 className="text-2xl font-semibold">Sản phẩm đã thêm:</h1>
         <div className="flex flex-wrap flex-row items-center justify-end pt-2 space-x-2 rounded-b max-w-4xl mx-auto">
-          {productsAdded.map((productAdded, i) => (
-            <div
-              key={i}
-              className="px-4 py-2 my-1 rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex aligh-center w-max cursor-pointer active:bg-gray-300 transition duration-300"
-            >
-              ({productAdded.quantity}) {productAdded.name.substring(0, 40)}...
-              <button
-                onClick={() => removeProductAdded(i)}
-                className="bg-transparent hover:bg-red-500 hover:rounded-full focus:outline-none hover:text-white pr-2.5"
+          {
+            //Loading Products Added to Subscription
+            subDetailsIsLoading &&
+              [1, 2, 3, 4].map((index) => (
+                <div
+                  key={index}
+                  className="px-4 py-2 my-1 w-[350px] animate-pulse rounded-full text-gray-500 bg-gray-200 font-semibold flex aligh-center"
+                >
+                  <span className="h-5 w-full"></span>
+                </div>
+              ))
+          }
+          {productsAdded.length > 0 ? (
+            productsAdded.map((productAdded, i) => (
+              <div
+                key={i}
+                className="px-4 py-2 my-1 rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex aligh-center w-max cursor-pointer active:bg-gray-300 transition duration-300"
               >
-                <XIcon className="w-3 ml-3" />
-              </button>
+                ({productAdded.quantity}) {productAdded.name.substring(0, 40)}...
+                <button
+                  onClick={() => removeProductAdded(i)}
+                  className="bg-transparent hover:bg-red-500 hover:rounded-full focus:outline-none hover:text-white pr-2.5"
+                >
+                  <XIcon className="w-3 ml-3" />
+                </button>
+              </div>
+            ))
+          ) : (
+            <div className="h-[100px] w-full flex justify-center item-center">
+              <p className="text-slate-800 font-semibold text-xl">Chưa có sản phẩm nào</p>
             </div>
-          ))}
+          )}
         </div>
       </div>
       <h2 className="text-2xl font-semibold">Chọn sản phẩm:</h2>
@@ -197,7 +232,7 @@ const LoaderAnimate = () => {
   return (
     <svg
       role="status"
-      class="inline w-4 h-4 mr-3 text-white animate-spin"
+      className="inline w-4 h-4 mr-3 text-white animate-spin"
       viewBox="0 0 100 101"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"

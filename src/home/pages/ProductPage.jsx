@@ -7,6 +7,7 @@ import { formatPrice } from "../../utils/formatType";
 import Product from "../components/product/Product";
 import { useQuery } from "react-query";
 import useStore from "../states/cartState";
+import { toast, ToastContainer } from "react-toastify";
 
 export default function ProductPage() {
   const { productSlug } = useParams();
@@ -24,11 +25,15 @@ export default function ProductPage() {
     staleTime: 5 * 60 * 1000,
   });
   const { cartAddItem } = useStore();
-
+  const handleAddToCart = () => {
+    cartAddItem({ product, qty: 1 });
+    toast.success("Thêm sản phẩm vào giỏ hàng!");
+  };
   if (isLoading) return <Loader />;
   if (isError) return <p>{error}</p>;
   return (
     <section className="text-gray-600 body-font overflow-hidden">
+      <ToastContainer />
       <div className="container px-5 py-24 mx-auto">
         <div className="lg:w-4/5 mx-auto flex flex-wrap">
           <img
@@ -58,7 +63,7 @@ export default function ProductPage() {
 
             <div className="flex">
               <button
-                onClick={() => cartAddItem({ product, qty: 1 })}
+                onClick={handleAddToCart}
                 className="flex ml-5 text-white bg-orange-500 uppercase border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded"
               >
                 Thêm vào giỏ

@@ -205,6 +205,19 @@ export const deleteSubcription = async (id) => {
   }
 };
 
+export const deleteProductSubscription = async (detailId) => {
+  try {
+    const { data } = await Axios.delete(BASE_URL + "/api/v1/subscription-details/" + detailId, {
+      headers: {
+        accept: "application/json",
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 // User - Profile
 
 export const getAllUsers = async (token = "") => {

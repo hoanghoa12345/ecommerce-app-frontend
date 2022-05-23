@@ -55,45 +55,45 @@ export default function ProductsPage() {
   }
   return (
     <main className="h-full overflow-y-auto">
-    <div className="container grid px-6 mx-auto">
-      <h2 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Products</h2>
-      <div className="flex items-center justify-between">
-        <h4 className="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Manage product</h4>
-        <button
-          onClick={handleAddProduct}
-          className="flex px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
-        >
-          Add <div className="ml-2">+</div>
-        </button>
-      </div>
-      <AddProductModal open={open} setOpen={setOpen} editItem={editItem} />
-      {openDelete && (
-        <DeleteModal
-          title={`Delete Product ${deleteId}`}
-          message={"Are you want delete?"}
-          open={openDelete}
-          setOpen={() => setOpenDelete(false)}
-          onDelete={onDelete}
-        />
-      )}
-      {/* With actions */}
-      <div className="w-full overflow-hidden rounded-lg shadow-xs">
-        <div className="w-full overflow-x-auto">
-          <ProductTable data={currentProducts} onEdit={editProductHandler} onDelete={deleteProductHandler} />
+      <div className="container grid px-6 mx-auto">
+        <h2 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Products</h2>
+        <div className="flex items-center justify-between">
+          <h4 className="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Manage product</h4>
+          <button
+            onClick={handleAddProduct}
+            className="flex px-4 py-2 text-sm font-medium leading-5 text-white transition-colors duration-150 bg-purple-600 border border-transparent rounded-lg active:bg-purple-600 hover:bg-purple-700 focus:outline-none focus:shadow-outline-purple"
+          >
+            Add <div className="ml-2">+</div>
+          </button>
         </div>
-        {/*Show pagination */}
-        <Pagination
-          indexOfFirstProduct={indexOfFirstProduct}
-          indexOfLastProduct={indexOfLastProduct}
-          currentPage={currentPage}
-          productsPerPage={limitProduct}
-          totalProducts={data.length}
-          paginate={paginate}
-          previousPaginate={previousPaginate}
-          nextPaginate={nextPaginate}
-        />
+        <AddProductModal open={open} setOpen={setOpen} editItem={editItem} />
+        {openDelete && (
+          <DeleteModal
+            title={`Delete Product ${deleteId}`}
+            message={"Are you want delete?"}
+            open={openDelete}
+            setOpen={() => setOpenDelete(false)}
+            onDelete={onDelete}
+          />
+        )}
+        {/* With actions */}
+        <div className="w-full overflow-hidden rounded-lg shadow-xs">
+          <div className="w-full overflow-x-auto">
+            <ProductTable data={currentProducts} onEdit={editProductHandler} onDelete={deleteProductHandler} />
+          </div>
+          {/*Show pagination */}
+          <Pagination
+            indexOfFirstProduct={indexOfFirstProduct}
+            indexOfLastProduct={indexOfLastProduct}
+            currentPage={currentPage}
+            productsPerPage={limitProduct}
+            totalProducts={data.length}
+            paginate={paginate}
+            previousPaginate={previousPaginate}
+            nextPaginate={nextPaginate}
+          />
+        </div>
       </div>
-    </div>
     </main>
   );
 }
@@ -115,7 +115,7 @@ const ProductTable = ({ data, onEdit, onDelete }) => {
           <tr key={item.id} className="text-gray-700 dark:text-gray-400">
             <td className="px-4 py-3">{item.name}</td>
             <td className="px-4 py-3 text-sm">{formatPrice(item.price)}</td>
-            <td className="px-4 py-3 text-xs">
+            <td className="px-4 py-3 h-24 md:h-32">
               <img className="w-32 h-auto" src={`${BASE_URL}/${item.image}`} alt={item.name} />
             </td>
             <td className="px-4 py-3 text-sm">{formatDate(item.created_at)}</td>
