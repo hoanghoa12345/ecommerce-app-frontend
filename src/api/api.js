@@ -8,6 +8,24 @@ export const getFullHeader = (token = "") => {
   };
 };
 
+export const getHomeCategory = async () => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/home/categories`);
+    return data;
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
+export const getHomeBannersSlider = async () => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/home/sliders/banners`);
+    return data;
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
 export const getAllProducts = async () => {
   try {
     const { data } = await Axios.get(`${BASE_URL}/api/v1/products`, {

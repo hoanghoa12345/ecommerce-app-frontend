@@ -8,11 +8,22 @@ const SubscriptionDetailsPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { isLoading, data: subscription } = useQuery(`subscription_id_${id}`, () => getSubscriptionById(id));
-
+  const handleEditSubscription = () => {
+    console.log("handle edit");
+  };
   if (isLoading) return <Loader />;
   return (
     <div className="flex flex-col mx-auto max-w-6xl w-full p-10 bg-white text-gray-800">
-      <h1 className="text-3xl font-semibold">{subscription.name}</h1>
+      <div className="flex w-full justify-between justify-items-center">
+        <h1 className="text-3xl font-semibold">{subscription.name}</h1>
+        <button
+          type="button"
+          onClick={() => navigate(`/subscription-payment/${id}`)}
+          className="py-2 px-4  bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
+        >
+          Đăng ký ngay
+        </button>
+      </div>
       <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
         {subscription.details.length > 0 &&
           subscription.details.map((item) => (
@@ -35,7 +46,14 @@ const SubscriptionDetailsPage = () => {
             </div>
           ))}
       </div>
-
+      <div>
+        <button
+          onClick={handleEditSubscription}
+          className="py-2 px-4  bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
+        >
+          Chỉnh sửa gói
+        </button>
+      </div>
       <section>
         <div className="container max-w-7xl mx-auto mt-6 p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800">
           <div className="flex flex-wrap -mx-8">

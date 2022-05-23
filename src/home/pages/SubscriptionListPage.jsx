@@ -6,7 +6,7 @@ import { formatPrice } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
 
 const SubscriptionListPage = () => {
-  const subscriptionList = useQuery("subscriptions", getSubscriptionsByAdmin);
+  const subscriptionList = useQuery("subscriptions", () => getSubscriptionsByAdmin());
   if (subscriptionList.isLoading) return <Loader />;
   if (subscriptionList.isError) return <p className="text-red-600">{subscriptionList.error}</p>;
   return (
