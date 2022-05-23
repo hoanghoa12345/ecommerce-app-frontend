@@ -26,7 +26,7 @@ const SubscriptionListPage = () => {
                         </div>
                       </div>
                     ),
-                    1: subItem.details.map((item, index) => (
+                    1: subItem?.details?.map((item, index) => (
                       <div key={index} className="bg-gray-200 col-span-1 overflow-hidden">
                         <img src={item.product.image} alt="" className="w-full h-1/2 object-center object-cover" />
                       </div>

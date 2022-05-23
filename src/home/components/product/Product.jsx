@@ -22,8 +22,8 @@ const Product = ({ product }) => {
           type="button"
           className="flex items-center justify-center w-full px-8 py-4 mt-4 bg-orange-500 rounded-sm"
         >
-          <span className="text-sm font-medium text-black"> Thêm vào giỏ hàng</span>
-          <ShoppingBagIcon className="w-5 h-5 ml-1.5 text-black" />
+          <span className="text-sm font-medium text-white"> Thêm vào giỏ hàng</span>
+          <ShoppingBagIcon className="w-5 h-5 ml-1.5 text-white" />
         </button>
       </div>
     </div>

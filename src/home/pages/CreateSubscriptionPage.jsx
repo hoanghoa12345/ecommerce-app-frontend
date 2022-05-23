@@ -35,6 +35,7 @@ const CreateSubscriptionPage = () => {
     id: 0,
   });
   const { user } = useUserContext();
+
   const { isLoading } = useQuery("subscriptions", () => getListSubscriptionByUser(user.id), {
     onSuccess: (data) => {
       setSubscriptions(data);
@@ -44,6 +45,12 @@ const CreateSubscriptionPage = () => {
   const { subscriptions, setSubscriptions } = useStore();
 
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (user.token === "") {
+      navigate("/login");
+    }
+  }, [user, navigate]);
 
   const { mutateAsync: createMutateAsync } = useMutation(createNewSubscription, {
     onSuccess: (data) => setSubscriptions([...subscriptions, data]),
