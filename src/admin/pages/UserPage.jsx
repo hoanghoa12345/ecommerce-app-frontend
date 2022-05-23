@@ -14,6 +14,7 @@ import { isEmpty } from "./../../utils/isEmptyObj";
 import DeleteModal from "../components/DeleteModal";
 import { useDropzone } from "react-dropzone";
 import { useSearchParams } from "react-router-dom";
+import icon_user from "../../assets/images/icon_user.png";
 
 const schema = yup
   .object({
@@ -45,6 +46,7 @@ export default function UserPage() {
   //Open create user model when url has createUser query
   let [params] = useSearchParams();
   useEffect(() => {
+    // console.log(params.has("createUser"));
     if (params.has("createUser")) {
       setItemEdit({});
       setAvatar(null);
@@ -91,7 +93,7 @@ export default function UserPage() {
   const nextPaginate = () => setCurrentPage(currentPage + 1);
 
   const onSubmit = async (formData) => {
-    console.log(formData);
+    // console.log(formData);
     try {
       const dataProfile = {
         description: formData.description,
@@ -108,17 +110,17 @@ export default function UserPage() {
           roles: formData.roles,
         };
 
-        const { user } = await mutationAddUser.mutateAsync(dataUser);
+        const data = await mutationAddUser.mutateAsync({ ...dataUser, token: user.token });
         // console.log(user);
-        await mutationUpdateProfile.mutateAsync({ ...dataProfile, user_id: user.id });
+        await mutationUpdateProfile.mutateAsync({ ...dataProfile, user_id: data.user.id, token: user.token });
       } else {
         const dataUser = {
           id: itemEdit.id,
           name: formData.name,
           roles: formData.roles,
         };
-        await mutationUpdateUser.mutateAsync(dataUser);
-        await mutationUpdateProfile.mutateAsync({ ...dataProfile, user_id: itemEdit.id });
+        await mutationUpdateUser.mutateAsync({ ...dataUser, token: user.token });
+        await mutationUpdateProfile.mutateAsync({ ...dataProfile, user_id: itemEdit.id, token: user.token });
       }
       queryClient.invalidateQueries("users");
       setIsOpenEdit(false);
@@ -149,7 +151,7 @@ export default function UserPage() {
     user.id === id ? setIsDelete(false) : setIsDelete(true);
   };
   const onDelete = async () => {
-    await mutationDeleteUser.mutateAsync(deleteId);
+    await mutationDeleteUser.mutateAsync({ deleteId, token: user.token });
     setIsOpenDelete(false);
     queryClient.invalidateQueries("users");
   };
@@ -428,7 +430,7 @@ const UserTable = ({ data, onEdit, onDelete }) => {
                   <div className="relative hidden w-8 h-8 mr-3 rounded-full md:block">
                     <img
                       className="object-cover w-full h-full rounded-full"
-                      src={`${BASE_URL}/${item.profile.avatar}`}
+                      src={item.profile?.avatar ? `${BASE_URL}/${item.profile.avatar}` : icon_user}
                       alt={item.name}
                       loading="lazy"
                     />
