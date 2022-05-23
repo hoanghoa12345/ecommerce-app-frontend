@@ -10,6 +10,7 @@ import { initialUser } from "../../constants/initialUser";
 import { useMutation, useQuery } from "react-query";
 import useStore from "../states/state";
 import useCartStore from "../states/cartState";
+import user_icon from "../../assets/images/icon_user.png";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -203,7 +204,11 @@ const Navbar = () => {
               <Menu as="div" className="relative inline-block text-left">
                 <Menu.Button type="button" className="flex items-center focus:outline-none" aria-label="toggle profile dropdown">
                   <div className="w-8 h-8 overflow-hidden border-2 border-gray-400 rounded-full">
-                    <img src={`${BASE_URL}/${userProfile?.avatar}`} className="object-cover w-full h-full" alt="avatar" />
+                    <img
+                      src={userProfile?.avatar ? `${BASE_URL}/${userProfile?.avatar}` : user_icon}
+                      className="object-cover w-full h-full"
+                      alt="avatar"
+                    />
                   </div>
                   <h3 className="mx-2 text-sm font-medium text-white dark:text-gray-200">{user.name}</h3>
                 </Menu.Button>

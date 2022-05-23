@@ -43,7 +43,7 @@ export const getCategoryBySlug = async (slug) => {
   }
 };
 
-export const createProduct = async ({ name, category_id, description, price, quantity, image }) => {
+export const createProduct = async ({ name, category_id, description, price, quantity, image, token }) => {
   const formData = new FormData();
   formData.append("name", name);
   formData.append("category_id", category_id);
@@ -55,10 +55,8 @@ export const createProduct = async ({ name, category_id, description, price, qua
   try {
     const { data } = await Axios.post(`${BASE_URL}/api/v1/products`, formData, {
       headers: {
-        headers: {
-          Accept: "application/json",
-          "Content-Type": "multipart/form-data",
-        },
+        Accept: "application/json",
+        "Content-Type": "multipart/form-data",
       },
     });
     return data;
@@ -219,34 +217,39 @@ export const getUserProfile = async (token = "") => {
   }
 };
 
-export const createUser = async (formData) => {
+export const createUser = async ({ token, ...formData }) => {
   const { data } = await Axios.post(`${BASE_URL}/api/v1/users`, formData, {
     headers: {
       Accept: "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
   return data;
 };
 
-export const updateUser = async ({ id, ...formData }) => {
+export const updateUser = async ({ id, token, ...formData }) => {
   const { data } = await Axios.put(`${BASE_URL}/api/v1/users/${id}`, formData, {
     headers: {
       Accept: "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
   return data;
 };
 
-export const deleteUser = async (id) => {
-  const { data } = await Axios.delete(`${BASE_URL}/api/v1/users/${id}`, {
+export const deleteUser = async ({ deleteId, token }) => {
+  const { data } = await Axios.delete(`${BASE_URL}/api/v1/users/${deleteId}`, {
     headers: {
       Accept: "application/json",
+      Authorization: `Bearer ${token}`,
     },
   });
   return data;
 };
 
 export const getProfileByUserId = async (user_id, token) => {
+  if (token === "") return "";
+
   const { data } = await Axios.get(`${BASE_URL}/api/v1/profiles/${user_id}`, {
     headers: {
       Accept: "application/json",
@@ -256,7 +259,7 @@ export const getProfileByUserId = async (user_id, token) => {
   return data;
 };
 
-export const updateProfile = async ({ ...Data }) => {
+export const updateProfile = async ({ token, ...Data }) => {
   const { description, address, phone, avatar, user_id } = Data;
   const formData = new FormData();
   formData.append("description", description);
@@ -269,6 +272,7 @@ export const updateProfile = async ({ ...Data }) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "multipart/form-data",
+        Authorization: "Bearer " + token,
       },
     });
     return data;

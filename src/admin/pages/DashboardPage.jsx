@@ -82,7 +82,7 @@ const DashboardPage = () => {
               </thead>
               <tbody className="bg-white divide-y dark:divide-gray-700 dark:bg-gray-800">
                 {currentProducts.map((user) => (
-                  <tr className="text-gray-700 dark:text-gray-400">
+                  <tr key={user.id} className="text-gray-700 dark:text-gray-400">
                     <td className="px-4 py-3">
                       <div className="flex items-center text-sm">
                         {/* Avatar with inset shadow */}
