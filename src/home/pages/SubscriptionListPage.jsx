@@ -2,11 +2,11 @@ import React from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { getSubscriptionsByAdmin } from "../../api/api";
-import { formatPrice } from "../../utils/formatType";
+import { formatPrice, slugify } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
 
 const SubscriptionListPage = () => {
-  const subscriptionList = useQuery("subscriptions", getSubscriptionsByAdmin);
+  const subscriptionList = useQuery("subscriptions", () => getSubscriptionsByAdmin());
   if (subscriptionList.isLoading) return <Loader />;
   if (subscriptionList.isError) return <p className="text-red-600">{subscriptionList.error}</p>;
   return (
@@ -26,11 +26,13 @@ const SubscriptionListPage = () => {
                         </div>
                       </div>
                     ),
-                    1: subItem?.details?.map((item, index) => (
-                      <div key={index} className="bg-gray-200 col-span-1 overflow-hidden">
-                        <img src={item.product.image} alt="" className="w-full h-1/2 object-center object-cover" />
-                      </div>
-                    )),
+                    1:
+                      Array.isArray(subItem.details) &&
+                      subItem.details.map((item, index) => (
+                        <div key={index} className="bg-gray-200 col-span-1 overflow-hidden">
+                          <img src={item.product.image} alt="" className="w-full h-1/2 object-center object-cover" />
+                        </div>
+                      )),
                     2: subItem.details.map((item, index) => (
                       <div key={index} className="bg-gray-200 col-span-1 row-span-1 overflow-hidden">
                         <img src={item.product.image} alt="" className="w-full h-1/2 object-center object-cover" />
@@ -86,7 +88,7 @@ const SubscriptionListPage = () => {
               <div className="mt-4 flex justify-between">
                 <div>
                   <h3 className="text-sm text-gray-700 font-semibold">
-                    <Link to={`/subscriptions/${subItem.id}`}>
+                    <Link to={`/subscriptions/${subItem.id}?name=${slugify(subItem.name)}&duration=${subItem.duration}month`}>
                       <span aria-hidden="true" className="absolute inset-0" />
                       {subItem.name}
                     </Link>

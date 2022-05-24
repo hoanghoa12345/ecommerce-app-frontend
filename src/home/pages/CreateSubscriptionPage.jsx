@@ -23,8 +23,6 @@ const CreateSubscriptionPage = () => {
   const {
     register,
     handleSubmit,
-    reset,
-    isSubmitSuccessful,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(schema),
@@ -140,12 +138,9 @@ const CreateSubscriptionPage = () => {
             Tạo gói mới
           </button>
         </div>
-        <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
+        <div className="grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
           {subscriptions.map((item, i) => (
-            <div
-              key={i}
-              className="cursor-pointer group bg-gradient-to-br from-pink-500 to-orange-400 hover:bg-gradient-to-bl h-40 rounded-md flex relative overflow-hidden"
-            >
+            <div key={i} className="cursor-pointer group bg-orange-600 h-64 rounded-md flex relative overflow-hidden">
               <button
                 type="button"
                 className="hidden group-hover:block z-10 absolute top-2 right-2 p-0.5 text-white hover:bg-gray-500/80 rounded-full"

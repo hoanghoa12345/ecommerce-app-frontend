@@ -8,6 +8,24 @@ export const getFullHeader = (token = "") => {
   };
 };
 
+export const getHomeCategory = async () => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/home/categories`);
+    return data;
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
+export const getHomeBannersSlider = async () => {
+  try {
+    const { data } = await Axios.get(`${BASE_URL}/api/v1/home/sliders/banners`);
+    return data;
+  } catch (error) {
+    throw Error(error);
+  }
+};
+
 export const getAllProducts = async () => {
   try {
     const { data } = await Axios.get(`${BASE_URL}/api/v1/products`, {
@@ -187,6 +205,19 @@ export const deleteSubcription = async (id) => {
   }
 };
 
+export const deleteProductSubscription = async (detailId) => {
+  try {
+    const { data } = await Axios.delete(BASE_URL + "/api/v1/subscription-details/" + detailId, {
+      headers: {
+        accept: "application/json",
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
 // User - Profile
 
 export const getAllUsers = async (token = "") => {
@@ -334,6 +365,15 @@ export const getAdminDashboardInfo = async (token) => {
         Authorization: "Bearer " + token,
       },
     });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getListUserSubscription = async () => {
+  try {
+    const { data } = await Axios.get(BASE_URL + "/api/v1/user-subscriptions");
     return data;
   } catch (error) {
     throw new Error(error);
