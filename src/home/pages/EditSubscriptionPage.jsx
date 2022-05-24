@@ -5,7 +5,6 @@ import { useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL, bulkInsertProductSub, deleteProductSubscription, getAllProducts, getSubscriptionById } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
-import Loader from "../components/loader/Loader";
 
 const EditSubscriptionPage = () => {
   const { id } = useParams();
@@ -46,19 +45,24 @@ const EditSubscriptionPage = () => {
     setInputQty(1);
   };
 
-  const deleteProductMutaion = useMutation((detailId) => deleteProductSubscription(detailId));
+  //const deleteProductMutation = useMutation((detailId) => deleteProductSubscription(detailId));
 
   const removeProductAdded = (index) => {
-    let productToDelete = productsAdded[index];
-    console.log(productToDelete);
-    //Hanle delete product from database
-
-    deleteProductMutaion.mutateAsync(productToDelete.id, {
-      onSuccess: () => {
-        productsAdded.splice(index, 1);
-        setProductsAdded([...productsAdded]);
-      },
-    });
+    // let productToDelete = productsAdded[index];
+    // if (productToDelete.id) {
+    //   //Hanle delete product from database
+    //   deleteProductMutation.mutateAsync(productToDelete.id, {
+    //     onSuccess: () => {
+    //       productsAdded.splice(index, 1);
+    //       setProductsAdded([...productsAdded]);
+    //     },
+    //   });
+    // } else {
+    //   productsAdded.splice(index, 1);
+    //   setProductsAdded([...productsAdded]);
+    // }
+    productsAdded.splice(index, 1);
+    setProductsAdded([...productsAdded]);
   };
 
   const {
