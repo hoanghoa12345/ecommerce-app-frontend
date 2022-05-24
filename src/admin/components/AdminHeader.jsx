@@ -1,7 +1,7 @@
 import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { MenuIcon, SearchIcon, LogoutIcon, UserCircleIcon } from "@heroicons/react/outline";
 import { Link, useNavigate } from "react-router-dom";
-import { BellIcon } from "@heroicons/react/solid";
+import { BellIcon, CheckCircleIcon } from "@heroicons/react/solid";
 import React, { Fragment } from "react";
 import Axios from "axios";
 import { useUserContext } from "../../context/user";
@@ -50,6 +50,44 @@ export default function AdminHeader() {
   //   }
   // };
 
+  const adminNotifications = [
+    {
+      id: 1,
+      message: "Bao Nho has add new products",
+      status: 0,
+      created_at: "2022-04-27 14:08:26",
+    },
+    {
+      id: 2,
+      message: "Bao Nho has add new products",
+      status: 0,
+      created_at: "2022-04-27 14:08:26",
+    },
+    {
+      id: 3,
+      message: "Bao Nho has add new products",
+      status: 1,
+      created_at: "2022-04-27 14:08:26",
+    },
+    {
+      id: 4,
+      message: "Bao Nho has add new products",
+      status: 1,
+      created_at: "2022-04-27 14:08:26",
+    },
+    {
+      id: 5,
+      message: "Bao Nho has add new products",
+      status: 1,
+      created_at: "2022-04-27 14:08:26",
+    },
+    {
+      id: 6,
+      message: "Bao Nho has add new products",
+      status: 1,
+      created_at: "2022-04-27 14:08:26",
+    },
+  ];
   return (
     <header className="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
       <div className="container flex items-center justify-between h-full px-6 mx-auto text-purple-600 dark:text-purple-300">
@@ -85,10 +123,12 @@ export default function AdminHeader() {
             >
               <BellIcon className="w-5 h-5" />
               {/* Notification badge */}
-              <span
-                aria-hidden="true"
-                className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
-              />
+              {adminNotifications.length > 0 && (
+                <span
+                  aria-hidden="true"
+                  className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
+                />
+              )}
             </Menu.Button>
             <Transition
               as={Fragment}
@@ -99,8 +139,24 @@ export default function AdminHeader() {
               leaveFrom="transform scale-100 opacity-100"
               leaveTo="transform scale-95 opacity-0"
             >
-              <Menu.Items className="absolute right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                <Menu.Item as="div">Not have notifications yet!</Menu.Item>
+              <Menu.Items className="absolute right-0 w-64 h-80 overflow-y-auto mt-2 flex flex-col items-center justify-center origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                {adminNotifications.length > 0 ? (
+                  adminNotifications.map((item) => (
+                    <Menu.Item
+                      key={item.id}
+                      as="div"
+                      className={`flex flex-row px-2 py-2 text-sm ${item.status === 0 ? "text-gray-700" : "text-gray-400"}`}
+                    >
+                      {item.status === 0 ? <BellIcon className="mr-2 w-5 h-5" /> : <CheckCircleIcon className="mr-2 w-5 h-5" />}
+                      {item.message}
+                    </Menu.Item>
+                  ))
+                ) : (
+                  <Menu.Item as="div" className="flex flex-col items-center">
+                    <BellIcon className="w-8 h-8" />
+                    <div>Not have notifications yet!</div>
+                  </Menu.Item>
+                )}
               </Menu.Items>
             </Transition>
           </Menu>
