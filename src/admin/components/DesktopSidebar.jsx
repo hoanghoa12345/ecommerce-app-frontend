@@ -1,8 +1,7 @@
 import React from "react";
-import { ClipboardListIcon, CollectionIcon, HomeIcon, UsersIcon, ViewGridIcon } from "@heroicons/react/outline";
+import { ClipboardListIcon, UserGroupIcon, CollectionIcon, HomeIcon, UsersIcon, ViewGridIcon } from "@heroicons/react/outline";
 import { Link, useNavigate, useMatch, useResolvedPath } from "react-router-dom";
 import { Disclosure } from "@headlessui/react";
-import { UserGroupIcon } from "@heroicons/react/solid";
 function SidebarLink({ children, to, ...props }) {
   let resolved = useResolvedPath(to);
   let match = useMatch({ path: resolved.pathname, end: true });
