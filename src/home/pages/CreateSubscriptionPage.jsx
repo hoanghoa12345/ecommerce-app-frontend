@@ -114,6 +114,7 @@ const CreateSubscriptionPage = () => {
               type="number"
               name="subscriptionDuration"
               max={10}
+              min={1}
               className="w-28 block shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 mt-2"
               placeholder="Chu kỳ"
               {...register("duration")}
