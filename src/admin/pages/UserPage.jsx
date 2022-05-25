@@ -438,7 +438,7 @@ const UserTable = ({ data, onEdit, onDelete }) => {
                   </div>
                   <div>
                     <p className="font-semibold">{item.name}</p>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">{item.profile.description}</p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">{item.profile?.description}</p>
                   </div>
                 </div>
               </td>

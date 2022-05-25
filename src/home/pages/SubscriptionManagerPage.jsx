@@ -1,9 +1,32 @@
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
-import { PencilIcon, TrashIcon } from "@heroicons/react/solid";
+import { EyeIcon, PencilIcon, PlusCircleIcon, TrashIcon } from "@heroicons/react/solid";
+import { Link } from "react-router-dom";
+import { useUserContext } from "../../context/user";
+import { getSubsByUserId, getUserSubsByUserId } from "../../api/api";
+import { useQuery } from "react-query";
+import Loader from "../../admin/components/Loader";
 
 const Subscriptionmanagerpage = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
+  const { user } = useUserContext();
+  const Subscription = useQuery("SubsByUserId", () => getSubsByUserId(user.id));
+  const UserSubscription = useQuery("UserSubsByUserId", () => getUserSubsByUserId({ id: user.id, token: user.token }));
+
+  if (Subscription.isError || UserSubscription.isError) {
+    return (
+      <p>
+        {Subscription.error.message} || {UserSubscription.error.message}
+      </p>
+    );
+  }
+
+  if (Subscription.isLoading) {
+    return <Loader />;
+  }
+
+  console.log("Subs ", Subscription.data);
+  console.log("UserSubs ", UserSubscription.data);
 
   return (
     <Tab.Group
@@ -16,27 +39,29 @@ const Subscriptionmanagerpage = () => {
         <Tab
           className={`${
             selectedIndex === 0
-              ? "text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500"
+              ? "text-orange-600 hover:text-orange-600 dark:text-orange-500 dark:hover:text-orange-500 border-orange-600 dark:border-orange-500"
               : ""
           } inline-block p-4 rounded-t-lg border-b-2`}
         >
-          Inactive
+          Danh sách gói
         </Tab>
         <Tab
           className={`${
             selectedIndex === 1
-              ? "text-blue-600 hover:text-blue-600 dark:text-blue-500 dark:hover:text-blue-500 border-blue-600 dark:border-blue-500"
+              ? "text-orange-600 hover:text-orange-600 dark:text-orange-500 dark:hover:text-orange-500 border-orange-600 dark:border-orange-500"
               : ""
           } inline-block p-4 rounded-t-lg border-b-2`}
         >
-          Active
+          Đã kích hoạt
         </Tab>
       </Tab.List>
       <Tab.Panels className={"pt-4"}>
         <div className="flex justify-end mb-4">
-          <button className="py-2 px-4 bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg ">
-            Add Subscription
-          </button>
+          <Link to={"/create-subscription"}>
+            <button className="py-2 px-4 bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg ">
+              Thêm gói mới
+            </button>
+          </Link>
         </div>
         <Tab.Panel>
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
@@ -44,110 +69,120 @@ const Subscriptionmanagerpage = () => {
               <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-4 py-3">
-                    name
+                    Tên gói
                   </th>
                   <th scope="col" className="px-4 py-3">
-                    duration (month)
+                    chu kỳ (tháng)
                   </th>
                   <th scope="col" className="px-4 py-3">
-                    total price
+                    Tổng tiền (vnđ)
                   </th>
                   <th scope="col" className="px-4 py-3">
-                    start_date
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    end_date
-                  </th>
-                  <th scope="col" className="px-4 py-3">
-                    Action
+                    chức năng
                   </th>
                 </tr>
               </thead>
               <tbody>
-                <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <th scope="row" className="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                    Apple MacBook Pro 17"
-                  </th>
-                  <td className="px-4 py-3">4</td>
-                  <td className="px-4 py-3">$2999</td>
-                  <td className="px-4 py-3">25/02/2022</td>
-                  <td className="px-4 py-3">30/10/2022</td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center space-x-4 text-sm">
-                      <button
-                        // onClick={() => onEdit(item)}
-                        className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 dark:text-blue-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
-                        aria-label="Edit"
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        // onClick={() => onDelete(item.id)}
-                        className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 dark:text-blue-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
-                        aria-label="Delete"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                {/* <tr className="bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <th scope="row" className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                    Microsoft Surface Pro
-                  </th>
-                  <td className="px-6 py-4">White</td>
-                  <td className="px-6 py-4">Laptop PC</td>
-                  <td className="px-6 py-4">$1999</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center space-x-4 text-sm">
-                      <button
-                        // onClick={() => onEdit(item)}
-                        className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 dark:text-blue-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
-                        aria-label="Edit"
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        // onClick={() => onDelete(item.id)}
-                        className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 dark:text-blue-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
-                        aria-label="Delete"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-                <tr className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600">
-                  <th scope="row" className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                    Magic Mouse 2
-                  </th>
-                  <td className="px-6 py-4">Black</td>
-                  <td className="px-6 py-4">Accessories</td>
-                  <td className="px-6 py-4">$99</td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center space-x-4 text-sm">
-                      <button
-                        // onClick={() => onEdit(item)}
-                        className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 dark:text-blue-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
-                        aria-label="Edit"
-                      >
-                        <PencilIcon className="w-5 h-5" />
-                      </button>
-                      <button
-                        // onClick={() => onDelete(item.id)}
-                        className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-blue-600 dark:text-blue-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
-                        aria-label="Delete"
-                      >
-                        <TrashIcon className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </td>
-                </tr> */}
+                {Subscription.data.map((item, index) => (
+                  <tr
+                    key={index}
+                    className="odd:bg-white even:bg-gray-50 odd:dark:bg-gray-800 even:dark:bg-gray-700 border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                  >
+                    <th scope="row" className="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                      {item.name}
+                    </th>
+                    <td className="px-4 py-3">{item.duration}</td>
+                    <td className="px-4 py-3">{item.total_price}</td>
+                    <td className="px-4 py-3">
+                      <div className="flex items-center space-x-4 text-sm">
+                        <button
+                          // onClick={() => onEdit(item)}
+                          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
+                          aria-label="Edit"
+                        >
+                          <PencilIcon className="w-5 h-5" />
+                        </button>
+                        <button
+                          // onClick={() => onDelete(item.id)}
+                          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
+                          aria-label="Delete"
+                        >
+                          <TrashIcon className="w-5 h-5" />
+                        </button>
+                        <button
+                          // onClick={() => onDelete(item.id)}
+                          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
+                          aria-label="Delete"
+                        >
+                          <PlusCircleIcon className="w-5 h-5" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
         </Tab.Panel>
-        <Tab.Panel>Đã kích hoạt</Tab.Panel>
+        <Tab.Panel>
+          <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+                <tr>
+                  <th scope="col" className="px-4 py-3">
+                    Tên gói
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    chu kỳ (tháng)
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    tổng tiền (vnđ)
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    ngày bắt đầu
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    ngày kết thúc
+                  </th>
+                  <th scope="col" className="px-4 py-3">
+                    Chức năng
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {UserSubscription.isLoading ? (
+                  <Loader />
+                ) : (
+                  UserSubscription.data.map((item, index) => (
+                    <tr
+                      key={index}
+                      className="odd:bg-white even:bg-gray-50 border-b odd:dark:bg-gray-800 even:dark:bg-gray-700 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"
+                    >
+                      <th scope="row" className="px-4 py-3 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                        {item?.subscription.name}
+                      </th>
+                      <td className="px-4 py-3">{item?.subscription.duration}</td>
+                      <td className="px-4 py-3">{item?.subscription.total_price}</td>
+                      <td className="px-4 py-3">{item?.start_date}</td>
+                      <td className="px-4 py-3">{item?.end_date}</td>
+                      <td className="px-4 py-3">
+                        <div className="flex items-center space-x-4 text-sm">
+                          <button
+                            // onClick={() => onEdit(item)}
+                            className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
+                            aria-label="Edit"
+                          >
+                            <EyeIcon className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
+        </Tab.Panel>
       </Tab.Panels>
     </Tab.Group>
   );

@@ -38,7 +38,6 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     const headers = getFullHeader(user.token);
-    console.log("headers", headers);
     const res = await Axios.post(
       "/api/v1/logout",
       {},
@@ -110,7 +109,7 @@ const Navbar = () => {
                         to="/create-subscription"
                         className="uppercase block px-4 py-3 text-sm text-gray-600 transition-colors duration-200 transform dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 dark:hover:text-white border-b-gray-200 border-b-2"
                       >
-                        Quản lý gói đăng ký
+                        Tạo gói đăng ký
                       </Menu.Item>
                     </Menu.Items>
                   </Transition>
@@ -221,7 +220,7 @@ const Navbar = () => {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute z-10 left-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Items className="absolute z-10 right-0 lg:left-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="px-1 py-1 ">
                       <Menu.Item as={Link} to={"/"}>
                         {({ active }) => (
@@ -231,11 +230,11 @@ const Navbar = () => {
                             } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                           >
                             <UserCircleIcon className="w-5 h-5 mr-2" aria-hidden="true" />
-                            Profile
+                            Thông tin cá nhân
                           </button>
                         )}
                       </Menu.Item>
-                      <Menu.Item as={Link} to={"/"}>
+                      <Menu.Item as={Link} to={"/manager-subscription"}>
                         {({ active }) => (
                           <button
                             className={`${
@@ -243,7 +242,7 @@ const Navbar = () => {
                             } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
                           >
                             <CollectionIcon className="w-5 h-5 mr-2" aria-hidden="true" />
-                            Gói đăng ký
+                            Quản lý gói đăng ký
                           </button>
                         )}
                       </Menu.Item>
@@ -256,7 +255,7 @@ const Navbar = () => {
                             onClick={handleLogout}
                           >
                             <LogoutIcon className="w-5 h-5 mr-2" aria-hidden="true" />
-                            Logout
+                            Đăng xuất
                           </button>
                         )}
                       </Menu.Item>

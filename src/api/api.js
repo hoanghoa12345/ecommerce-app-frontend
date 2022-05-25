@@ -379,3 +379,26 @@ export const getListUserSubscription = async () => {
     throw new Error(error);
   }
 };
+
+export const getSubsByUserId = async (id) => {
+  try {
+    const { data } = await Axios.get(BASE_URL + `/api/v1/subscriptions-by-user/${id}`);
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getUserSubsByUserId = async ({ id, token }) => {
+  try {
+    const { data } = await Axios.get(BASE_URL + `/api/v1/subscriptions-user/${id}`, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

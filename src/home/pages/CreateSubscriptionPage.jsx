@@ -3,7 +3,7 @@ import { XIcon } from "@heroicons/react/outline";
 import { useNavigate } from "react-router-dom";
 import useStore from "../states/subscriptionState";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { createNewSubscription, deleteSubcription, getListSubscriptionByUser } from "../../api/api";
+import { createNewSubscription, deleteSubcription, getSubsByUserId } from "../../api/api";
 import { useUserContext } from "../../context/user";
 import Loader from "../components/loader/Loader";
 import { TrashIcon } from "@heroicons/react/solid";
@@ -34,7 +34,7 @@ const CreateSubscriptionPage = () => {
   });
   const { user } = useUserContext();
 
-  const { isLoading } = useQuery("subscriptions", () => getListSubscriptionByUser(user.id), {
+  const { isLoading } = useQuery("subscriptions", () => getSubsByUserId(user.id), {
     onSuccess: (data) => {
       setSubscriptions(data);
     },
@@ -87,7 +87,7 @@ const CreateSubscriptionPage = () => {
 
   if (isLoading) return <Loader />;
   return (
-    <div className="w-full mt-10 container max-w-6xl mx-auto">
+    <div className="w-full my-10 container max-w-6xl mx-auto">
       {/* Modal add subscriptions */}
       <Modal isOpen={openModalCreate} setIsClose={() => setOpenModalCreate(!openModalCreate)} title="Tạo gói đăng ký mới">
         <form onSubmit={handleSubmit(submitCreateSubscription)} className="space-y-4">
@@ -130,7 +130,7 @@ const CreateSubscriptionPage = () => {
         </form>
       </Modal>
       <div className="mt-10 sm:mt-0">
-        <div className="mt-2">
+        <div className="mt-2 px-10 lg:px-0">
           <button
             onClick={createSubscription}
             className="text-white bg-orange-600 hover:bg-orange-700 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 focus:outline-none dark:focus:ring-orange-800"
@@ -138,7 +138,7 @@ const CreateSubscriptionPage = () => {
             Tạo gói mới
           </button>
         </div>
-        <div className="grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
+        <div className="grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-3 px-10 lg:px-0 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
           {subscriptions.map((item, i) => (
             <div key={i} className="cursor-pointer group bg-orange-600 h-64 rounded-md flex relative overflow-hidden">
               <button
