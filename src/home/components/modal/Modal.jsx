@@ -1,11 +1,11 @@
-import { Fragment, useState, useEffect } from "react";
+import { Fragment } from "react";
 import { Transition, Dialog } from "@headlessui/react";
 import { XIcon } from "@heroicons/react/outline";
 
-const Modal = (props) => {
+const Modal = ({ isOpen, setIsClose, title, children }) => {
   return (
-    <Transition appear show={props.isOpen} as={Fragment}>
-      <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={props.setIsClose}>
+    <Transition appear show={isOpen} as={Fragment}>
+      <Dialog as="div" className="fixed inset-0 z-10 overflow-y-auto" onClose={setIsClose}>
         <div className="min-h-screen px=4 text-center">
           <Transition.Child
             as={Fragment}
@@ -30,13 +30,13 @@ const Modal = (props) => {
           >
             <div className="max-w-3xl relative inline-block w-full p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-white shadow-xl rounded-2xl">
               <Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-                {props.title}
+                {title}
               </Dialog.Title>
-              <button type="button" className="absolute top-6 right-6 text-gray-400 hover:text-gray-500" onClick={props.setIsClose}>
+              <button type="button" className="absolute top-6 right-6 text-gray-400 hover:text-gray-500" onClick={setIsClose}>
                 <span className="sr-only">Close</span>
                 <XIcon className="h-6 w-6" aria-hidden="true" />
               </button>
-              {props.children}
+              {children}
             </div>
           </Transition.Child>
         </div>

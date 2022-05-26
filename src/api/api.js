@@ -178,12 +178,13 @@ export const getSubscriptionsByAdmin = async () => {
   }
 };
 
-export const createNewSubscription = async (formData) => {
+export const createNewSubscription = async ({ token, ...formData }) => {
   try {
     const { data } = await Axios.post(BASE_URL + "/api/v1/subscriptions", formData, {
       headers: {
         "content-type": "application/json",
         accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return data;
@@ -192,11 +193,12 @@ export const createNewSubscription = async (formData) => {
   }
 };
 
-export const deleteSubcription = async (id) => {
+export const deleteSubcription = async ({ id, token }) => {
   try {
     const { data } = await Axios.delete(BASE_URL + "/api/v1/subscriptions/" + id, {
       headers: {
         accept: "application/json",
+        Authorization: `Bearer ${token}`,
       },
     });
     return data;

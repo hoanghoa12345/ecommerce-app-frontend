@@ -71,6 +71,7 @@ const CreateSubscriptionPage = () => {
       name: data.name,
       duration: data.duration,
       total_price: 0,
+      token: user.token,
     });
     queryClient.invalidateQueries("subscriptions");
     setOpenModalCreate(false);
@@ -81,7 +82,7 @@ const CreateSubscriptionPage = () => {
     // setSubscriptions([...subscriptions]);
 
     if (isConfirmed.confirm) {
-      await deleteMutateAsync(id);
+      await deleteMutateAsync({ id, token: user.token });
     }
   };
 
@@ -113,6 +114,7 @@ const CreateSubscriptionPage = () => {
               name="subscriptionDuration"
               max={10}
               min={1}
+              defaultValue={1}
               className="w-28 block shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 mt-2"
               placeholder="Chu kỳ"
               {...register("duration")}

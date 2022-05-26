@@ -1,9 +1,9 @@
 import { XIcon } from "@heroicons/react/solid";
 import React, { useEffect, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
-import { BASE_URL, bulkInsertProductSub, deleteProductSubscription, getAllProducts, getSubscriptionById } from "../../api/api";
+import { BASE_URL, bulkInsertProductSub, getAllProducts, getSubscriptionById } from "../../api/api";
 import { formatPrice } from "../../utils/formatType";
 
 const EditSubscriptionPage = () => {
@@ -11,6 +11,7 @@ const EditSubscriptionPage = () => {
   const queryClient = useQueryClient();
   const [productsAdded, setProductsAdded] = useState([]);
   const [inputQty, setInputQty] = useState(1);
+  const navigate = useNavigate();
   const addProductToSub = (product) => {
     const subId = id;
     let qty = inputQty;
@@ -105,6 +106,7 @@ const EditSubscriptionPage = () => {
       onSuccess: async () => {
         toast.success("Cập nhật sản phẩm thành công!");
         queryClient.invalidateQueries(`subscription_id_${id}`);
+        navigate("/create-subscription");
       },
       onError: async () => {
         toast.error("Không thể cập nhật gói đăng ký");
@@ -113,7 +115,7 @@ const EditSubscriptionPage = () => {
   };
 
   return (
-    <div className="max-w-6xl w-full mt-8 container mx-auto">
+    <div className="max-w-6xl w-full my-8 container mx-auto">
       <ToastContainer />
       <div>
         <h1 className="text-2xl font-semibold">Sản phẩm đã thêm:</h1>
