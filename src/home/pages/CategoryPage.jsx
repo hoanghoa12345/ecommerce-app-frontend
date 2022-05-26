@@ -20,7 +20,7 @@ const CategoryPage = () => {
 
   if (categoriesQuery.isLoading || categoryQuery.isLoading || categoryProductsQuery.isLoading) return <Loader />;
   return (
-    <div>
+    <div className="min-h-screen">
       <div className="mb-4 pt-4 border-t">
         <div className="container px-4 mx-auto">
           <ul className="flex items-center">
