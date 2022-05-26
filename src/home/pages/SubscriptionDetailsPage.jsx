@@ -105,9 +105,6 @@ const SubscriptionDetailsPage = () => {
                   </div>
                 </li>
               </ul>
-              <div>
-                <img src="https://www.gpstracker.at/wp-content/uploads/2019/03/How-GPS-Tracking-Can-Benefit-Delivery-Services.jpg" alt="" />
-              </div>
             </div>
           </div>
         </div>

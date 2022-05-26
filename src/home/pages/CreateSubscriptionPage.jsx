@@ -100,6 +100,7 @@ const CreateSubscriptionPage = () => {
               type="text"
               name="susbcriptionName"
               className="block w-8/12 shadow-sm sm:text-sm border-gray-300 rounded-md focus:ring-orange-500 focus:border-orange-500 mt-2"
+              autoComplete="off"
               placeholder="Tên gói đăng ký"
               {...register("name")}
             />

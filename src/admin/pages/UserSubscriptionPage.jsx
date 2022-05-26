@@ -5,9 +5,11 @@ import Loader from "../components/Loader";
 import { formatDate } from "../../utils/date";
 import { DotsVerticalIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
 import { Menu, Transition } from "@headlessui/react";
+import { useUserContext } from "../../context/user";
 
 const UserSubscriptionPage = () => {
-  const { data: userSubscriptionList, isLoading } = useQuery("user-subscriptions-list", () => getListUserSubscription());
+  const { user } = useUserContext();
+  const { data: userSubscriptionList, isLoading } = useQuery("user-subscriptions-list", () => getListUserSubscription(user.token));
   if (isLoading) return <Loader />;
   return (
     <div className="container grid px-6 mx-auto">

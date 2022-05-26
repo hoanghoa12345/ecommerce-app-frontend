@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Tab } from "@headlessui/react";
 import { EyeIcon, PencilIcon, PlusCircleIcon, TrashIcon } from "@heroicons/react/solid";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useUserContext } from "../../context/user";
 import { BASE_URL, deleteSubcription, getSubsByUserId, getSubscriptionById, getUserSubsByUserId } from "../../api/api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
@@ -11,6 +11,7 @@ import Modal from "../components/modal/Modal";
 import { formatPrice } from "../../utils/formatType";
 
 const Subscriptionmanagerpage = () => {
+  const navigate = useNavigate();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const { user } = useUserContext();
   const queryClient = useQueryClient();
@@ -156,7 +157,7 @@ const Subscriptionmanagerpage = () => {
                           <TrashIcon className="w-5 h-5" />
                         </button>
                         <button
-                          // onClick={() => onDelete(item.id)}
+                          onClick={() => navigate(`/subscription-payment/${item.id}`)}
                           type="button"
                           className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
                           aria-label="Delete"
