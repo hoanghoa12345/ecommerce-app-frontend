@@ -19,7 +19,7 @@ const HomePage = () => {
 const HeroSlide = () => {
   const { isLoading, error, isError, data: heroSlide } = useQuery("banners_slider", () => getHomeBannersSlider());
 
-  if (isLoading) return <Loader />;
+  if (isLoading) return <div className="w-full animate-pulse bg-gray-300 h-[32rem]" />;
   if (isError) return <p>{error}</p>;
   return (
     <div className="w-full">

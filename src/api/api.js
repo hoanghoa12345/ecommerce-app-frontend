@@ -314,9 +314,14 @@ export const updateProfile = async ({ token, ...Data }) => {
   }
 };
 
-export const bulkInsertProductSub = async (listProductSub) => {
+export const bulkInsertProductSub = async ({ token = "", ...listProductSub }) => {
   try {
-    const { data } = await Axios.post(`${BASE_URL}/api/v1/subscription-details/bulk`, listProductSub);
+    const { data } = await Axios.post(`${BASE_URL}/api/v1/subscription-details/bulk`, listProductSub, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
     return data;
   } catch (error) {
     throw new Error(error);
@@ -373,9 +378,14 @@ export const getAdminDashboardInfo = async (token) => {
   }
 };
 
-export const getListUserSubscription = async () => {
+export const getListUserSubscription = async (token) => {
   try {
-    const { data } = await Axios.get(BASE_URL + "/api/v1/user-subscriptions");
+    const { data } = await Axios.get(BASE_URL + "/api/v1/user-subscriptions", {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
     return data;
   } catch (error) {
     throw new Error(error);

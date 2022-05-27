@@ -1,5 +1,14 @@
 import { Disclosure, Menu, Popover, Transition } from "@headlessui/react";
-import { CollectionIcon, HeartIcon, LogoutIcon, MenuIcon, SearchIcon, ShoppingCartIcon, UserCircleIcon } from "@heroicons/react/outline";
+import {
+  CollectionIcon,
+  HeartIcon,
+  LogoutIcon,
+  MenuIcon,
+  SearchIcon,
+  ShoppingCartIcon,
+  TemplateIcon,
+  UserCircleIcon,
+} from "@heroicons/react/outline";
 import React, { useState, Fragment } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { BASE_URL, getAllCategory, getFullHeader, getProfileByUserId, getSearchResult } from "../../api/api";
@@ -38,23 +47,37 @@ const Navbar = () => {
 
   const handleLogout = async () => {
     const headers = getFullHeader(user.token);
-    const res = await Axios.post(
-      "/api/v1/logout",
-      {},
-      {
-        headers,
+    try {
+      const res = await Axios.post(
+        "/api/v1/logout",
+        {},
+        {
+          headers,
+        }
+      );
+      if (res.status === 200) {
+        localStorage.removeItem("user");
+        userDispatch(setUser(initialUser));
+        navigate("/login");
       }
-    );
-
-    if (res.status === 200) {
+    } catch (error) {
       localStorage.removeItem("user");
       userDispatch(setUser(initialUser));
       navigate("/login");
+      throw new Error(error);
     }
   };
 
   const openCartSlide = useStore((state) => state.setCartSlideOpen);
   const cartItems = useCartStore((state) => state.cartItems);
+
+  // useEffect(() => {
+  //   if (isError) {
+  //     localStorage.removeItem("user");
+  //     userDispatch(setUser(initialUser));
+  //     navigate("/login");
+  //   }
+  // }, [isError, navigate, userDispatch]);
 
   return (
     <Disclosure as="nav" className="bg-orange-600 shadow dark:bg-gray-800">
@@ -220,8 +243,22 @@ const Navbar = () => {
                   leaveFrom="transform opacity-100 scale-100"
                   leaveTo="transform opacity-0 scale-95"
                 >
-                  <Menu.Items className="absolute z-10 right-0 lg:left-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                  <Menu.Items className="absolute z-10 right-0 lg:right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                     <div className="px-1 py-1 ">
+                      {user.roles === "admin" && (
+                        <Menu.Item as={Link} to={"/admin"}>
+                          {({ active }) => (
+                            <button
+                              className={`${
+                                active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                              } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                            >
+                              <TemplateIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                              Trang Admin
+                            </button>
+                          )}
+                        </Menu.Item>
+                      )}
                       <Menu.Item as={Link} to={"/"}>
                         {({ active }) => (
                           <button

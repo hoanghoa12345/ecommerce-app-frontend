@@ -4,11 +4,13 @@ import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 import { toast, ToastContainer } from "react-toastify";
 import { BASE_URL, bulkInsertProductSub, getAllProducts, getSubscriptionById } from "../../api/api";
+import { useUserContext } from "../../context/user";
 import { formatPrice } from "../../utils/formatType";
 
 const EditSubscriptionPage = () => {
   const { id } = useParams();
   const queryClient = useQueryClient();
+  const { user } = useUserContext();
   const [productsAdded, setProductsAdded] = useState([]);
   const [inputQty, setInputQty] = useState(1);
   const navigate = useNavigate();
@@ -100,23 +102,29 @@ const EditSubscriptionPage = () => {
   }, [isSuccess, subscription]);
 
   // Handle add product list to subscriptions
-  const productsSubMutation = useMutation((listProductSub) => bulkInsertProductSub(listProductSub));
+  const productsSubMutation = useMutation(bulkInsertProductSub);
   const handleAddToSubscription = () => {
-    productsSubMutation.mutate(productsAdded, {
-      onSuccess: async () => {
-        toast.success("Cập nhật sản phẩm thành công!");
-        queryClient.invalidateQueries(`subscription_id_${id}`);
-        navigate("/create-subscription");
-      },
-      onError: async () => {
-        toast.error("Không thể cập nhật gói đăng ký");
-      },
-    });
+    productsSubMutation.mutate(
+      { ...productsAdded, token: user.token },
+      {
+        onSuccess: async () => {
+          toast.success("Cập nhật sản phẩm thành công!");
+          queryClient.invalidateQueries(`subscription_id_${id}`);
+          navigate("/create-subscription");
+        },
+        onError: async () => {
+          toast.error("Không thể cập nhật gói đăng ký");
+        },
+      }
+    );
   };
 
   return (
     <div className="max-w-6xl w-full my-8 container mx-auto">
       <ToastContainer />
+      <div>
+        <h2 className="text-2xl font-semibold my-2 text-center w-full">{subscription?.name}</h2>
+      </div>
       <div>
         <h1 className="text-2xl font-semibold">Sản phẩm đã thêm:</h1>
         <div className="flex flex-wrap flex-row items-center justify-end pt-2 space-x-2 rounded-b max-w-4xl mx-auto">

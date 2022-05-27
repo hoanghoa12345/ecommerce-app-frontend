@@ -28,29 +28,7 @@ import CheckoutPage from "./home/pages/CheckoutPage";
 
 const App = () => {
   const queryClient = new QueryClient();
-  //const navigate = useNavigate();
   const { user } = useUserContext();
-  // axios.interceptors.response.use(
-  //   (res) => res,
-  //   (err) => {
-  //     if (err.response?.status === 401) {
-  //       localStorage.removeItem("user");
-  //       userDispatch(setUser(initialUser));
-  //       navigate("/login");
-  //       throw new Error(err.response?.statusText);
-  //     }
-  //     throw err;
-  //   }
-  // );
-  // useEffect(() => {
-  //   console.log("Updated User context: ", user.name, user.token);
-  //   let token = user.token;
-  //   axios.interceptors.request.use((req) => {
-  //     req.headers.authorization = "Bearer " + token;
-  //     return req;
-  //   });
-  // }, [user]);
-
   return (
     <QueryClientProvider client={queryClient}>
       <Routes>

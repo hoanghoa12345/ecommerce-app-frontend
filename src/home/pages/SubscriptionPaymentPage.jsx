@@ -17,7 +17,7 @@ const SubscriptionPaymentPage = () => {
   //const navigate = useNavigate();
   const [message, setMessage] = useState(null);
   const { user } = useUserContext();
-  const userProfileQuery = useQuery("profile", () => getProfileByUserId(user.id));
+  const userProfileQuery = useQuery("profile", () => getProfileByUserId(user.id, user.token));
   const schema = yup
     .object({
       start_date: yup.string().required(),

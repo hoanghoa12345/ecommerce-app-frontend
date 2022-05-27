@@ -2,16 +2,19 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { MenuIcon, SearchIcon, LogoutIcon, UserCircleIcon } from "@heroicons/react/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { BellIcon, CheckCircleIcon } from "@heroicons/react/solid";
-import React, { Fragment } from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import Axios from "axios";
 import { useUserContext } from "../../context/user";
-import { getProfileByUserId, BASE_URL } from "../../api/api";
+import { getProfileByUserId, BASE_URL, getSearchResult } from "../../api/api";
 import { setUser } from "./../../action/user";
 import { initialUser } from "../../constants/initialUser";
 import { useMutation, useQuery } from "react-query";
 
 export default function AdminHeader() {
   const navigate = useNavigate();
+  const [isShowing, setIsShowing] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [searchResult, setSearchResult] = useState([]);
   const { user, userDispatch } = useUserContext();
   const { data } = useQuery("profile", () => getProfileByUserId(user.id, user.token), {
     retry: false,
@@ -39,6 +42,23 @@ export default function AdminHeader() {
       },
     }
   );
+  const handleSearchProduct = (e) => {
+    setSearchInput(e.target.value);
+    setIsShowing(true);
+  };
+  useEffect(() => {
+    if (searchInput.trim().length === 0) {
+      setIsShowing(false);
+    }
+    const sendSearchRequest = async (value) => {
+      if (value.trim().length % 2 === 0) {
+        const data = await getSearchResult(value);
+        setSearchResult(data);
+      }
+    };
+    sendSearchRequest(searchInput);
+  }, [searchInput]);
+
   // const handleLogout = async () => {
   //   const headers = getFullHeader(user.token);
   //   const res = await Axios.post("/api/v1/logout", {}, { headers });
@@ -103,10 +123,29 @@ export default function AdminHeader() {
             </div>
             <input
               className="w-full pl-8 pr-2 text-sm text-gray-700 placeholder-gray-600 bg-gray-100 border-0 rounded-md dark:placeholder-gray-500 dark:focus:shadow-outline-gray dark:focus:placeholder-gray-600 dark:bg-gray-700 dark:text-gray-200 focus:placeholder-gray-500 focus:bg-white focus:border-purple-300 focus:outline-none focus:shadow-outline-purple form-input"
-              type="text"
+              type="search"
               placeholder="Search for products"
               aria-label="Search"
+              onChange={(e) => handleSearchProduct(e)}
+              value={searchInput}
             />
+            {/* Suggest products llist*/}
+            {isShowing && (
+              <div className="absolute right-0 mt-2 h-72 w-full overflow-y-auto origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                <div className="px-1 py-1">
+                  {searchResult.map((i) => (
+                    <Link
+                      to={`/products/${i.slug}`}
+                      key={i.id}
+                      className="group flex w-full items-center rounded-md px-2 py-2 text-sm hover:bg-violet-500 hover:text-white text-gray-900"
+                    >
+                      <img className="w-10 h-10 border rounded-md mr-2" src={`${BASE_URL}/${i.image}`} alt="" />
+                      <span>{i.name}</span>
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
         <ul className="flex items-center flex-shrink-0 space-x-6">

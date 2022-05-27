@@ -22,6 +22,7 @@ import { XIcon } from "@heroicons/react/outline";
 import { formatPrice } from "../../utils/formatType";
 import Button from "../components/Button";
 import Pagination from "../components/Pagination";
+import { useUserContext } from "../../context/user";
 
 const schema = yup.object({
   name: yup.string().required(),
@@ -29,6 +30,7 @@ const schema = yup.object({
 });
 let limitProduct = 8;
 const SubscriptionPage = () => {
+  const { user } = useUserContext();
   const { data, error, isLoading, isError } = useQuery("subscriptions", getSubscriptionList);
 
   const [isOpen, setIsOpen] = useState(false);
@@ -133,18 +135,21 @@ const SubscriptionPage = () => {
   //console.log(productsAdded);
   const productsSubMutation = useMutation((listProductSub) => bulkInsertProductSub(listProductSub));
   const submitProductSubscription = () => {
-    productsSubMutation.mutate(productsAdded, {
-      onSuccess: async () => {
-        toast.success("Create new subscription");
-        setOpenPreview(false);
-        setItemPreview(null);
-        setProductsAdded([]);
-        queryClient.invalidateQueries("subscriptions");
-      },
-      onError: async () => {
-        toast.error("Can not create subscription");
-      },
-    });
+    productsSubMutation.mutate(
+      { ...productsAdded, token: user.token },
+      {
+        onSuccess: async () => {
+          toast.success("Create new subscription");
+          setOpenPreview(false);
+          setItemPreview(null);
+          setProductsAdded([]);
+          queryClient.invalidateQueries("subscriptions");
+        },
+        onError: async () => {
+          toast.error("Can not create subscription");
+        },
+      }
+    );
   };
 
   const handleEditItem = (item) => {
