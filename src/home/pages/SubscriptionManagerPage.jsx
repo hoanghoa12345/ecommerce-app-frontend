@@ -108,8 +108,44 @@ const Subscriptionmanagerpage = () => {
               message={`Bạn có chắc muốn xóa ${deleteItem.name}?`}
               onDelete={handleDeleteItem}
             />
+            <Modal title={""} setIsClose={() => setIsOpenView(false)} isOpen={isOpenView}>
+              {isLoading === false && (
+                <>
+                  <div className="text-center mb-4">
+                    <h2 className="font-bold text-lg">{selectedSub.name}</h2>
+                    <p className="text-sm">Chu kỳ: {selectedSub.duration} tháng</p>
+                  </div>
+
+                  <div className="flex flex-wrap justify-center bg-slate-50">
+                    <div className="mt-2 max-w-2xl h-[580px] overflow-y-auto">
+                      <ul>
+                        {selectedSub.details.map((item) => (
+                          <li key={item.id} className="md:flex py-6 px-4">
+                            <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                              <img className="w-full h-full object-cover" src={`${BASE_URL}/${item.product.image}`} alt="product" />
+                            </div>
+
+                            <div className="ml-4 flex flex-1 flex-col">
+                              <div className="flex flex-col justify-between text-base font-medium text-gray-900">
+                                <Link to={`/products/${item.product.slug}`} className="font-medium">
+                                  <h3>{item.product.name}</h3>
+                                </Link>
+                                <p className="mt-4">{formatPrice(item.price)}</p>
+                              </div>
+                              <div className="flex flex-row items-center mt-2">
+                                <p className="text-gray-500 mr-2">Số lượng: {item.quantity}</p>
+                              </div>
+                            </div>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  </div>
+                </>
+              )}
+            </Modal>
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-4 py-3">
                     Tên gói
@@ -118,7 +154,7 @@ const Subscriptionmanagerpage = () => {
                     chu kỳ (tháng)
                   </th>
                   <th scope="col" className="px-4 py-3">
-                    Tổng tiền (vnđ)
+                    Tổng tiền
                   </th>
                   <th scope="col" className="px-4 py-3">
                     chức năng
@@ -135,35 +171,49 @@ const Subscriptionmanagerpage = () => {
                       {item.name}
                     </th>
                     <td className="px-4 py-3">{item.duration}</td>
-                    <td className="px-4 py-3">{item.total_price}</td>
+                    <td className="px-4 py-3">{formatPrice(item.total_price)}</td>
                     <td className="px-4 py-3">
-                      <div className="flex items-center space-x-4 text-sm">
-                        <Link to={`/create-subscription/${item.id}`}>
+                      {item.status === "active" ? (
+                        <div className="flex items-center space-x-4 text-sm">
                           <button
                             type="button"
+                            onClick={() => onViewSubsDetail(item.id)}
                             className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
                             aria-label="Edit"
                           >
-                            <PencilIcon className="w-5 h-5" />
+                            <EyeIcon className="w-5 h-5" />
                           </button>
-                        </Link>
-                        <button
-                          onClick={() => onDeleteItem(item)}
-                          type="button"
-                          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
-                          aria-label="Delete"
-                        >
-                          <TrashIcon className="w-5 h-5" />
-                        </button>
-                        <button
-                          // onClick={() => onDelete(item.id)}
-                          type="button"
-                          className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
-                          aria-label="Delete"
-                        >
-                          <PlusCircleIcon className="w-5 h-5" />
-                        </button>
-                      </div>
+                        </div>
+                      ) : (
+                        <div className="flex items-center space-x-4 text-sm">
+                          <Link to={`/create-subscription/${item.id}`}>
+                            <button
+                              type="button"
+                              className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
+                              aria-label="Edit"
+                            >
+                              <PencilIcon className="w-5 h-5" />
+                            </button>
+                          </Link>
+                          <button
+                            onClick={() => onDeleteItem(item)}
+                            type="button"
+                            className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
+                            aria-label="Delete"
+                          >
+                            <TrashIcon className="w-5 h-5" />
+                          </button>
+                          <Link to={`/subscription-payment/${item.id}`}>
+                            <button
+                              type="button"
+                              className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-orange-600 dark:text-orange-500 rounded-lg focus:outline-none focus:shadow-outline-gray"
+                              aria-label="Delete"
+                            >
+                              <PlusCircleIcon className="w-5 h-5" />
+                            </button>
+                          </Link>
+                        </div>
+                      )}
                     </td>
                   </tr>
                 ))}
@@ -174,7 +224,7 @@ const Subscriptionmanagerpage = () => {
         <Tab.Panel>
           <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
             <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-              <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+              <thead className="text-xs text-gray-700 uppercase bg-gray-100 dark:bg-gray-700 dark:text-gray-400">
                 <tr>
                   <th scope="col" className="px-4 py-3">
                     Tên gói
@@ -183,7 +233,7 @@ const Subscriptionmanagerpage = () => {
                     chu kỳ (tháng)
                   </th>
                   <th scope="col" className="px-4 py-3">
-                    tổng tiền (vnđ)
+                    tổng tiền
                   </th>
                   <th scope="col" className="px-4 py-3">
                     ngày bắt đầu
@@ -209,7 +259,7 @@ const Subscriptionmanagerpage = () => {
                         {item?.subscription.name}
                       </th>
                       <td className="px-4 py-3">{item?.subscription.duration}</td>
-                      <td className="px-4 py-3">{item?.subscription.total_price}</td>
+                      <td className="px-4 py-3">{formatPrice(item?.subscription.total_price)}</td>
                       <td className="px-4 py-3">{item?.start_date}</td>
                       <td className="px-4 py-3">{item?.end_date}</td>
                       <td className="px-4 py-3">

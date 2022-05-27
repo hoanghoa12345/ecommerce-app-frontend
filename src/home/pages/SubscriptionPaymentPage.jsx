@@ -183,6 +183,7 @@ const SubscriptionPaymentPage = () => {
                       </label>
                       <input
                         {...register("start_date")}
+                        readOnly
                         type="date"
                         name="start_date"
                         id="start_date"
@@ -198,6 +199,7 @@ const SubscriptionPaymentPage = () => {
                       </label>
                       <input
                         {...register("end_date")}
+                        readOnly
                         type="date"
                         name="end_date"
                         id="end_date"
