@@ -25,6 +25,7 @@ import EditSubscriptionPage from "./home/pages/EditSubscriptionPage";
 import SubscriptionManagerpage from "./home/pages/SubscriptionManagerPage";
 import UserSubscriptionPage from "./admin/pages/UserSubscriptionPage";
 import CheckoutPage from "./home/pages/CheckoutPage";
+import OrdersPage from "./admin/pages/OrdersPage";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -54,6 +55,7 @@ const App = () => {
             <Route path="users" element={<UserPage />} />
             <Route path="subscriptions" element={<SubscriptionPage />} />
             <Route path="user-subscriptions" element={<UserSubscriptionPage />} />
+            <Route path="orders" element={<OrdersPage />} />
           </Route>
         )}
         <Route path="/register" element={<Register />} />

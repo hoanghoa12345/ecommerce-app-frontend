@@ -67,11 +67,19 @@ const SubscriptionPage = () => {
   };
 
   const handleDelete = async () => {
-    //console.log("delete subscription", deleteItem.id);
-    await deleteMutateAsync(deleteItem.id);
-    toast.success("Deleted Item");
-    setIsOpenDelete(false);
-    queryClient.invalidateQueries("subscriptions");
+    await deleteMutateAsync(
+      { id: deleteItem.id, token: user.token },
+      {
+        onSuccess: () => {
+          toast.success("Deleted Item");
+          setIsOpenDelete(false);
+          queryClient.invalidateQueries("subscriptions");
+        },
+        onError: () => {
+          toast.error("Failed delete item");
+        },
+      }
+    );
   };
 
   const onPreviewList = (item) => {

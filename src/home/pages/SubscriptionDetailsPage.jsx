@@ -1,19 +1,41 @@
 import { ViewGridAddIcon, ViewListIcon } from "@heroicons/react/solid";
 import React from "react";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { BASE_URL, getSubscriptionById } from "../../api/api";
+import { BASE_URL, copyNewSubscription, getSubscriptionById } from "../../api/api";
+import { useUserContext } from "../../context/user";
 import { formatPrice } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
 import useStore from "../states/displayState";
 
 const SubscriptionDetailsPage = () => {
+  const { user } = useUserContext();
   const { id } = useParams();
   const navigate = useNavigate();
   const { displayType, setDisplayType } = useStore();
   const { isLoading, data: subscription } = useQuery(`subscription_id_${id}`, () => getSubscriptionById(id));
+  const copySubsMutation = useMutation(copyNewSubscription);
   const handleEditSubscription = () => {
-    console.log("handle edit");
+    const formData = {
+      user_id: user.id,
+      subscription_name: subscription.name,
+      subscription_duration: subscription.duration,
+      subscription_detail: subscription.details,
+    };
+    const token = user.token;
+    copySubsMutation.mutate(
+      {
+        formData,
+        token,
+      },
+      {
+        onSuccess: (data) => {
+          if (data.status === 201) {
+            navigate(`/create-subscription/${data.subscription_id}`);
+          }
+        },
+      }
+    );
   };
   if (isLoading) return <Loader />;
   return (

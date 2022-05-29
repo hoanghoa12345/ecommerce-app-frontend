@@ -36,6 +36,7 @@ const SubscriptionPaymentPage = () => {
     isLoading,
     data: subscription,
     isError,
+    isSuccess,
     error: queryError,
   } = useQuery(`subscription_id_${id}`, () => getSubscriptionById(id), {
     retry: false,
@@ -108,7 +109,9 @@ const SubscriptionPaymentPage = () => {
       </div>
     );
   };
-
+  if (isSuccess && subscription.details.length === 0) {
+    return <p>Không có sản phẩm</p>;
+  }
   return (
     <div className="w-full mt-10 container max-w-6xl mx-auto">
       <ToastContainer />

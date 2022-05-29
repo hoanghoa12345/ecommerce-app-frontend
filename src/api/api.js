@@ -414,3 +414,69 @@ export const getUserSubsByUserId = async ({ id, token }) => {
     throw new Error(error);
   }
 };
+
+export const copyNewSubscription = async ({ formData, token }) => {
+  const { user_id, subscription_name, subscription_duration, subscription_detail } = formData;
+  try {
+    const { data } = await Axios.post(
+      BASE_URL + `/api/v1/subscriptions/copy-new-subscription`,
+      {
+        user_id,
+        subscription_name,
+        subscription_duration,
+        subscription_detail,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const createNewOrder = async ({ formData, token }) => {
+  try {
+    const { data } = await Axios.post(BASE_URL + "/api/v1/order", formData, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getListOrder = async (token) => {
+  try {
+    const { data } = await Axios.get(BASE_URL + "/api/v1/orders", {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const deleteOrderById = async ({ id, token }) => {
+  try {
+    const { data } = await Axios.delete(BASE_URL + "/api/v1/orders/" + id, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

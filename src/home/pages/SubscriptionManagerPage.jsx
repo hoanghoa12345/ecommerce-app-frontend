@@ -280,6 +280,26 @@ const Subscriptionmanagerpage = () => {
               </tbody>
             </table>
             <Modal title={""} setIsClose={() => setIsOpenView(false)} isOpen={isOpenView}>
+              {isLoading && (
+                <>
+                  <div className="flex items-center flex-col mb-4">
+                    <div className="h-6 w-6/12 rounded-md bg-gray-300" />
+                    <div className="h-6 w-4/12 rounded-md bg-gray-300 mt-2" />
+                  </div>
+                  <div className="md:flex py-6 px-4 animate-pulse">
+                    <div className="h-24 w-24 flex-shrink-0 rounded-md border border-gray-200 bg-gray-300" />
+                    <div className="ml-4 flex flex-1 flex-col">
+                      <div className="flex flex-col justify-between text-base font-medium text-gray-900">
+                        <div className="h-6 w-full rounded-md bg-gray-300" />
+                        <div className="h-6 w-4/12 rounded-md bg-gray-300 mt-4" />
+                      </div>
+                      <div className="flex flex-row items-center mt-2">
+                        <div className="h-6 w-4/12 rounded-md bg-gray-300" />
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
               {isLoading === false && (
                 <>
                   <div className="text-center mb-4">

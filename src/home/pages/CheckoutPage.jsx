@@ -1,14 +1,18 @@
-import React from "react";
+import React, { useState, Fragment } from "react";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import useCartStore from "../states/cartState";
 import { formatPrice } from "../../utils/formatType";
-import { BASE_URL, getProfileByUserId } from "../../api/api";
-import { TrashIcon } from "@heroicons/react/solid";
+import { BASE_URL, createNewOrder, getProfileByUserId } from "../../api/api";
+import { CheckIcon, SelectorIcon, TrashIcon } from "@heroicons/react/solid";
 import { useUserContext } from "../../context/user";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import Loader from "../components/loader/Loader";
+import Modal from "../components/modal/Modal";
+import { Combobox, Transition } from "@headlessui/react";
+import { BadgeCheckIcon } from "@heroicons/react/outline";
+import { useNavigate } from "react-router-dom";
 
 const schema = yup
   .object({
@@ -19,7 +23,11 @@ const schema = yup
   .required();
 
 const CheckoutPage = () => {
-  const { cartRemoveItem, cartItems: products, cartIncrementQty, cartDecrementQty } = useCartStore();
+  const navigate = useNavigate();
+  const [isOpenView, setIsOpenView] = useState(false);
+  const [isOpenPayment, setIsOpenPayment] = useState(false);
+  const [checkoutInfo, setCheckoutInfo] = useState({});
+  const { cartRemoveItem, cartItems: products, cartIncrementQty, cartDecrementQty, cartDestroy } = useCartStore();
   const { user } = useUserContext();
   const userProfileQuery = useQuery("profile", () => getProfileByUserId(user.id, user.token));
   const {
@@ -28,8 +36,48 @@ const CheckoutPage = () => {
     formState: { errors },
   } = useForm({ resolver: yupResolver(schema) });
 
+  const checkoutMutation = useMutation(createNewOrder);
+
   const onSubmit = (formdata) => {
+    setCheckoutInfo(formdata);
+    setIsOpenView(true);
     console.log(formdata);
+  };
+
+  const handlePayment = (data) => {
+    console.log(data);
+    //Cancel modal fill bank info to payment
+    setIsOpenView(false);
+    setIsOpenPayment(true);
+    let total_price = products.reduce((previousValue, currentsValue) => previousValue + currentsValue.product.price * currentsValue.qty, 0);
+    let total_qty = products.reduce((previousValue, currentsValue) => previousValue + currentsValue.qty, 0);
+    let order_detail = [];
+    products.forEach((element) => {
+      order_detail.push({
+        product_id: element.product.id,
+        quantity: element.qty,
+        price: element.product.price,
+      });
+    });
+    checkoutMutation.mutate(
+      {
+        formData: {
+          user_id: user.id,
+          total_price: total_price,
+          total_qty: total_qty,
+          status: "not_delivery",
+          address: checkoutInfo.address,
+          phone_number: checkoutInfo.phone_number,
+          order_detail: order_detail,
+        },
+        token: user.token,
+      },
+      {
+        onSuccess: () => {
+          cartDestroy();
+        },
+      }
+    );
   };
 
   if (userProfileQuery.isLoading) {
@@ -150,9 +198,9 @@ const CheckoutPage = () => {
             </div>
             <span className="text-left text-sm font-medium text-gray-700 py-2 px-6">Phương thức thanh toán: Vui lòng chọn</span>
             <select className="text-sm border-0" {...register("payment_status")}>
-              <option value="atm_debit_card">Thẻ ghi nợ nội địa</option>
+              <option value="atm_debit_card">Thẻ ngân hàng nội địa</option>
               <option value="online_wallet">Ví điện tử</option>
-              <option value="visa_debit_card">Thẻ thanh toán quốc tế</option>
+              <option value="visa_debit_card">Thẻ quốc tế</option>
             </select>
             <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
               <button
@@ -165,6 +213,29 @@ const CheckoutPage = () => {
           </div>
         </form>
       </div>
+
+      <Modal title="" setIsClose={() => setIsOpenView(false)} isOpen={isOpenView}>
+        {checkoutInfo?.payment_status === "atm_debit_card" && <ATMPaymentView onPayment={(data) => handlePayment(data)} />}
+      </Modal>
+      <Modal title={checkoutMutation.isLoading ? "Đang xử lý..." : ""} setIsClose={() => setIsOpenPayment(false)} isOpen={isOpenPayment}>
+        {checkoutMutation.isLoading && <Loader />}
+        {checkoutMutation.isSuccess && (
+          <div className="flex flex-col justify-center items-center mx-12">
+            <BadgeCheckIcon className="w-8 h-8 text-green-600 text-center" />
+            <h2 className="text-2xl font-semibold">Thanh toán thành công!</h2>
+            <p className="text-sm text-gray-700">
+              Đơn hàng đã được thanh toán thành công! Vui lòng kiểm tra thông tin đơn hàng trong email
+            </p>
+            <button
+              type="button"
+              onClick={() => navigate("/")}
+              className="inline-flex w-4/12 justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            >
+              Trở về trang chủ
+            </button>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };
@@ -256,3 +327,162 @@ const OrderTable = ({ cartDecrementQty, cartIncrementQty, cartRemoveItem, produc
 };
 
 export default CheckoutPage;
+
+const bankInfoSchema = yup
+  .object({
+    card_number: yup.string().required("Vui lòng nhập số thẻ"),
+    card_date: yup.string().required("Vui lòng nhập ngày phát hành thẻ"),
+    card_holder: yup.string().required("Vui lòng nhập tên chủ thẻ"),
+  })
+  .required();
+const bgUrl = "http://localhost:8000/upload/bank_sprites.png";
+const banksList = [
+  { id: 1, name: "AB Bank", style: { width: "101px", height: "50px", background: `url(${bgUrl}) -297px -260px` } },
+  { id: 2, name: "ACB Bank", style: { width: "99px", height: "50px", background: `url(${bgUrl}) -402px -50px` } },
+  { id: 3, name: "Agribank", style: { width: "100px", height: "50px", background: `url(${bgUrl}) -0 -312px` } },
+  { id: 4, name: "Bac A Bank", style: { width: "100px", height: "50px", background: `url(${bgUrl}) -100px -312px` } },
+  { id: 5, name: "BIDV", style: { width: "100px", height: "50px", background: `url(${bgUrl}) -200px -312px` } },
+  { id: 6, name: "Citi Bank", style: { width: "101px", height: "52px", background: `url(${bgUrl}) -0 -0` } },
+  { id: 7, name: "Eximbank", style: { width: "99px", height: "52px", background: `url(${bgUrl}) -302px -156px` } },
+  { id: 8, name: "HD Bank", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -0 -104px` } },
+  { id: 9, name: "TVB", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -100px -104px` } },
+  { id: 10, name: "LienVietPost Bank", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -202px -0` } },
+  { id: 11, name: "MB Bank", style: { width: "101px", height: "52px", background: `url(${bgUrl}) -101px -0` } },
+  { id: 12, name: "MSB", style: { width: "99px", height: "52px", background: `url(${bgUrl}) -302px -208px` } },
+  { id: 13, name: "OCB", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -202px -52px` } },
+  { id: 14, name: "Ocean Bank", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -202px -104px` } },
+  { id: 15, name: "PV Com bank", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -0 -156px` } },
+  { id: 16, name: "Sacombank", style: { width: "101px", height: "52px", background: `url(${bgUrl}) -0 -52px` } },
+  { id: 17, name: "Saigon Bank", style: { width: "99px", height: "52px", background: `url(${bgUrl}) -0 -260px` } },
+  { id: 18, name: "SCB", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -100px -156px` } },
+  { id: 19, name: "SEA Bank", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -200px -156px` } },
+  { id: 20, name: "SHB", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -0 -208px` } },
+  { id: 21, name: "Shinhan Bank", style: { width: "101px", height: "52px", background: `url(${bgUrl}) -101px -52px` } },
+  { id: 22, name: "Techcombank", style: { width: "99px", height: "52px", background: `url(${bgUrl}) -99px -260px` } },
+  { id: 23, name: "TB Bank", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -100px -208px` } },
+  { id: 24, name: "Bản Việt", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -200px -208px` } },
+  { id: 25, name: "VIB", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -302px -0` } },
+  { id: 26, name: "Vietcombank", style: { width: "99px", height: "52px", background: `url(${bgUrl}) -198px -260px` } },
+  { id: 27, name: "Vietin Bank", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -302px -52px` } },
+  { id: 28, name: "VP Bank", style: { width: "100px", height: "52px", background: `url(${bgUrl}) -302px -104px` } },
+  { id: 29, name: "VISA", style: { width: "99px", height: "50px", background: `url(${bgUrl}) -402px -100px` } },
+  { id: 30, name: "JCB", style: { width: "100px", height: "50px", background: `url(${bgUrl}) -300px -312px` } },
+  { id: 31, name: "Master card", style: { width: "100px", height: "50px", background: `url(${bgUrl}) -402px -0` } },
+];
+const ATMPaymentView = ({ onPayment }) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({ resolver: yupResolver(bankInfoSchema) });
+  const onSubmit = (formdata) => {
+    onPayment({ ...formdata, bank_name: selected.name });
+  };
+  const [selected, setSelected] = useState(banksList[0]);
+  const [query, setQuery] = useState("");
+
+  const filteredBank =
+    query === ""
+      ? banksList
+      : banksList.filter((bank) => bank.name.toLowerCase().replace(/\s+/g, "").includes(query.toLowerCase().replace(/\s+/g, "")));
+  return (
+    <div className="w-full h-[400px] bg-gray-100">
+      <Combobox value={selected} onChange={setSelected}>
+        <div className="relative mt-1">
+          <div className="relative w-full cursor-default overflow-hidden rounded-lg bg-white text-left shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-opacity-75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300 sm:text-sm">
+            <Combobox.Input
+              className="w-full border-none py-2 pl-3 pr-10 text-sm leading-5 text-gray-900 focus:ring-0"
+              displayValue={(bank) => bank.name}
+              onChange={(event) => setQuery(event.target.value)}
+            />
+            <Combobox.Button className="absolute inset-y-0 right-0 flex items-center pr-2">
+              <SelectorIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+            </Combobox.Button>
+          </div>
+          <Transition
+            as={Fragment}
+            leave="transition ease-in duration-100"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+            afterLeave={() => setQuery("")}
+          >
+            <Combobox.Options className="absolute mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm">
+              {filteredBank.length === 0 && query !== "" ? (
+                <div className="relative cursor-default select-none py-2 px-4 text-gray-700">Nothing found.</div>
+              ) : (
+                filteredBank.map((bankItem) => (
+                  <Combobox.Option
+                    key={bankItem.id}
+                    className={({ active }) =>
+                      `relative cursor-default select-none py-2 pl-10 pr-4 ${active ? "bg-orange-600 text-white" : "text-gray-900"}`
+                    }
+                    value={bankItem}
+                  >
+                    {({ selected, active }) => (
+                      <div className="flex items-center">
+                        <div className="mr-2" style={bankItem.style}></div>
+                        <span className={`block truncate ${selected ? "font-medium" : "font-normal"}`}>{bankItem.name}</span>
+                        {selected ? (
+                          <span className={`absolute inset-y-0 left-0 flex items-center pl-3 ${active ? "text-white" : "text-orange-600"}`}>
+                            <CheckIcon className="h-5 w-5" aria-hidden="true" />
+                          </span>
+                        ) : null}
+                      </div>
+                    )}
+                  </Combobox.Option>
+                ))
+              )}
+            </Combobox.Options>
+          </Transition>
+        </div>
+      </Combobox>
+      <div>
+        <div style={selected.style}></div>
+
+        <span>Ngân hàng: {selected.name}</span>
+      </div>
+      <div>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div className="flex flex-col my-2">
+            <input
+              {...register("card_number")}
+              className="p-2 border rounded-md w-11/12"
+              name="card_number"
+              type="text"
+              placeholder="Nhập số thẻ"
+            />
+            <span className="text-xs text-red-600 dark:text-red-400">{errors.card_number?.message}</span>
+          </div>
+          <div className="flex flex-col my-2 mr-4">
+            <input
+              {...register("card_date")}
+              className="p-2 border rounded-md w-3/12 "
+              name="card_date"
+              type="text"
+              placeholder="Ngày phát hành"
+            />
+            <span className="text-xs text-red-600 dark:text-red-400">{errors.card_date?.message}</span>
+          </div>
+          <div className="flex flex-col my-2">
+            <input
+              {...register("card_holder")}
+              className="p-2 border rounded-md w-7/12 "
+              name="card_holder"
+              type="text"
+              placeholder="Tên chủ thẻ"
+            />
+            <span className="text-xs text-red-600 dark:text-red-400">{errors.card_holder?.message}</span>
+          </div>
+          <div className="flex justify-end">
+            <button
+              type="submit"
+              className="inline-flex w-4/12 justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+            >
+              Thực hiện giao dịch
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+};

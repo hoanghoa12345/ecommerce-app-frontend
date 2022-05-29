@@ -24,6 +24,10 @@ const store = (set) => ({
         cartItem.product.id === item.product.id ? { ...cartItem, qty: cartItem.qty > 1 ? cartItem.qty - 1 : cartItem.qty } : cartItem
       ),
     })),
+  cartDestroy: () =>
+    set(() => ({
+      cartItems: [],
+    })),
 });
 
 const useStore = create(

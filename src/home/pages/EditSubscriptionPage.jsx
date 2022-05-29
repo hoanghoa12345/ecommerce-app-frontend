@@ -240,8 +240,6 @@ const EditSubscriptionPage = () => {
   );
 };
 
-export default EditSubscriptionPage;
-
 const LoaderAnimate = () => {
   return (
     <svg
@@ -262,3 +260,5 @@ const LoaderAnimate = () => {
     </svg>
   );
 };
+
+export default EditSubscriptionPage;

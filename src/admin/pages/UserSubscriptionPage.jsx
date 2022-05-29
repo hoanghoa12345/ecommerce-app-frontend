@@ -35,13 +35,19 @@ const UserSubscriptionPage = () => {
               <td className="px-4 py-3">{item.start_date}</td>
               <td className="px-4 py-3">{item.end_date}</td>
               <td className="px-4 py-3 text-xs">
-                <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
-                  {item.status}
-                </span>
+                {item.status === "active" ? (
+                  <span className="px-2 py-1 font-semibold leading-tight text-green-700 bg-green-100 rounded-full dark:bg-green-700 dark:text-green-100">
+                    {item.status}
+                  </span>
+                ) : (
+                  <span className="px-2 py-1 font-semibold leading-tight text-red-700 bg-red-100 rounded-full dark:text-red-100 dark:bg-red-700">
+                    {item.status}
+                  </span>
+                )}
               </td>
               <td className="px-4 py-3">{item.delivery_schedule}</td>
               <td className="px-4 py-3">{formatDate(item.created_at)}</td>
-              <td className="px-4 py-3">
+              <td className="px-4 py-3 w-8">
                 <Menu as="div">
                   <Menu.Button
                     className="flex items-center justify-between px-2 py-2 text-sm font-medium leading-5 text-purple-600 rounded-lg dark:text-gray-400 focus:outline-none focus:shadow-outline-gray hover:bg-gray-300 hover:rounded-full"

@@ -1,5 +1,13 @@
 import React from "react";
-import { ClipboardListIcon, UserGroupIcon, CollectionIcon, HomeIcon, UsersIcon, ViewGridIcon } from "@heroicons/react/outline";
+import {
+  ClipboardListIcon,
+  UserGroupIcon,
+  CollectionIcon,
+  HomeIcon,
+  UsersIcon,
+  ViewGridIcon,
+  ShoppingBagIcon,
+} from "@heroicons/react/outline";
 import { Link, useNavigate, useMatch, useResolvedPath } from "react-router-dom";
 import { Disclosure, Transition } from "@headlessui/react";
 function SidebarLink({ children, to, ...props }) {
@@ -60,6 +68,10 @@ export default function DesktopSidebar() {
             <SidebarLink to="/admin/user-subscriptions">
               <UsersIcon className="w-5 h-5" />
               <span className="ml-4">User Subs</span>
+            </SidebarLink>
+            <SidebarLink to="/admin/orders">
+              <ShoppingBagIcon className="w-5 h-5" />
+              <span className="ml-4">Orders</span>
             </SidebarLink>
           </ul>
           <div className="px-6 my-6">

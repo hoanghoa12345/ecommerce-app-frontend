@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { getSubscriptionsByAdmin } from "../../api/api";
@@ -6,15 +6,19 @@ import { formatPrice, slugify } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
 
 const SubscriptionListPage = () => {
+  const [limitProduct, setLimitProduct] = useState(8);
   const subscriptionList = useQuery("subscriptions", () => getSubscriptionsByAdmin());
   if (subscriptionList.isLoading) return <Loader />;
   if (subscriptionList.isError) return <p className="text-red-600">{subscriptionList.error}</p>;
+  const paginateData = subscriptionList.data?.slice(0, limitProduct);
+  const subscriptionListLength = subscriptionList.data?.length;
+
   return (
     <div className="bg-white">
       <div className="max-w-2xl mx-auto py-2 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8">
         <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">Gói đăng ký</h2>
         <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {subscriptionList.data.map((subItem) => (
+          {paginateData.map((subItem) => (
             <div key={subItem.id} className="group relative">
               {Array.isArray(subItem.details) && (
                 <div className="w-full min-h-80 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 border-1">
@@ -99,6 +103,19 @@ const SubscriptionListPage = () => {
               </div>
             </div>
           ))}
+        </div>
+        <div className="mt-8 flex justify-center w-full">
+          {paginateData.length < subscriptionListLength && (
+            <button
+              onClick={() => {
+                setLimitProduct(subscriptionListLength);
+              }}
+              type="button"
+              className="py-2 px-4  bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
+            >
+              Xem thêm gói
+            </button>
+          )}
         </div>
       </div>
     </div>
