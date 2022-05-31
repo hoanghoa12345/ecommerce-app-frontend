@@ -88,7 +88,7 @@ const CreateSubscriptionPage = () => {
 
   if (isLoading) return <Loader />;
   return (
-    <div className="w-full my-10 container max-w-6xl mx-auto">
+    <div className="w-full my-10 container max-w-6xl mx-auto min-h-[80vh]">
       {/* Modal add subscriptions */}
       <Modal isOpen={openModalCreate} setIsClose={() => setOpenModalCreate(!openModalCreate)} title="Tạo gói đăng ký mới">
         <form onSubmit={handleSubmit(submitCreateSubscription)} className="space-y-4">

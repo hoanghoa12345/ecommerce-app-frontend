@@ -1,4 +1,4 @@
-import React, { Fragment } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import { useQuery } from "react-query";
 import { getListUserSubscription } from "../../api/api";
 import Loader from "../components/Loader";
@@ -6,10 +6,21 @@ import { formatDate } from "../../utils/date";
 import { DotsVerticalIcon, PencilIcon, TrashIcon } from "@heroicons/react/solid";
 import { Menu, Transition } from "@headlessui/react";
 import { useUserContext } from "../../context/user";
+import { DOTS, usePagination } from "../hooks/usePagination";
 
+let PageSize = 8;
 const UserSubscriptionPage = () => {
   const { user } = useUserContext();
   const { data: userSubscriptionList, isLoading } = useQuery("user-subscriptions-list", () => getListUserSubscription(user.token));
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const currentTableData = useMemo(() => {
+    const firstPageIndex = (currentPage - 1) * PageSize;
+    const lastPageIndex = firstPageIndex + PageSize;
+    return userSubscriptionList?.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, userSubscriptionList]);
+
   if (isLoading) return <Loader />;
   return (
     <div className="container grid px-6 mx-auto">
@@ -29,7 +40,7 @@ const UserSubscriptionPage = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y">
-          {userSubscriptionList.map((item) => (
+          {currentTableData.map((item) => (
             <tr key={item.id} className="text-gray-700">
               <td className="px-4 py-3">{item.user.name}</td>
               <td className="px-4 py-3">{item.start_date}</td>
@@ -99,6 +110,79 @@ const UserSubscriptionPage = () => {
           ))}
         </tbody>
       </table>
+      <div className="flex justify-center my-4">
+        <PaginationExample
+          currentPage={currentPage}
+          totalCount={userSubscriptionList.length}
+          pageSize={PageSize}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      </div>
+    </div>
+  );
+};
+
+const PaginationExample = (props) => {
+  const { onPageChange, totalCount, siblingCount = 1, currentPage, pageSize } = props;
+
+  const paginationRange = usePagination({
+    currentPage,
+    totalCount,
+    siblingCount,
+    pageSize,
+  });
+
+  if (currentPage === 0 || paginationRange.length < 2) {
+    return null;
+  }
+
+  const onNext = () => {
+    onPageChange(currentPage + 1);
+  };
+
+  const onPrevious = () => {
+    onPageChange(currentPage - 1);
+  };
+
+  let lastPage = paginationRange[paginationRange.length - 1];
+  return (
+    <div className="inline-flex -space-x-px">
+      <button
+        className="py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 disabled:cursor-not-allowed disabled:text-gray-300"
+        onClick={onPrevious}
+        disabled={currentPage === 1}
+      >
+        Previous
+      </button>
+      {paginationRange.map((pageNumber) => {
+        if (pageNumber === DOTS) {
+          return (
+            <button className="py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
+              &#8230;
+            </button>
+          );
+        }
+
+        return (
+          <button
+            className={
+              pageNumber === currentPage
+                ? "py-2 px-3 text-blue-600 bg-blue-50 border border-gray-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white"
+                : "py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white"
+            }
+            onClick={() => onPageChange(pageNumber)}
+          >
+            {pageNumber}
+          </button>
+        );
+      })}
+      <button
+        className="py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white disabled:cursor-not-allowed disabled:text-gray-300"
+        onClick={onNext}
+        disabled={currentPage === lastPage}
+      >
+        Next
+      </button>
     </div>
   );
 };

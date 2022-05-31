@@ -5,6 +5,7 @@ import { BASE_URL, getAdminDashboardInfo } from "../../api/api";
 import { useUserContext } from "../../context/user";
 import Loader from "../components/Loader";
 import Pagination from "../components/Pagination";
+import { formatPrice } from "../../utils/formatType";
 let limitUser = 4;
 const DashboardPage = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -43,8 +44,8 @@ const DashboardPage = () => {
               <CashIcon className="w-5 h-5" />
             </div>
             <div>
-              <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Account balance</p>
-              <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">{data.account_balance}</p>
+              <p className="mb-2 text-sm font-medium text-gray-600 dark:text-gray-400">Income</p>
+              <p className="text-lg font-semibold text-gray-700 dark:text-gray-200">{formatPrice(data.account_balance)}</p>
             </div>
           </div>
           {/* Card */}
