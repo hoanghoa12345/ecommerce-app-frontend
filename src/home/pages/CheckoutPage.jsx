@@ -41,14 +41,15 @@ const CheckoutPage = () => {
   const onSubmit = (formdata) => {
     setCheckoutInfo(formdata);
     setIsOpenView(true);
+    //Show ATM Bank choose
+    setIsOpenPayment(true);
     console.log(formdata);
   };
 
   const handlePayment = (data) => {
     console.log(data);
-    //Cancel modal fill bank info to payment
-    setIsOpenView(false);
-    setIsOpenPayment(true);
+    //Hide form fill bank info to payment and show successful payment
+    setIsOpenPayment(false);
     let total_price = products.reduce((previousValue, currentsValue) => previousValue + currentsValue.product.price * currentsValue.qty, 0);
     let total_qty = products.reduce((previousValue, currentsValue) => previousValue + currentsValue.qty, 0);
     let order_detail = [];
@@ -214,10 +215,33 @@ const CheckoutPage = () => {
         </form>
       </div>
 
-      <Modal title="" setIsClose={() => setIsOpenView(false)} isOpen={isOpenView}>
-        {checkoutInfo?.payment_status === "atm_debit_card" && <ATMPaymentView onPayment={(data) => handlePayment(data)} />}
+      <Modal title={checkoutMutation.isLoading ? "Đang xử lý..." : ""} setIsClose={() => setIsOpenView(false)} isOpen={isOpenView}>
+        {isOpenPayment ? (
+          <ATMPaymentView onPayment={(data) => handlePayment(data)} />
+        ) : (
+          <div>
+            {checkoutMutation.isLoading ? (
+              <Loader />
+            ) : (
+              <div className="flex flex-col justify-center items-center mx-12">
+                <BadgeCheckIcon className="w-8 h-8 text-green-600 text-center" />
+                <h2 className="text-2xl font-semibold">Thanh toán thành công!</h2>
+                <p className="text-sm text-gray-700">
+                  Đơn hàng đã được thanh toán thành công! Vui lòng kiểm tra thông tin đơn hàng trong email
+                </p>
+                <button
+                  type="button"
+                  onClick={() => navigate("/")}
+                  className="inline-flex w-4/12 justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-orange-600 hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-orange-500"
+                >
+                  Trở về trang chủ
+                </button>
+              </div>
+            )}
+          </div>
+        )}
       </Modal>
-      <Modal title={checkoutMutation.isLoading ? "Đang xử lý..." : ""} setIsClose={() => setIsOpenPayment(false)} isOpen={isOpenPayment}>
+      {/* <Modal title={checkoutMutation.isLoading ? "Đang xử lý..." : ""} setIsClose={() => setIsOpenPayment(false)} isOpen={isOpenPayment}>
         {checkoutMutation.isLoading && <Loader />}
         {checkoutMutation.isSuccess && (
           <div className="flex flex-col justify-center items-center mx-12">
@@ -235,7 +259,7 @@ const CheckoutPage = () => {
             </button>
           </div>
         )}
-      </Modal>
+      </Modal> */}
     </div>
   );
 };
