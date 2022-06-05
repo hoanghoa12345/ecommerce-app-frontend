@@ -480,3 +480,21 @@ export const deleteOrderById = async ({ id, token }) => {
     throw new Error(error);
   }
 };
+
+export const updateStatusOrderById = async ({ id, status, token }) => {
+  try {
+    const { data } = await Axios.put(
+      BASE_URL + "/api/v1/orders/" + id,
+      { status },
+      {
+        headers: {
+          Accept: "application/json",
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
