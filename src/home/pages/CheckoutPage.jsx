@@ -43,11 +43,9 @@ const CheckoutPage = () => {
     setIsOpenView(true);
     //Show ATM Bank choose
     setIsOpenPayment(true);
-    console.log(formdata);
   };
 
   const handlePayment = (data) => {
-    console.log(data);
     //Hide form fill bank info to payment and show successful payment
     setIsOpenPayment(false);
     let total_price = products.reduce((previousValue, currentsValue) => previousValue + currentsValue.product.price * currentsValue.qty, 0);
