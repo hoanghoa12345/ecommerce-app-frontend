@@ -1,6 +1,6 @@
 import { ArrowRightIcon } from "@heroicons/react/outline";
 import React, { useCallback, useState } from "react";
-import { useMutation, useQuery } from "react-query";
+import { useMutation, useQuery, useQueryClient } from "react-query";
 import { BASE_URL, getProfileByUserId, updateProfile } from "../../api/api";
 import { useUserContext } from "../../context/user";
 import Loader from "../components/loader/Loader";
@@ -11,6 +11,7 @@ const ProfilePage = () => {
   const [isUpdated, setIsUpdated] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const { user } = useUserContext();
+  const QueryClient = useQueryClient();
   const { data: profile, isLoading, isError } = useQuery("profile", () => getProfileByUserId(user.id, user.token));
   //console.log(profile);
   const { register, handleSubmit, setValue } = useForm();
@@ -26,7 +27,10 @@ const ProfilePage = () => {
     await mutationUpdateProfile.mutateAsync(
       { ...dataProfile, user_id: user.id, token: user.token },
       {
-        onSuccess: () => setIsUpdated(true),
+        onSuccess: () => {
+          setIsUpdated(true);
+          QueryClient.invalidateQueries("profile");
+        },
       }
     );
   };
