@@ -49,12 +49,14 @@ const Subscriptionmanagerpage = () => {
     setIsOpenView(true);
   };
 
-  if (Subscription.isError || UserSubscription.isError) {
-    return (
-      <p>
-        {Subscription.error.message} || {UserSubscription.error.message}
-      </p>
-    );
+  if (Subscription.isError) {
+    console.error(Subscription.error);
+    return <p>Có lỗi xảy ra khi load thông tin gói</p>;
+  }
+
+  if (UserSubscription.isError) {
+    console.error(UserSubscription.error);
+    return <p className="flex w-full justify-center text-center h-screen">Có lỗi xảy ra khi load thông tin đăng ký gói</p>;
   }
 
   if (Subscription.isLoading) {
@@ -249,9 +251,18 @@ const Subscriptionmanagerpage = () => {
               </thead>
               <tbody>
                 {UserSubscription.isLoading ? (
-                  <Loader />
+                  <tr>
+                    <th></th>
+                    <th></th>
+                    <th></th>
+                    <th>
+                      <Loader />
+                    </th>
+                    <th></th>
+                    <th></th>
+                  </tr>
                 ) : (
-                  UserSubscription.data.map((item, index) => (
+                  UserSubscription.data?.map((item, index) => (
                     <tr
                       key={index}
                       className="odd:bg-white even:bg-gray-50 border-b odd:dark:bg-gray-800 even:dark:bg-gray-700 dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600"

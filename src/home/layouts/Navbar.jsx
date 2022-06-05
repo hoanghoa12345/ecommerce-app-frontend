@@ -259,7 +259,7 @@ const Navbar = () => {
                           )}
                         </Menu.Item>
                       )}
-                      <Menu.Item as={Link} to={"/"}>
+                      <Menu.Item as={Link} to={"/profile"}>
                         {({ active }) => (
                           <button
                             className={`${

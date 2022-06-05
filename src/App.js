@@ -26,6 +26,7 @@ import SubscriptionManagerpage from "./home/pages/SubscriptionManagerPage";
 import UserSubscriptionPage from "./admin/pages/UserSubscriptionPage";
 import CheckoutPage from "./home/pages/CheckoutPage";
 import OrdersPage from "./admin/pages/OrdersPage";
+import ProfilePage from "./home/pages/ProfilePage";
 
 const App = () => {
   const queryClient = new QueryClient();
@@ -45,6 +46,7 @@ const App = () => {
           <Route path="create-subscription/:id" element={<EditSubscriptionPage />} />
           <Route path="manager-subscription" element={<SubscriptionManagerpage />} />
           <Route path="checkout" element={<CheckoutPage />} />
+          <Route path="profile" element={<ProfilePage />} />
         </Route>
         {user.roles === "admin" && (
           <Route path="/admin" element={<AdminLayout />}>

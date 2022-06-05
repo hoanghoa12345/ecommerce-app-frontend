@@ -2,7 +2,7 @@ import { Menu } from "@headlessui/react";
 import { DotsVerticalIcon, EyeIcon, TrashIcon } from "@heroicons/react/solid";
 import React, { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { deleteOrderById, getListOrder } from "../../api/api";
+import { deleteOrderById, getListOrder, updateStatusOrderById } from "../../api/api";
 import { useUserContext } from "../../context/user";
 import { formatDate } from "../../utils/date";
 import { formatPrice } from "../../utils/formatType";
@@ -23,6 +23,7 @@ const OrdersPage = () => {
     setItemView(item);
   };
   const { mutate: deleteOrderMutate } = useMutation(deleteOrderById);
+  const { mutate: updateStatusMutate } = useMutation(updateStatusOrderById);
   const handleOpenDeleteModal = (id) => {
     setIsOpenDelete(true);
     setDeleteId(id);
@@ -34,6 +35,17 @@ const OrdersPage = () => {
         onSuccess: () => {
           queryClient.invalidateQueries("orders");
           setIsOpenDelete(false);
+        },
+      }
+    );
+  };
+  const handleUpdateStatus = (id) => {
+    updateStatusMutate(
+      { id, status: "delivered", token: user.token },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries("orders");
+          setIsOpenView(false);
         },
       }
     );
@@ -84,6 +96,20 @@ const OrdersPage = () => {
                   ))}
                 </tbody>
               </table>
+            </div>
+            <div className="mt-4 flex flex-row justify-between">
+              <button
+                onClick={() => setIsOpenView(false)}
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => handleUpdateStatus(itemView.id)}
+                className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"
+              >
+                Mark as delivered
+              </button>
             </div>
           </div>
         </div>
