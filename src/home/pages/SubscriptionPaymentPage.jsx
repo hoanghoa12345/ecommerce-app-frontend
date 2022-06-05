@@ -54,7 +54,7 @@ const SubscriptionPaymentPage = () => {
   });
 
   const onSubmit = (data) => {
-    console.log(data);
+    // console.log(data);
     userSubscriptionMutation.mutate(data);
     setMessage("Đăng ký gói thành công!");
   };
@@ -70,7 +70,7 @@ const SubscriptionPaymentPage = () => {
 
     let endDateEpoch = startDateEpoch + duration * epochMonth * Number(times);
 
-    console.log(endDateEpoch);
+    // console.log(endDateEpoch);
 
     const endDate = new Date(endDateEpoch).toISOString().split("T")[0];
 
@@ -213,7 +213,7 @@ const SubscriptionPaymentPage = () => {
 
                     <div className="col-span-6 sm:col-span-4">
                       <label htmlFor="email-address" className="block text-sm font-medium text-gray-700">
-                        Email address
+                        Email
                       </label>
                       <input
                         {...register("email")}

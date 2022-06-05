@@ -19,6 +19,7 @@ const Subscriptionmanagerpage = () => {
   const { mutateAsync: deleteMutateAsync } = useMutation(deleteSubcription, {
     onSuccess: () => {
       queryClient.invalidateQueries("SubsByUserId");
+      queryClient.invalidateQueries("UserSubsByUserId");
     },
   });
   const [isOpenDelete, setIsOpenDelete] = useState(false);

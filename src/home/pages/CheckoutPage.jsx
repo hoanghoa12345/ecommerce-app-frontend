@@ -41,11 +41,11 @@ const CheckoutPage = () => {
   const onSubmit = (formdata) => {
     setCheckoutInfo(formdata);
     setIsOpenView(true);
-    console.log(formdata);
+    // console.log(formdata);
   };
 
   const handlePayment = (data) => {
-    console.log(data);
+    // console.log(data);
     //Cancel modal fill bank info to payment
     setIsOpenView(false);
     setIsOpenPayment(true);
