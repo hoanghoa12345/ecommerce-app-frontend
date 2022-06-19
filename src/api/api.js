@@ -498,3 +498,69 @@ export const updateStatusOrderById = async ({ id, status, token }) => {
     throw new Error(error);
   }
 };
+
+export const forgotPassword = async (formData) => {
+  try {
+    const { data } = await Axios.post(BASE_URL + "/api/v1/forgot-password", formData, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const resetPassword = async (formData) => {
+  try {
+    const { data } = await Axios.post(BASE_URL + "/api/v1/reset-password", formData, {
+      headers: {
+        Accept: "application/json",
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const getFavoritesByUser = async ({ userId, token }) => {
+  try {
+    const { data } = await Axios.get(BASE_URL + "/api/v1/favorites/" + userId, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+export const addToFavorite = async ({ formData, token }) => {
+  try {
+    const { data } = await Axios.post(BASE_URL + "/api/v1/favorites", formData, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+export const removeFavoriteItem = async ({ id, token }) => {
+  try {
+    const { data } = await Axios.delete(BASE_URL + "/api/v1/favorites/" + id, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};

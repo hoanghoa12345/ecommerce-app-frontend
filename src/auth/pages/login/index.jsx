@@ -8,6 +8,10 @@ import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { convertUserFromRes } from "./../../../utils/convertFromRes";
 import { useMutation } from "react-query";
+import Modal from "../../../home/components/modal/Modal";
+import { AtSymbolIcon } from "@heroicons/react/outline";
+import { forgotPassword } from "../../../api/api";
+import { toast, ToastContainer } from "react-toastify";
 
 const schema = yup
   .object({
@@ -21,7 +25,14 @@ const initMessageErr = {
   password: "",
 };
 
+const resetPasswordSchema = yup
+  .object({
+    email: yup.string().email().required(),
+  })
+  .required();
+
 const Login = () => {
+  const [openModal, setOpenModal] = useState(false);
   const [messageErr, setMessageErr] = useState(initMessageErr);
   const navigate = useNavigate();
   const { user, userDispatch } = useUserContext();
@@ -105,8 +116,36 @@ const Login = () => {
       }
     }*/
   };
+
+  const openResetModal = () => {
+    setOpenModal(true);
+  };
+
+  const forgotPasswordMutation = useMutation(forgotPassword);
+
+  const {
+    register: rg,
+    handleSubmit: handleResetPassword,
+    formState: { errors: err },
+  } = useForm({
+    resolver: yupResolver(resetPasswordSchema),
+  });
+
+  const onEmailSubmit = (data) => {
+    forgotPasswordMutation.mutate(data, {
+      onSuccess: (resData) => {
+        setOpenModal(false);
+        toast.success(resData.message);
+      },
+      onError: (resErr) => {
+        toast.success(resErr.message);
+      },
+    });
+  };
+
   return (
     <div className="h-screen flex items-center">
+      <ToastContainer />
       <div className="lg:flex align-baseline max-w-md w-full mx-auto overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800 lg:max-w-4xl">
         <div
           className="hidden h-auto bg-cover lg:block lg:w-1/2"
@@ -176,9 +215,9 @@ const Login = () => {
                 <label className="block mb-2 text-sm font-medium text-gray-600 dark:text-gray-200" htmlFor="loggingPassword">
                   Password
                 </label>
-                <Link to="/" className="text-xs text-gray-500 dark:text-gray-300 hover:underline">
+                <button onClick={openResetModal} className="text-xs text-gray-500 dark:text-gray-300 hover:underline">
                   Forget Password?
-                </Link>
+                </button>
               </div>
 
               <input
@@ -212,6 +251,38 @@ const Login = () => {
           </div>
         </div>
       </div>
+      <Modal isOpen={openModal} setIsClose={() => setOpenModal(false)} title="Nhập email để khôi phục mật khẩu">
+        <form className="p-4" onSubmit={handleResetPassword(onEmailSubmit)}>
+          <div>
+            <div className="relative">
+              <label className="sr-only" htmlFor="email">
+                Email
+              </label>
+              <input
+                className="w-full py-3 pl-3 pr-12 text-sm border-2 border-gray-200 rounded"
+                id="email"
+                type="email"
+                placeholder="Email"
+                {...rg("email")}
+              />
+              <span className="absolute text-gray-500 -translate-y-1/2 pointer-events-none top-1/2 right-4">
+                <AtSymbolIcon className="w-5 h-5" />
+              </span>
+            </div>
+            <span className="text-red-600 text-sm block h-5">{err.email?.message}</span>
+          </div>
+
+          <div className="flex items-center justify-between pt-4">
+            <p className="text-sm text-gray-500">Thông tin khôi phục mật khẩu sẽ được gửi qua email</p>
+            <button type="submit" className="relative inline-block text-sm font-medium text-white group focus:outline-none focus:ring">
+              <span className="absolute inset-0 border border-red-600 group-active:border-red-500" />
+              <span className="block px-12 py-3 transition-transform bg-red-600 border border-red-600 active:border-red-500 active:bg-red-500 group-hover:-translate-x-1 group-hover:-translate-y-1">
+                Gửi Email
+              </span>
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

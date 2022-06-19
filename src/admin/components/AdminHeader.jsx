@@ -2,7 +2,7 @@ import { Disclosure, Menu, Transition } from "@headlessui/react";
 import { MenuIcon, SearchIcon, LogoutIcon, UserCircleIcon } from "@heroicons/react/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { BellIcon, CheckCircleIcon } from "@heroicons/react/solid";
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, useEffect, useRef, useState } from "react";
 import Axios from "axios";
 import { useUserContext } from "../../context/user";
 import { getProfileByUserId, BASE_URL, getSearchResult } from "../../api/api";
@@ -11,8 +11,9 @@ import { initialUser } from "../../constants/initialUser";
 import { useMutation, useQuery } from "react-query";
 
 export default function AdminHeader() {
+  const ref = useRef();
   const navigate = useNavigate();
-  const [isShowing, setIsShowing] = useState(false);
+  const [isShowing, setIsShowing] = useState(false); //Show search result
   const [searchInput, setSearchInput] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const { user, userDispatch } = useUserContext();
@@ -50,12 +51,14 @@ export default function AdminHeader() {
     if (searchInput.trim().length === 0) {
       setIsShowing(false);
     }
+
     const sendSearchRequest = async (value) => {
       if (value.trim().length % 2 === 0) {
         const data = await getSearchResult(value);
         setSearchResult(data);
       }
     };
+
     sendSearchRequest(searchInput);
   }, [searchInput]);
 
@@ -108,6 +111,21 @@ export default function AdminHeader() {
       created_at: "2022-04-27 14:08:26",
     },
   ];
+
+  useEffect(() => {
+    const checkIfClickedOutside = (e) => {
+      if (isShowing && ref.current && !ref.current.contains(e.target)) {
+        setIsShowing(false);
+      }
+    };
+
+    document.addEventListener("mousedown", checkIfClickedOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", checkIfClickedOutside);
+    };
+  }, [isShowing]);
+
   return (
     <header className="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
       <div className="container flex items-center justify-between h-full px-6 mx-auto text-purple-600 dark:text-purple-300">
@@ -129,20 +147,29 @@ export default function AdminHeader() {
               onChange={(e) => handleSearchProduct(e)}
               value={searchInput}
             />
-            {/* Suggest products llist*/}
+            {/* Suggest products list*/}
             {isShowing && (
-              <div className="absolute right-0 mt-2 h-72 w-full overflow-y-auto origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+              <div
+                className="absolute right-0 mt-2 h-72 w-full overflow-y-auto origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                ref={ref}
+              >
                 <div className="px-1 py-1">
-                  {searchResult.map((i) => (
-                    <Link
-                      to={`/products/${i.slug}`}
-                      key={i.id}
-                      className="group flex w-full items-center rounded-md px-2 py-2 text-sm hover:bg-violet-500 hover:text-white text-gray-900"
-                    >
-                      <img className="w-10 h-10 border rounded-md mr-2" src={`${BASE_URL}/${i.image}`} alt="" />
-                      <span>{i.name}</span>
-                    </Link>
-                  ))}
+                  {searchResult.length > 0 ? (
+                    searchResult.map((i) => (
+                      <Link
+                        to={`/products/${i.slug}`}
+                        key={i.id}
+                        className="group flex w-full items-center rounded-md px-2 py-2 text-sm hover:bg-violet-500 hover:text-white text-gray-900"
+                      >
+                        <img className="w-10 h-10 border rounded-md mr-2" src={`${BASE_URL}/${i.image}`} alt="" />
+                        <span>{i.name}</span>
+                      </Link>
+                    ))
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <p className="text-black">Không có sản phẩm phù hợp!</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}

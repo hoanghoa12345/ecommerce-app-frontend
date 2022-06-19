@@ -1,15 +1,17 @@
 import { Menu } from "@headlessui/react";
 import { DotsVerticalIcon, EyeIcon, TrashIcon } from "@heroicons/react/solid";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { deleteOrderById, getListOrder, updateStatusOrderById } from "../../api/api";
+import { BASE_URL, deleteOrderById, getListOrder, updateStatusOrderById } from "../../api/api";
 import { useUserContext } from "../../context/user";
 import { formatDate } from "../../utils/date";
 import { formatPrice } from "../../utils/formatType";
 import DeleteModal from "../components/DeleteModal";
 import Loader from "../components/Loader";
 import Modal from "../components/Modal";
+import PaginationPro from "../components/PaginationPro";
 
+let PageSize = 8;
 const OrdersPage = () => {
   const [isOpenView, setIsOpenView] = useState(false);
   const [itemView, setItemView] = useState({});
@@ -18,6 +20,14 @@ const OrdersPage = () => {
   const queryClient = useQueryClient();
   const { user } = useUserContext();
   const { data: orders, isLoading } = useQuery("orders", () => getListOrder(user.token));
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const currentTableData = useMemo(() => {
+    const firstPageIndex = (currentPage - 1) * PageSize;
+    const lastPageIndex = firstPageIndex + PageSize;
+    return orders?.slice(firstPageIndex, lastPageIndex);
+  }, [currentPage, orders]);
+
   const handleOpenModelView = (item) => {
     setIsOpenView(true);
     setItemView(item);
@@ -71,6 +81,9 @@ const OrdersPage = () => {
                 <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                   <tr>
                     <th scope="col" className="px-6 py-3">
+                      Product image
+                    </th>
+                    <th scope="col" className="px-6 py-3">
                       Product name
                     </th>
                     <th scope="col" className="px-6 py-3">
@@ -87,9 +100,10 @@ const OrdersPage = () => {
                 <tbody>
                   {itemView.details?.map((item) => (
                     <tr key={item.id} className="bg-white border-b dark:bg-gray-800 dark:border-gray-700">
-                      <th scope="row" className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
-                        {item.product.name}
-                      </th>
+                      <td className="px-6 py-4">
+                        <img className="w-16 h-16 rounded-md ring-2 ring-white" src={`${BASE_URL}/${item.product.image}`} alt="" />
+                      </td>
+                      <td className="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">{item.product.name}</td>
                       <td className="px-6 py-4">{item.quantity}</td>
                       <td className="px-6 py-4">{formatPrice(item.price)}</td>
                     </tr>
@@ -138,7 +152,7 @@ const OrdersPage = () => {
           </tr>
         </thead>
         <tbody className="bg-white divide-y">
-          {orders.map((item) => (
+          {currentTableData.map((item) => (
             <tr key={item.id} className="text-gray-700">
               <td className="px-4 py-3 text-sm">{item.order_number}</td>
               <td className="px-4 py-3 text-sm">{formatPrice(item.total_price)}</td>
@@ -193,6 +207,15 @@ const OrdersPage = () => {
           ))}
         </tbody>
       </table>
+
+      <div className="flex justify-center my-4">
+        <PaginationPro
+          currentPage={currentPage}
+          totalCount={orders.length}
+          pageSize={PageSize}
+          onPageChange={(page) => setCurrentPage(page)}
+        />
+      </div>
     </div>
   );
 };

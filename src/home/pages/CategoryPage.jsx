@@ -1,12 +1,15 @@
 import React from "react";
 import { Link, useParams } from "react-router-dom";
 import { ChevronRightIcon } from "@heroicons/react/outline";
-import { getAllCategory, getCategoryBySlug, getProductsByCategory } from "../../api/api";
+import { addToFavorite, getAllCategory, getCategoryBySlug, getProductsByCategory } from "../../api/api";
 import Product from "../components/product/Product";
-import { useQueries } from "react-query";
+import { useMutation, useQueries } from "react-query";
 import Loader from "../components/loader/Loader";
+import { useUserContext } from "../../context/user";
+import { toast } from "react-toastify";
 
 const CategoryPage = () => {
+  const { user } = useUserContext();
   const { categorySlug } = useParams();
   const [categoriesQuery, categoryQuery, categoryProductsQuery] = useQueries([
     { queryKey: "categories", queryFn: getAllCategory },
@@ -17,6 +20,27 @@ const CategoryPage = () => {
   const { data: categories } = categoriesQuery;
   const { data: category } = categoryQuery;
   const { data: categoryProducts } = categoryProductsQuery;
+
+  const addToWishListMutation = useMutation(addToFavorite);
+
+  const handleAddToWishList = (productId) => {
+    if (user.token.length > 0)
+      addToWishListMutation.mutate(
+        {
+          formData: {
+            user_id: user.id,
+            product_id: productId,
+          },
+          token: user.token,
+        },
+        {
+          onSuccess: (wish) => {
+            toast.success(wish.message);
+          },
+          onError: (err) => toast.error(err.message),
+        }
+      );
+  };
 
   if (categoriesQuery.isLoading || categoryQuery.isLoading || categoryProductsQuery.isLoading) return <Loader />;
   return (
@@ -64,7 +88,7 @@ const CategoryPage = () => {
             <div className="mb-7">
               <div className="grid grid-cols-2 mt-8 lg:grid-cols-4 gap-x-4 gap-y-8">
                 {categoryProducts.map((item) => (
-                  <Product key={item.id} product={item} />
+                  <Product key={item.id} product={item} addToWishList={handleAddToWishList} />
                 ))}
               </div>
             </div>
