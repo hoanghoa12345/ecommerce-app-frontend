@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Route, Routes, Navigate } from "react-router-dom";
 import AdminLayout from "./admin/layouts/AdminLayout";
 import DashboardPage from "./admin/pages/DashboardPage";
@@ -27,8 +27,13 @@ import UserSubscriptionPage from "./admin/pages/UserSubscriptionPage";
 import CheckoutPage from "./home/pages/CheckoutPage";
 import OrdersPage from "./admin/pages/OrdersPage";
 import ProfilePage from "./home/pages/ProfilePage";
+import ResetPassword from "./auth/pages/resetPassword";
+import WishListPage from "./home/pages/WishListPage";
 
 const App = () => {
+  useEffect(() => {
+    document.title = "eClean - Cung cấp sản phẩm vệ sinh dành cho gia đình";
+  });
   const queryClient = new QueryClient();
   const { user } = useUserContext();
   return (
@@ -47,6 +52,7 @@ const App = () => {
           <Route path="manager-subscription" element={<SubscriptionManagerpage />} />
           <Route path="checkout" element={<CheckoutPage />} />
           <Route path="profile" element={<ProfilePage />} />
+          <Route path="wishlist" element={<WishListPage />} />
         </Route>
         {user.roles === "admin" && (
           <Route path="/admin" element={<AdminLayout />}>
@@ -62,6 +68,7 @@ const App = () => {
         )}
         <Route path="/register" element={<Register />} />
         <Route path="/login" element={<Login />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
         <Route path="*" element={<Page404 />} />
       </Routes>
       <ReactQueryDevtools initialIsOpen={false} />

@@ -10,7 +10,7 @@ import { useUserContext } from "../../context/user";
 import { getProfileByUserId } from "../../api/api";
 import { CheckCircleIcon } from "@heroicons/react/solid";
 import { XIcon } from "@heroicons/react/outline";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 const SubscriptionPaymentPage = () => {
   const { id } = useParams();
@@ -77,9 +77,9 @@ const SubscriptionPaymentPage = () => {
     setValue("end_date", endDate);
   };
 
-  const handleStartDateChange = (e) => {
-    console.log("start_date: ", e.target.value);
-  };
+  // const handleStartDateChange = (e) => {
+  //   console.log("start_date: ", e.target.value);
+  // };
 
   if (userProfileQuery.isSuccess) {
     //Log user profile
@@ -114,7 +114,6 @@ const SubscriptionPaymentPage = () => {
   }
   return (
     <div className="w-full mt-10 container max-w-6xl mx-auto">
-      <ToastContainer />
       <div className="mt-10 sm:mt-0">
         {message && <Alert message={message} bgColor="emerald" onClose={() => setMessage(null)} />}
         <div className="md:grid md:grid-cols-3 md:gap-6">
@@ -190,7 +189,6 @@ const SubscriptionPaymentPage = () => {
                         type="date"
                         name="start_date"
                         id="start_date"
-                        onChange={handleStartDateChange}
                         className="mt-1 focus:ring-orange-500 focus:border-orange-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       />
                       <span className="text-xs text-red-600 dark:text-red-400">{errors.start_date?.message}</span>

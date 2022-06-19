@@ -74,6 +74,7 @@ export default function ProductsPage() {
             open={openDelete}
             setOpen={() => setOpenDelete(false)}
             onDelete={onDelete}
+            isDelete
           />
         )}
         {/* With actions */}

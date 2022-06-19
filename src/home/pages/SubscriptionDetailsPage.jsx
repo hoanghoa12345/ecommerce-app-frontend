@@ -1,8 +1,10 @@
+import { HeartIcon } from "@heroicons/react/outline";
 import { ViewGridAddIcon, ViewListIcon } from "@heroicons/react/solid";
 import React from "react";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { BASE_URL, copyNewSubscription, getSubscriptionById } from "../../api/api";
+import { toast } from "react-toastify";
+import { addToFavorite, BASE_URL, copyNewSubscription, getSubscriptionById } from "../../api/api";
 import { useUserContext } from "../../context/user";
 import { formatPrice } from "../../utils/formatType";
 import Loader from "../components/loader/Loader";
@@ -37,6 +39,27 @@ const SubscriptionDetailsPage = () => {
       }
     );
   };
+
+  const addToWishListMutation = useMutation(addToFavorite);
+
+  const handleAddToWishList = (subscriptionId) => {
+    if (user.token.length > 0)
+      addToWishListMutation.mutate(
+        {
+          formData: {
+            user_id: user.id,
+            subscription_id: subscriptionId,
+          },
+          token: user.token,
+        },
+        {
+          onSuccess: (wish) => {
+            toast.success(wish.message);
+          },
+          onError: (err) => toast.error(err.message),
+        }
+      );
+  };
   if (isLoading) return <Loader />;
   return (
     <div className="flex flex-col mx-auto max-w-6xl w-full p-10 bg-white text-gray-800">
@@ -58,19 +81,15 @@ const SubscriptionDetailsPage = () => {
           >
             <ViewGridAddIcon className="w-6 h-6" />
           </button>
+          <button onClick={() => handleAddToWishList(id)} type="button" className="ml-4 hover:bg-red-600 rounded-full hover:text-white p-1">
+            <HeartIcon className="w-6 h-6" />
+          </button>
         </div>
       </div>
       {/**Display grid and list item layout */}
       {displayType === "grid" && <GridLayout subscription={subscription.details} />}
       {displayType === "list" && <ListLayout subscription={subscription.details} />}
-      <div className="mt-8">
-        <button
-          onClick={handleEditSubscription}
-          className="py-2 px-4  bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
-        >
-          Chỉnh sửa gói
-        </button>
-      </div>
+
       <section>
         <div className="container max-w-7xl mx-auto mt-6 p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800">
           <div className="flex flex-wrap -mx-8">
@@ -80,13 +99,20 @@ const SubscriptionDetailsPage = () => {
                 <p className="mb-8 leading-loose text-gray-500 dark:text-gray-300">
                   Đăng ký mua hàng với nhiều ưu đãi, tận hưởng trải nghiệm mua sắm với sản phẩm tốt nhất.
                 </p>
-                <div className="w-full md:w-1/3">
+                <div className="w-full flex justify-between">
                   <button
                     type="button"
                     onClick={() => navigate(`/subscription-payment/${id}`)}
-                    className="py-2 px-4  bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 focus:ring-offset-indigo-200 text-white w-full transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg "
+                    className="inline-block px-12 py-3 text-sm font-medium text-white bg-orange-600 border border-orange-600 rounded active:text-orange-500 hover:bg-transparent hover:text-orange-600 focus:outline-none focus:ring"
                   >
                     Đăng ký ngay
+                  </button>
+
+                  <button
+                    onClick={handleEditSubscription}
+                    className="inline-block px-12 py-3 text-sm font-medium text-orange-600 border border-orange-600 rounded hover:bg-orange-600 hover:text-white active:bg-orange-500 focus:outline-none focus:ring"
+                  >
+                    Chỉnh sửa gói
                   </button>
                 </div>
               </div>
@@ -154,10 +180,10 @@ const GridLayout = ({ subscription }) => {
               </Link>
               <div className="flex items-center">
                 <span className="text-sm font-medium text-gray-600">{item.quantity}</span>
-                <span className="text-sm font-medium ml-1 text-indigo-500"> sản phẩm</span>
+                <span className="text-sm font-medium ml-1 text-orange-500"> sản phẩm</span>
               </div>
             </div>
-            <span className="flex items-center h-8 bg-indigo-200 text-indigo-600 text-sm font-medium px-2 rounded">
+            <span className="flex items-center h-8 bg-orange-200 text-orange-600 text-sm font-medium px-2 rounded">
               {formatPrice(item.price)}
             </span>
           </div>
