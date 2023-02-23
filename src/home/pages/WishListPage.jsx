@@ -17,18 +17,18 @@ const WishListPage = () => {
 
   const getWishListQuery = useQuery("wishlist", () => getFavoritesByUser({ userId: user.id, token: user.token }), {
     onSuccess: (data) => {
-      setWishProduct([]);
-      setWishSubscription([]);
+      let productsArr = [];
+      let subscriptionArr = [];
       data.forEach((value) => {
         if (value.product_id !== null) {
-          wishProduct.push(value);
+          productsArr.push(value);
         }
         if (value.subscription_id !== null) {
-          wishSubscription.push(value);
+          subscriptionArr.push(value);
         }
       });
-      setWishProduct(wishProduct);
-      setWishSubscription(wishSubscription);
+      setWishProduct(productsArr);
+      setWishSubscription(subscriptionArr);
     },
   });
 
@@ -51,7 +51,7 @@ const WishListPage = () => {
   if (getWishListQuery.isLoading) return <Loader />;
 
   return (
-    <div className="w-full mt-10 container max-w-6xl mx-auto">
+    <div className="w-full mt-10 container max-w-6xl mx-auto min-h-[500px]">
       <h2 className="text-2xl font-semibold">Sản phẩm yêu thích</h2>
       <Tab.Group
         as="div"
@@ -127,12 +127,9 @@ const WishListPage = () => {
           </Tab.Panel>
           <Tab.Panel>
             {wishSubscription.length > 0 ? (
-              <div>
+              <div className="mx-auto lg:max-w-xl md:max-w-2xl">
                 {wishSubscription.map((item) => (
-                  <div>
-                    <p>{item.subscription.name}</p>
-                    <p>{item.subscription.total_price}</p>
-                  </div>
+                  <CardSubscriptionItem key={item.id} item={item} onDelete={handleDeleteItem} />
                 ))}
               </div>
             ) : (
@@ -141,6 +138,22 @@ const WishListPage = () => {
           </Tab.Panel>
         </Tab.Panels>
       </Tab.Group>
+    </div>
+  );
+};
+
+const CardSubscriptionItem = (props) => {
+  const item = props.item;
+  return (
+    <div className="block relative p-8 bg-orange-600 border border-orange-700 shadow-xl rounded-xl my-4">
+      <button
+        onClick={() => props.onDelete(item.id)}
+        className="absolute right-4 top-4 rounded-full px-3 py-1.5 bg-orange-100 text-orange-600 font-medium text-xs hover:bg-red-600 hover:text-orange-100"
+      >
+        <TrashIcon className="w-5 h-5" />
+      </button>
+      <h3 className="mt-3 text-xl font-bold text-white">{item.subscription.name}</h3>
+      <p className="mt-4 text-sm text-gray-100">{formatPrice(item.subscription.total_price)}</p>
     </div>
   );
 };

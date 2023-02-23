@@ -75,6 +75,7 @@ export const createProduct = async ({ name, category_id, description, price, qua
       headers: {
         Accept: "application/json",
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
     });
     return data;
@@ -96,7 +97,7 @@ export const deleteProduct = async (id) => {
   }
 };
 
-export const updateProduct = async ({ id, ...data }) => {
+export const updateProduct = async ({ token, id, ...data }) => {
   const { name, category_id, description, price, quantity, image } = data;
   const formData = new FormData();
   formData.append("name", name);
@@ -111,6 +112,7 @@ export const updateProduct = async ({ id, ...data }) => {
       headers: {
         Accept: "application/json",
         "Content-Type": "multipart/form-data",
+        Authorization: `Bearer ${token}`,
       },
     });
     return data;
@@ -346,9 +348,14 @@ export const getSubscriptionById = async (id) => {
   }
 };
 
-export const postUserSubscription = async (formData) => {
+export const postUserSubscription = async ({ formData, token }) => {
   try {
-    const { data } = await Axios.post(`${BASE_URL}/api/v1/user-subscription`, formData);
+    const { data } = await Axios.post(`${BASE_URL}/api/v1/user-subscription`, formData, {
+      headers: {
+        Accept: "application/json",
+        Authorization: "Bearer " + token,
+      },
+    });
     return data;
   } catch (error) {
     throw new Error(error);
@@ -559,6 +566,26 @@ export const removeFavoriteItem = async ({ id, token }) => {
         Authorization: "Bearer " + token,
       },
     });
+    return data;
+  } catch (error) {
+    throw new Error(error);
+  }
+};
+
+export const updatePaymentStatus = async ({ id, status }) => {
+  try {
+    const { data } = await Axios.put(
+      BASE_URL + "/api/v1/payment-status",
+      {
+        sub_id: id,
+        sub_pay_status: status,
+      },
+      {
+        headers: {
+          Accept: "application/json",
+        },
+      }
+    );
     return data;
   } catch (error) {
     throw new Error(error);
