@@ -1,4 +1,4 @@
-import { createContext, useContext, useReducer } from "react";
+import React, { createContext, useContext, useReducer } from "react";
 
 const userLocal = JSON.parse(localStorage.getItem("user")) || {
   token: "",
@@ -6,20 +6,20 @@ const userLocal = JSON.parse(localStorage.getItem("user")) || {
     id: "",
     name: "",
     email: "",
-    roles: "",
-  },
+    roles: ""
+  }
 };
 
 const {
   token,
-  user: { id, name, email, roles },
+  user: { id, name, email, roles }
 } = userLocal;
 const initialState = {
   id,
   name,
   email,
   roles,
-  token,
+  token
 };
 
 const UserContext = createContext({ initialState, userDispatch: () => null });
@@ -28,13 +28,13 @@ const reducer = (state = initialState, action) => {
   switch (action.type) {
     case "SET_NAME": {
       return {
-        ...state,
+        ...state
       };
     }
     case "SET_ROLES": {
       return {
         ...state,
-        roles: action.payload,
+        roles: action.payload
       };
     }
     case "SET_USER": {
@@ -43,7 +43,7 @@ const reducer = (state = initialState, action) => {
         name: action.payload.name,
         email: action.payload.email,
         roles: action.payload.roles,
-        token: action.payload.token,
+        token: action.payload.token
       };
     }
     default: {

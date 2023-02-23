@@ -1,7 +1,7 @@
 import { Autoplay } from "swiper";
 import { Swiper, SwiperSlide } from "swiper/react";
 import "swiper/css";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { addToFavorite, getHomeBannersSlider, getHomeCategory, getTopProduct } from "../../../api/api";
 import Product from "../../components/product/Product";
 import { useMutation, useQuery } from "react-query";
@@ -31,7 +31,7 @@ const HeroSlide = () => {
             <div
               className="w-full bg-center bg-cover h-[32rem]"
               style={{
-                backgroundImage: `url(${item})`,
+                backgroundImage: `url(${item})`
               }}
             ></div>
           </SwiperSlide>
@@ -84,21 +84,21 @@ const TopProducts = () => {
 
   const addToWishListMutation = useMutation(addToFavorite);
 
-  const handleAddToWishList = (productId) => {
+  const handleAddToWishList = productId => {
     if (user.token.length > 0)
       addToWishListMutation.mutate(
         {
           formData: {
             user_id: user.id,
-            product_id: productId,
+            product_id: productId
           },
-          token: user.token,
+          token: user.token
         },
         {
-          onSuccess: (wish) => {
+          onSuccess: wish => {
             toast.success(wish.message);
           },
-          onError: (err) => toast.error(err.message),
+          onError: err => toast.error(err.message)
         }
       );
   };
@@ -112,7 +112,7 @@ const TopProducts = () => {
           <h2 className="relative inline-block px-4 text-2xl font-bold text-center bg-white">Sản phẩm mới nhất</h2>
         </div>
         <div className="grid grid-cols-2 mt-8 lg:grid-cols-4 gap-x-4 gap-y-8">
-          {topProducts.map((item) => (
+          {topProducts.map(item => (
             <Product key={item.id} product={item} addToWishList={handleAddToWishList} />
           ))}
         </div>

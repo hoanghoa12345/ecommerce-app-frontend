@@ -8,20 +8,23 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useUserContext } from "../../context/user";
 import { getProfileByUserId } from "../../api/api";
-import { CheckCircleIcon } from "@heroicons/react/solid";
-import { XIcon } from "@heroicons/react/outline";
-import { toast } from "react-toastify";
+import PaymentModel from "../components/payment-model/PaymentModel";
+import { zaloPayCreateOrder } from "../../utils/zaloPay";
 
 const SubscriptionPaymentPage = () => {
   const { id } = useParams();
   //const navigate = useNavigate();
+  const [totalPrice, setTotalPrice] = useState(0);
   const [message, setMessage] = useState(null);
+  const [userSubId, setUserSubId] = useState(null);
+
   const { user } = useUserContext();
+
   const userProfileQuery = useQuery("profile", () => getProfileByUserId(user.id, user.token));
   const schema = yup
     .object({
       start_date: yup.string().required(),
-      end_date: yup.string().required(),
+      end_date: yup.string().required("Vui lòng chọn thời gian kết thúc gói"),
       delivery_schedule: yup.string().required(),
     })
     .required();
@@ -46,21 +49,32 @@ const SubscriptionPaymentPage = () => {
     const currentDate = new Date();
     setValue("start_date", currentDate.toISOString().split("T")[0]);
     register("subscription_id", { value: id });
+    register("payment_status", { value: "Chưa thanh toán" });
   }, [id, register, setValue]);
 
-  const userSubscriptionMutation = useMutation((formData) => postUserSubscription(formData), {
-    onSuccess: () => toast.success("Đăng ký gói thành công!"),
-    onError: () => toast.error("Không thể đăng ký gói này"),
-  });
-
-  const onSubmit = (data) => {
-    console.log(data);
-    userSubscriptionMutation.mutate(data);
+  const userSubscriptionMutation = useMutation(postUserSubscription);
+  const onSubmit = (formData) => {
+    userSubscriptionMutation.mutate(
+      { formData, token: user.token },
+      {
+        onSuccess: (data) => {
+          localStorage.setItem("user_sub_id", data.sub_id);
+        },
+      }
+    );
     setMessage("Đăng ký gói thành công!");
+    zaloPayCreateOrder({
+      bank_code: formData.paymentModel,
+      amount: totalPrice,
+    });
+    // console.log(formData);
   };
 
   const handleTimeChange = (e) => {
     const times = e.target.value;
+
+    setTotalPrice(subscription?.total_price * Number(times));
+
     let duration = subscription?.duration;
 
     let startDateValue = getValues(["start_date"])[0];
@@ -70,7 +84,7 @@ const SubscriptionPaymentPage = () => {
 
     let endDateEpoch = startDateEpoch + duration * epochMonth * Number(times);
 
-    console.log(endDateEpoch);
+    //console.log(endDateEpoch);
 
     const endDate = new Date(endDateEpoch).toISOString().split("T")[0];
 
@@ -91,43 +105,30 @@ const SubscriptionPaymentPage = () => {
     setValue("phone_number", data.phone_number);
   }
 
-  const Alert = ({ message, bgColor = "blue", onClose }) => {
-    return (
-      <div className={`w-full text-white bg-${bgColor}-500`}>
-        <div className="container flex items-center justify-between px-6 py-4 mx-auto">
-          <div className="flex">
-            <CheckCircleIcon className="w-5 h-5" />
-            <p className="mx-3">{message}</p>
-          </div>
-          <button
-            onClick={onClose}
-            className="p-1 transition-colors duration-200 transform rounded-md hover:bg-opacity-25 hover:bg-gray-600 focus:outline-none"
-          >
-            <XIcon className="w-5 h-5" />
-          </button>
-        </div>
-      </div>
-    );
-  };
   if (isSuccess && subscription.details.length === 0) {
     return <p>Không có sản phẩm</p>;
   }
   return (
     <div className="w-full mt-10 container max-w-6xl mx-auto">
       <div className="mt-10 sm:mt-0">
-        {message && <Alert message={message} bgColor="emerald" onClose={() => setMessage(null)} />}
+        {message ? (
+          <div className="mx-4 my-2 bg-green-500 text-sm text-white rounded-md p-4">
+            <span className="font-bold">✔</span> {message}
+          </div>
+        ) : null}
+
         <div className="md:grid md:grid-cols-3 md:gap-6">
           <div className="md:col-span-1">
-            <div className="px-4 sm:px-0">
+            <div className="px-4 sm:px-0 py-2">
               <h3 className="text-lg font-medium leading-6 text-gray-900">Thông tin gói đăng ký</h3>
             </div>
             {isLoading ? (
               <div className="w-full h-24 border-2 rounded-md mx-auto">
                 <div className="flex animate-pulse flex-row items-center h-full justify-center space-x-5">
-                  <div className="w-12 bg-gray-300 h-12 rounded-full "></div>
+                  <div className="w-12 bg-gray-300 h-12 rounded-full"></div>
                   <div className="flex flex-col space-y-3">
-                    <div className="w-48 bg-gray-300 h-6 rounded-md "></div>
-                    <div className="w-32 bg-gray-300 h-6 rounded-md "></div>
+                    <div className="w-48 bg-gray-300 h-6 rounded-md"></div>
+                    <div className="w-32 bg-gray-300 h-6 rounded-md"></div>
                   </div>
                 </div>
               </div>
@@ -150,6 +151,7 @@ const SubscriptionPaymentPage = () => {
                       <p>
                         {formatPrice(subscription.total_price)} ({subscription.duration} tháng)
                       </p>
+                      <p className="text-black font-semibold text-sm">Tổng số tiền: {formatPrice(totalPrice)}</p>
                     </div>
                   </div>
                 </div>
@@ -255,7 +257,7 @@ const SubscriptionPaymentPage = () => {
                       />
                     </div>
 
-                    <div className="col-span-6 sm:col-span-6 lg:col-span-2">
+                    {/*<div className="col-span-6 sm:col-span-6 lg:col-span-2">
                       <label htmlFor="city" className="block text-sm font-medium text-gray-700">
                         Thành phố
                       </label>
@@ -279,7 +281,7 @@ const SubscriptionPaymentPage = () => {
                         autoComplete="address-level1"
                         className="mt-1 focus:ring-orange-500 focus:border-orange-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
                       />
-                    </div>
+                    </div>*/}
 
                     <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                       <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">
@@ -297,12 +299,13 @@ const SubscriptionPaymentPage = () => {
                     </div>
                   </div>
                 </div>
-                <span className="text-left text-sm font-medium text-gray-700 py-2 px-6">Phương thức thanh toán: Vui lòng chọn</span>
+                {/*<span className="text-left text-sm font-medium text-gray-700 py-2 px-6">Phương thức thanh toán: Vui lòng chọn</span>
                 <select className="text-sm border-0" {...register("payment_status")}>
                   <option value="atm_debit_card">Thẻ ghi nợ nội địa</option>
                   <option value="online_wallet">Ví điện tử</option>
                   <option value="visa_debit_card">Thẻ thanh toán quốc tế</option>
-                </select>
+                  </select>*/}
+                <PaymentModel register={register} />
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button
                     type="submit"
