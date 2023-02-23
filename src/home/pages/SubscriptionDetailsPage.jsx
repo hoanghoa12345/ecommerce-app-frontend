@@ -81,7 +81,7 @@ const SubscriptionDetailsPage = () => {
           >
             <ViewGridAddIcon className="w-6 h-6" />
           </button>
-          <button onClick={() => handleAddToWishList(id)} type="button" className="ml-4 hover:bg-red-600 rounded-full hover:text-white p-1">
+          <button onClick={() => handleAddToWishList} type="button" className="ml-4 hover:bg-orange-600 rounded-full hover:text-white p-1">
             <HeartIcon className="w-6 h-6" />
           </button>
         </div>
@@ -103,14 +103,14 @@ const SubscriptionDetailsPage = () => {
                   <button
                     type="button"
                     onClick={() => navigate(`/subscription-payment/${id}`)}
-                    className="inline-block px-12 py-3 text-sm font-medium text-white bg-orange-600 border border-orange-600 rounded active:text-orange-500 hover:bg-transparent hover:text-orange-600 focus:outline-none focus:ring"
+                    className="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border border-transparent font-semibold bg-orange-500 text-white hover:bg-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
                   >
                     Đăng ký ngay
                   </button>
 
                   <button
                     onClick={handleEditSubscription}
-                    className="inline-block px-12 py-3 text-sm font-medium text-orange-600 border border-orange-600 rounded hover:bg-orange-600 hover:text-white active:bg-orange-500 focus:outline-none focus:ring"
+                    className="py-3 px-4 inline-flex justify-center items-center gap-2 rounded-md border-2 border-orange-200 font-semibold text-orange-500 hover:text-white hover:bg-orange-500 hover:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-200 focus:ring-offset-2 transition-all text-sm dark:focus:ring-offset-gray-800"
                   >
                     Chỉnh sửa gói
                   </button>

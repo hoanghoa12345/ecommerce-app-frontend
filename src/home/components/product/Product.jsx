@@ -1,3 +1,4 @@
+import React from "react";
 import { HeartIcon, ShoppingBagIcon } from "@heroicons/react/outline";
 import { BASE_URL } from "../../../api/api";
 import { Link } from "react-router-dom";
@@ -32,7 +33,7 @@ const Product = ({ product, addToWishList }) => {
           }}
           name="add"
           type="button"
-          className="flex items-center justify-center w-full px-8 py-4 mt-4 bg-orange-500 rounded-sm"
+          className="flex items-center justify-center w-full px-8 py-4 mt-4 bg-orange-500 hover:bg-orange-800 focus:ring-4 focus:ring-orange-300 rounded-sm"
         >
           <span className="text-sm font-medium text-white">Thêm vào giỏ hàng</span>
           <ShoppingBagIcon className="w-5 h-5 ml-1.5 text-white" />
@@ -44,11 +45,11 @@ const Product = ({ product, addToWishList }) => {
 
 Product.propTypes = {
   product: PropTypes.object.isRequired,
-  addToWishList: PropTypes.func,
+  addToWishList: PropTypes.func
 };
 
 Product.defaultProps = {
-  addToWishList: () => {},
+  addToWishList: () => {}
 };
 
 export default Product;

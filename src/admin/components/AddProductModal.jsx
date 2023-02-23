@@ -9,8 +9,10 @@ import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { useUserContext } from "../../context/user";
 
 const AddProductModal = ({ open, setOpen, editItem }) => {
+  const { user } = useUserContext();
   const schema = yup
     .object({
       name: yup.string().min(5).required(),
@@ -41,11 +43,11 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
   const { mutateAsync: updateMutateAsync } = useMutation(updateProduct);
   const onSubmit = async (data) => {
     if (editItem === null) {
-      await mutateAsync(data);
+      await mutateAsync({ ...data, token: user.token });
       toast.success("Created product successful!");
     }
     if (editItem) {
-      await updateMutateAsync({ ...data, id: editItem.id });
+      await updateMutateAsync({ ...data, id: editItem.id, token: user.token });
       toast.success("Updated product successful!");
     }
     setOpen(false);
