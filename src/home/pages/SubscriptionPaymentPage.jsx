@@ -13,10 +13,9 @@ import { zaloPayCreateOrder } from "../../utils/zaloPay";
 
 const SubscriptionPaymentPage = () => {
   const { id } = useParams();
-  //const navigate = useNavigate();
+
   const [totalPrice, setTotalPrice] = useState(0);
   const [message, setMessage] = useState(null);
-  const [userSubId, setUserSubId] = useState(null);
 
   const { user } = useUserContext();
 
@@ -67,7 +66,6 @@ const SubscriptionPaymentPage = () => {
       bank_code: formData.paymentModel,
       amount: totalPrice,
     });
-    // console.log(formData);
   };
 
   const handleTimeChange = (e) => {
@@ -84,20 +82,12 @@ const SubscriptionPaymentPage = () => {
 
     let endDateEpoch = startDateEpoch + duration * epochMonth * Number(times);
 
-    //console.log(endDateEpoch);
-
     const endDate = new Date(endDateEpoch).toISOString().split("T")[0];
 
     setValue("end_date", endDate);
   };
 
-  // const handleStartDateChange = (e) => {
-  //   console.log("start_date: ", e.target.value);
-  // };
-
   if (userProfileQuery.isSuccess) {
-    //Log user profile
-    //console.log(userProfileQuery.data);
     //Set user profile data to form
     let data = userProfileQuery.data;
     setValue("email", user.email);
@@ -257,32 +247,6 @@ const SubscriptionPaymentPage = () => {
                       />
                     </div>
 
-                    {/*<div className="col-span-6 sm:col-span-6 lg:col-span-2">
-                      <label htmlFor="city" className="block text-sm font-medium text-gray-700">
-                        Thành phố
-                      </label>
-                      <input
-                        type="text"
-                        name="city"
-                        id="city"
-                        autoComplete="address-level2"
-                        className="mt-1 focus:ring-orange-500 focus:border-orange-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>
-
-                    <div className="col-span-6 sm:col-span-3 lg:col-span-2">
-                      <label htmlFor="region" className="block text-sm font-medium text-gray-700">
-                        Tỉnh
-                      </label>
-                      <input
-                        type="text"
-                        name="region"
-                        id="region"
-                        autoComplete="address-level1"
-                        className="mt-1 focus:ring-orange-500 focus:border-orange-500 block w-full shadow-sm sm:text-sm border-gray-300 rounded-md"
-                      />
-                    </div>*/}
-
                     <div className="col-span-6 sm:col-span-3 lg:col-span-2">
                       <label htmlFor="phone_number" className="block text-sm font-medium text-gray-700">
                         Điện thoại
@@ -299,12 +263,7 @@ const SubscriptionPaymentPage = () => {
                     </div>
                   </div>
                 </div>
-                {/*<span className="text-left text-sm font-medium text-gray-700 py-2 px-6">Phương thức thanh toán: Vui lòng chọn</span>
-                <select className="text-sm border-0" {...register("payment_status")}>
-                  <option value="atm_debit_card">Thẻ ghi nợ nội địa</option>
-                  <option value="online_wallet">Ví điện tử</option>
-                  <option value="visa_debit_card">Thẻ thanh toán quốc tế</option>
-                  </select>*/}
+
                 <PaymentModel register={register} />
                 <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
                   <button

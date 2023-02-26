@@ -10,6 +10,8 @@ import {
 } from "@heroicons/react/outline";
 import { Link, useNavigate, useMatch, useResolvedPath } from "react-router-dom";
 import { Disclosure, Transition } from "@headlessui/react";
+import { ReactComponent as Logo } from "../../assets/images/logo-eclean.svg";
+
 function SidebarLink({ children, to, ...props }) {
   let resolved = useResolvedPath(to);
   let match = useMatch({ path: resolved.pathname, end: true });
@@ -41,8 +43,8 @@ export default function DesktopSidebar() {
     >
       <Disclosure.Panel as="aside" className="w-64 overflow-y-auto bg-white dark:bg-gray-800 lg:block flex-shrink-0">
         <div className="py-4 text-gray-500 dark:text-gray-400">
-          <Link className="ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" to="/admin">
-            Admin Page
+          <Link className=" ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" to="/admin">
+            <Logo className="h-6" />
           </Link>
           <ul className="mt-6">
             <SidebarLink to="/admin/dashboard">
