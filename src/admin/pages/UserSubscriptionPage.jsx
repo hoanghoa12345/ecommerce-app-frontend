@@ -25,11 +25,11 @@ const UserSubscriptionPage = () => {
   return (
     <div className="container grid px-6 mx-auto">
       <div className="flex justify-between items-center">
-        <h2 className="my-6 text-2xl font-semibold text-gray-700">User Subscriptions</h2>
+        <h2 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">User Subscriptions</h2>
       </div>
-      <table className="w-full whitespace-nowrap shadow sm:rounded-lg bg-white">
+      <table className="w-full whitespace-nowrap shadow sm:rounded-lg bg-white dark:bg-gray-800">
         <thead>
-          <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
+          <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <th className="px-4 py-3">User</th>
             <th className="px-4 py-3">Start date</th>
             <th className="px-4 py-3">End date</th>
@@ -39,9 +39,9 @@ const UserSubscriptionPage = () => {
             <th className="px-4 py-3">Action</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y">
+        <tbody className="bg-white dark:bg-gray-800 divide-y dark:divide-gray-700">
           {currentTableData.map((item) => (
-            <tr key={item.id} className="text-gray-700">
+            <tr key={item.id} className="text-gray-700 dark:text-gray-400">
               <td className="px-4 py-3">{item.user.name}</td>
               <td className="px-4 py-3">{item.start_date}</td>
               <td className="px-4 py-3">{item.end_date}</td>

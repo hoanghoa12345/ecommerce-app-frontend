@@ -13,7 +13,10 @@ const zaloPayCreateOrder = async ({ bank_code, amount }) => {
       },
     }
   );
-  window.open(data.order_url, "_blank", "noopener,noreferrer");
+
+  if (data.order_url) {
+    window.open(data.order_url, "_blank", "noopener,noreferrer");
+  }
 };
 
 export { zaloPayCreateOrder };

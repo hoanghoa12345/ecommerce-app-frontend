@@ -42,9 +42,10 @@ export default function DesktopSidebar() {
       leaveTo="-translate-x-full"
     >
       <Disclosure.Panel as="aside" className="w-64 overflow-y-auto bg-white dark:bg-gray-800 lg:block flex-shrink-0">
-        <div className="py-4 text-gray-500 dark:text-gray-400">
+        <div className="py-4 text-gray-500 dark:text-gray-400 h-screen">
           <Link className=" ml-6 text-lg font-bold text-gray-800 dark:text-gray-200" to="/admin">
             <Logo className="h-6" />
+            <div className="text-center">Admin</div>
           </Link>
           <ul className="mt-6">
             <SidebarLink to="/admin/dashboard">

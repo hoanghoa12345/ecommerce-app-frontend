@@ -29,7 +29,7 @@ const schema = yup
   })
   .required();
 
-let limitUser = 4;
+let limitUser = 6;
 export default function UserPage() {
   const { user } = useUserContext();
   const [messageErr, setMessageErr] = useState("");
@@ -172,7 +172,7 @@ export default function UserPage() {
     <main className="h-full overflow-y-auto">
       <div className="container px-6 mx-auto grid">
         <h2 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Users</h2>
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between py-2">
           <h4 className="mb-4 text-lg font-semibold text-gray-600 dark:text-gray-300">Manage product</h4>
           <button
             onClick={handleAddUser}
@@ -188,13 +188,13 @@ export default function UserPage() {
               <form onSubmit={handleSubmit(onSubmit)}>
                 <div className="mt-4 grid grid-cols-6 gap-6">
                   <div className="col-span-6 sm:col-span-3">
-                    <label className="block" htmlFor="Name">
+                    <label className="block dark:text-gray-400" htmlFor="Name">
                       Name
                       <label>
                         <input
                           type="text"
                           placeholder="Name"
-                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                           {...register("name")}
                         />
                       </label>
@@ -202,7 +202,7 @@ export default function UserPage() {
                     <span className="text-xs text-red-400">{errors.name?.message}</span>
                   </div>
                   <div className="col-span-6 sm:col-span-3">
-                    <label className="block" htmlFor="email">
+                    <label className="block dark:text-gray-400" htmlFor="email">
                       Email
                       <label>
                         <input
@@ -210,7 +210,7 @@ export default function UserPage() {
                           disabled={isAdd ? false : true}
                           autoComplete="off"
                           placeholder="Email"
-                          className="disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                          className="disabled:bg-slate-50 disabled:text-slate-500 disabled:border-slate-200 w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                           {...register("email")}
                         />
                       </label>
@@ -220,14 +220,14 @@ export default function UserPage() {
                   {isAdd && (
                     <>
                       <div className="col-span-6 sm:col-span-3">
-                        <label className="block">
+                        <label className="block dark:text-gray-400">
                           Password
                           <label>
                             <input
                               type="password"
                               autoComplete="off"
                               placeholder="Password"
-                              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                               {...register("password")}
                             />
                           </label>
@@ -239,14 +239,14 @@ export default function UserPage() {
                   {isAdd && (
                     <>
                       <div className="col-span-6 sm:col-span-3">
-                        <label className="block">
+                        <label className="block dark:text-gray-400">
                           Confirm Password
                           <label>
                             <input
                               type="password"
                               placeholder="Password"
                               autoComplete="off"
-                              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                              className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                               {...register("password_confirmation")}
                             />
                           </label>
@@ -256,11 +256,11 @@ export default function UserPage() {
                     </>
                   )}
                   <div className="col-span-6 sm:col-span-3">
-                    <label className="block">
+                    <label className="block dark:text-gray-400">
                       Roles
                       <label>
                         <select
-                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                           {...register("roles")}
                         >
                           <option value={"user"}>User</option>
@@ -270,13 +270,13 @@ export default function UserPage() {
                     </label>
                   </div>
                   <div className="col-span-6 sm:col-span-3">
-                    <label className="block" htmlFor="phone">
+                    <label className="block dark:text-gray-400" htmlFor="phone">
                       Phone
                       <label>
                         <input
                           type="text"
                           placeholder="Phone"
-                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                           defaultValue={itemEdit?.profile?.phone_number}
                           {...register("phone")}
                         />
@@ -285,13 +285,13 @@ export default function UserPage() {
                     <span className="text-xs text-red-400">{errors.phone?.message}</span>
                   </div>
                   <div className="col-span-6">
-                    <label className="block" htmlFor="address">
+                    <label className="block dark:text-gray-400" htmlFor="address">
                       Address
                       <label>
                         <input
                           type="text"
                           placeholder="Address"
-                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                           defaultValue={itemEdit?.profile?.address}
                           {...register("address")}
                         />
@@ -300,13 +300,13 @@ export default function UserPage() {
                     <span className="text-xs text-red-400">{errors.address?.message}</span>
                   </div>
                   <div className="col-span-6">
-                    <label className="block" htmlFor="description">
+                    <label className="block dark:text-gray-400" htmlFor="description">
                       Description
                       <label>
                         <input
                           type="text"
                           placeholder="Description"
-                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600"
+                          className="w-full px-4 py-2 mt-2 border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-600 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white"
                           defaultValue={itemEdit?.profile?.description}
                           {...register("description")}
                         />
@@ -340,7 +340,7 @@ export default function UserPage() {
                         <div className="flex text-sm text-gray-600">
                           <label
                             htmlFor="image"
-                            className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                            className="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                           >
                             <span>Upload a file</span>
                             <input

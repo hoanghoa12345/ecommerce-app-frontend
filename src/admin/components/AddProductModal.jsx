@@ -103,10 +103,10 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
               leaveTo="opacity-0 translate-y-4 md:translate-y-0 md:scale-95"
             >
               <div className="flex text-base text-left transform transition w-full md:inline-block md:max-w-2xl md:px-4 md:my-8 md:align-middle lg:max-w-4xl">
-                <div className="w-full relative flex items-center bg-white px-4 pt-14 pb-8 overflow-hidden shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
+                <div className="w-full relative flex items-center bg-white dark:bg-gray-800 px-4 pt-14 pb-8 overflow-hidden shadow-2xl sm:px-6 sm:pt-8 md:p-6 lg:p-8">
                   <button
                     type="button"
-                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-8 lg:right-8"
+                    className="absolute top-4 right-4 text-gray-400 dark:text-gray-300 hover:text-gray-500 sm:top-8 sm:right-6 md:top-6 md:right-6 lg:top-8 lg:right-8"
                     onClick={() => setOpen(false)}
                   >
                     <span className="sr-only">Close</span>
@@ -116,8 +116,8 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                   <div className="w-full grid grid-cols-1 gap-y-8 gap-x-6 items-start sm:grid-cols-12 lg:gap-x-8">
                     <form className="col-span-12" onSubmit={handleSubmit(onSubmit)}>
                       <div>
-                        <div className="px-4 py-4 bg-white space-y-4 sm:p-6">
-                          <label htmlFor="productName" className="block text-sm font-medium text-gray-700">
+                        <div className="px-4 py-4 bg-white dark:bg-gray-800 space-y-4 sm:p-6">
+                          <label htmlFor="productName" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Name
                           </label>
                           <div className="mt-1 relative rounded-md shadow-sm">
@@ -126,21 +126,21 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                               name="name"
                               id="name"
                               defaultValue={editItem?.name}
-                              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 rounded-md"
+                              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded-md"
                               placeholder="Product"
                               {...register("name")}
                             />
                           </div>
                           <span className="text-xs text-red-600 dark:text-red-400">{errors.name?.message}</span>
                           <div>
-                            <label htmlFor="category_id" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="category_id" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                               Category
                             </label>
                             <select
                               id="category_id"
                               name="category_id"
                               defaultValue={editItem?.category_id}
-                              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 rounded-md"
+                              className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-4 pr-12 sm:text-sm border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded-md"
                               {...register("category_id")}
                             >
                               <option>Choose Category</option>
@@ -155,7 +155,7 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                           <span className="text-xs text-red-600 dark:text-red-400">{errors.category_id?.message}</span>
 
                           <div>
-                            <label htmlFor="description" className="block text-sm font-medium text-gray-700">
+                            <label htmlFor="description" className="block text-sm font-medium text-gray-700 dark:text-gray-300 ">
                               Description
                             </label>
                             <div className="mt-1">
@@ -164,14 +164,14 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                                 name="description"
                                 rows={3}
                                 defaultValue={editItem?.description}
-                                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 rounded-md"
+                                className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded-md"
                                 placeholder="Description"
                                 {...register("description")}
                               />
                             </div>
                           </div>
                           <span className="text-xs text-red-600 dark:text-red-400">{errors.description?.message}</span>
-                          <label htmlFor="price" className="block text-sm font-medium text-gray-700">
+                          <label htmlFor="price" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Price
                           </label>
                           <div className="mt-1 relative rounded-md shadow-sm">
@@ -180,7 +180,7 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                               name="price"
                               id="price"
                               defaultValue={editItem?.price}
-                              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+                              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded-md"
                               placeholder="0"
                               {...register("price")}
                             />
@@ -189,7 +189,7 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                             </div>
                           </div>
                           <span className="text-xs text-red-600 dark:text-red-400">{errors.price?.message}</span>
-                          <label htmlFor="quantity" className="block text-sm font-medium text-gray-700">
+                          <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                             Quantity
                           </label>
                           <div className="mt-1 relative rounded-md shadow-sm">
@@ -198,14 +198,14 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                               name="quantity"
                               id="quantity"
                               defaultValue={editItem?.quantity}
-                              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+                              className="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 rounded-md"
                               placeholder="0"
                               {...register("quantity")}
                             />
                           </div>
                           <span className="text-xs text-red-600 dark:text-red-400">{errors.quantity?.message}</span>
                           <div>
-                            <label className="block text-sm font-medium text-gray-700">Picture</label>
+                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Picture</label>
                             <div
                               {...getRootProps()}
                               className={`mt-1 flex justify-center px-6 pt-5 pb-6 border-2 ${
@@ -230,7 +230,7 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                                 <div className="flex text-sm text-gray-600">
                                   <label
                                     htmlFor="image"
-                                    className="relative cursor-pointer bg-white rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+                                    className="relative cursor-pointer rounded-md font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                                   >
                                     <span>Upload a file</span>
                                     <input
@@ -259,7 +259,7 @@ const AddProductModal = ({ open, setOpen, editItem }) => {
                             <span className="text-xs text-red-600 dark:text-red-400">{errors.image?.message}</span>
                           </div>
                         </div>
-                        <div className="px-4 py-3 bg-gray-50 text-right sm:px-6">
+                        <div className="px-4 py-3 bg-gray-50 dark:bg-gray-800 text-right sm:px-6">
                           <button
                             type="submit"
                             className="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"

@@ -11,6 +11,7 @@ import Modal from "../components/modal/Modal";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
+import { toast } from "react-toastify";
 const CreateSubscriptionPage = () => {
   const schema = yup.object({
     name: yup.string().required("Vui lòng nhập tên gói đăng ký"),
@@ -72,7 +73,13 @@ const CreateSubscriptionPage = () => {
       duration: data.duration,
       total_price: 0,
       token: user.token,
-    });
+    })
+      .then((value) => {
+        toast.success("Đã tạo gói đăng ký mới!");
+      })
+      .catch((error) => {
+        toast.error(error.message);
+      });
     queryClient.invalidateQueries("subscriptions");
     setOpenModalCreate(false);
   };

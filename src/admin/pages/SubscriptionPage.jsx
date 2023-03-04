@@ -1,4 +1,4 @@
-import { ClipboardListIcon, EyeIcon, TrashIcon } from "@heroicons/react/solid";
+import { EyeIcon, TrashIcon, PencilIcon } from "@heroicons/react/solid";
 import React, { Fragment, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import {
@@ -40,6 +40,7 @@ const SubscriptionPage = () => {
   const [itemPreview, setItemPreview] = useState({});
   const [openEditModal, setOpenEditModal] = useState(false);
   const [itemEdit, setItemEdit] = useState({});
+
   const queryClient = useQueryClient();
   const { mutateAsync } = useMutation(createNewSubscription);
   const { mutateAsync: deleteMutateAsync } = useMutation(deleteSubcription);
@@ -83,6 +84,11 @@ const SubscriptionPage = () => {
   };
 
   const onPreviewList = (item) => {
+    setOpenEditModal(true);
+    setItemEdit(item);
+  };
+
+  const handleEditItem = (item) => {
     setOpenPreview(true);
     setItemPreview(item);
     let productItemArr = [];
@@ -96,6 +102,7 @@ const SubscriptionPage = () => {
       };
       productItemArr.push(subscriptionDetail);
     });
+
     setProductsAdded(productItemArr);
   };
 
@@ -110,17 +117,13 @@ const SubscriptionPage = () => {
   const [inputQty, setInputQty] = useState(1);
 
   const addProductToSub = (subId, product, qty, index) => {
-    // let currentList = [...productsAdded];
-    // currentList[index] = { subscription_id: subId, product_id: product.id, name: product.name, price: product.price, quantity: qty };
-    // setProductsAdded(currentList);
-    // console.log(productsAdded);
     let i = 0;
 
     const prdItem = productsAdded.find((prd, index) => {
       i = index;
       return prd.product_id === product.id;
     });
-    // console.log(i, prdItem);
+
     let currentList = [...productsAdded];
     if (prdItem) {
       currentList[i] = { subscription_id: subId, product_id: product.id, name: product.name, price: product.price, quantity: qty };
@@ -132,7 +135,6 @@ const SubscriptionPage = () => {
       ]);
     }
     setInputQty(1);
-    //toast.info("Add product " + product.name.substring(0, 15) + "...");
   };
 
   const removeProductAdded = (i) => {
@@ -140,14 +142,13 @@ const SubscriptionPage = () => {
     setProductsAdded([...productsAdded]);
   };
 
-  //console.log(productsAdded);
   const productsSubMutation = useMutation((listProductSub) => bulkInsertProductSub(listProductSub));
   const submitProductSubscription = () => {
     productsSubMutation.mutate(
       { ...productsAdded, token: user.token },
       {
         onSuccess: async () => {
-          toast.success("Create new subscription");
+          toast.success("Update product for subscription");
           setOpenPreview(false);
           setItemPreview(null);
           setProductsAdded([]);
@@ -158,11 +159,6 @@ const SubscriptionPage = () => {
         },
       }
     );
-  };
-
-  const handleEditItem = (item) => {
-    setOpenEditModal(true);
-    setItemEdit(item);
   };
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -186,7 +182,7 @@ const SubscriptionPage = () => {
         onDelete={() => handleDelete()}
       />
       <div className="flex justify-between items-center">
-        <h2 className="my-6 text-2xl font-semibold text-gray-700">Subscription List</h2>
+        <h2 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Subscription List</h2>
         <button
           type="button"
           onClick={() => setIsOpen(true)}
@@ -196,9 +192,9 @@ const SubscriptionPage = () => {
         </button>
       </div>
       {productIsError && <li className="text-red-600 text-center">{productError}</li>}
-      <table className="w-full whitespace-nowrap shadow sm:rounded-lg bg-white">
+      <table className="w-full whitespace-nowrap shadow sm:rounded-lg bg-white dark:bg-gray-800">
         <thead>
-          <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
+          <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 dark:text-gray-400 uppercase border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <th className="px-4 py-3">Name</th>
             <th className="px-4 py-3">Duration (Month)</th>
             <th className="px-4 py-3">Total Price</th>
@@ -206,7 +202,7 @@ const SubscriptionPage = () => {
             <th className="px-4 py-3">Actions</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y">
+        <tbody className="bg-white dark:bg-gray-800 divide-y dark:divide-gray-700">
           {isLoading ? (
             <tr>
               <td colSpan={5}>
@@ -221,18 +217,18 @@ const SubscriptionPage = () => {
             //Data for pagination
             currentProducts.map((item) => (
               <Fragment key={item.id}>
-                <tr className="text-gray-700">
+                <tr className="text-gray-700 dark:text-gray-400">
                   <td className="px-4 py-3 flex">{item.name}</td>
                   <td className="px-4 py-3">{item.duration}</td>
                   <td className="px-4 py-3">{formatPrice(item.total_price)}</td>
                   <td className="px-4 py-3">{item.user.name}</td>
                   <td className="px-4 py-3 flex items-center space-x-4">
                     <button className="flex items-center justify-between px-2 py-2 text-purple-600 text-sm hover:bg-gray-200 hover:border-gray-200 hover:rounded-full">
-                      <ClipboardListIcon onClick={() => onPreviewList(item)} className="w-5 h-5" />
+                      <PencilIcon onClick={() => handleEditItem(item)} className="w-5 h-5" />
                       {productsIsLoading && <Loader />}
                     </button>
                     <button
-                      onClick={() => handleEditItem(item)}
+                      onClick={() => onPreviewList(item)}
                       className="flex items-center justify-between px-2 py-2 text-purple-600 text-sm hover:bg-gray-200 hover:border-gray-200 hover:rounded-full"
                     >
                       <EyeIcon className="w-5 h-5" />
@@ -260,6 +256,7 @@ const SubscriptionPage = () => {
         previousPaginate={previousPaginate}
         nextPaginate={nextPaginate}
       />
+      {/* Create new subscription modal */}
       <Modal show={isOpen} title="Create new subscription" maxWidth="2xl" onClose={() => setIsOpen(false)}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="mt-2">
@@ -309,9 +306,10 @@ const SubscriptionPage = () => {
           </div>
         </form>
       </Modal>
+      {/* Update products in subscription */}
       <Modal show={openPreview} title={itemPreview?.name} maxWidth="3xl" onClose={() => setOpenPreview(false)}>
         <div>
-          <div className="flex flex-wrap justify-center space-x-2">
+          <div className="flex flex-wrap justify-center space-x-2 max-h-36 overflow-y-auto">
             {productsAdded.map((productAdd, i) => (
               <div key={i}>
                 <ChipProduct
@@ -321,20 +319,20 @@ const SubscriptionPage = () => {
                 />
               </div>
             ))}
-            {productsAdded.length === 0 && <span>Please choose products</span>}
+            {productsAdded.length === 0 && <span className="dark:text-gray-300">Please choose products</span>}
           </div>
-          <div className="flow-root mt-6 max-h-96 overflow-y-scroll border-t border-gray-200">
-            <ul className="-my-6 divide-y divide-gray-200">
+          <div className="flow-root mt-6 max-h-96 overflow-y-scroll border-t border-gray-200 dark:border-gray-700">
+            <ul className="-my-6 divide-y divide-gray-200 dark:divide-gray-700">
               {products &&
                 products.map((product, index) => (
                   <li key={product.id} className="flex py-6 px-4">
-                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                    <div className="h-24 w-24 flex-shrink-0 overflow-hidden rounded-md border border-gray-200 dark:border-gray-700">
                       <img src={`${BASE_URL}/${product.image}`} alt={product.name} className="h-full w-full object-cover object-center" />
                     </div>
 
                     <div className="ml-4 flex flex-1 flex-col">
                       <div>
-                        <div className="flex justify-between text-base font-medium text-gray-900">
+                        <div className="flex justify-between text-base font-medium text-gray-900 dark:text-gray-300">
                           <h3>
                             <a href={product.slug}> {product.name} </a>
                           </h3>
@@ -345,7 +343,7 @@ const SubscriptionPage = () => {
                         <p className="text-gray-500">Qty {product.quantity}</p>
                         <input
                           type="number"
-                          className="input input-bordered border-gray-300 w-14 rounded-lg"
+                          className="input input-bordered border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-purple-500 dark:focus:border-purple-500 w-14 rounded-lg"
                           placeholder="1"
                           onChange={(e) => setInputQty(e.target.value)}
                           min="1"
@@ -366,21 +364,22 @@ const SubscriptionPage = () => {
                 ))}
             </ul>
           </div>
-          <div className="flex items-center justify-end border-t border-gray-200 pt-2 space-x-2 rounded-b">
+          <div className="flex items-center justify-end border-t border-gray-200 dark:border-gray-700 pt-2 space-x-2 rounded-b">
             <button
               type="button"
+              onClick={() => setOpenPreview(false)}
               className="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-purple-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600"
             >
               Cancel
             </button>
             <Button onClick={submitProductSubscription} type="button" isLoading={productsSubMutation.isLoading}>
-              Create
+              Save
             </Button>
           </div>
         </div>
       </Modal>
       <Modal show={openEditModal} title={itemEdit.name} maxWidth="3xl" onClose={() => setOpenEditModal(false)}>
-        <div className="bg-white">
+        <div className="bg-white dark:bg-gray-800">
           <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
             <h2 className="sr-only">Products</h2>
 
@@ -394,12 +393,14 @@ const SubscriptionPage = () => {
                       className="w-full h-full object-center object-cover group-hover:opacity-75"
                     />
                   </div>
-                  <h3 className="mt-4 text-sm text-gray-700 max-h-9 overflow-hidden">{item.product.name}</h3>
-                  <p className="mt-1 text-lg font-medium text-gray-900">{`${formatPrice(item.price)} x ${item.quantity}`}</p>
+                  <h3 className="mt-4 text-sm text-gray-700 dark:text-gray-400 max-h-9 overflow-hidden">{item.product.name}</h3>
+                  <p className="mt-1 text-lg font-medium text-gray-900 dark:text-gray-400">{`${formatPrice(item.price)} x ${
+                    item.quantity
+                  }`}</p>
                 </div>
               ))}
-              {itemEdit.details?.length === 0 && <p>Không có sản phẩm</p>}
             </div>
+            {itemEdit.details?.length === 0 && <p className="dark:text-gray-300 text-center">Không có sản phẩm</p>}
           </div>
         </div>
       </Modal>
@@ -411,7 +412,7 @@ export default SubscriptionPage;
 
 const ChipProduct = ({ name, onRemove }) => {
   return (
-    <span className="px-4 py-2 my-1 rounded-full text-gray-500 bg-gray-200 font-semibold text-sm flex align-center w-max cursor-pointer active:bg-gray-300 transition duration-300 ease">
+    <span className="px-4 py-2 my-1 rounded-full text-gray-500 dark:text-gray-400 bg-gray-200 dark:bg-gray-700 font-semibold text-sm flex align-center w-max cursor-pointer active:bg-gray-300 transition duration-300 ease">
       {name}
       <button onClick={onRemove} className="bg-transparent hover focus:outline-none">
         <XIcon className="w-3 ml-3" />

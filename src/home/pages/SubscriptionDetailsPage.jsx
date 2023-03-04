@@ -1,8 +1,9 @@
 import { HeartIcon } from "@heroicons/react/outline";
 import { ViewGridAddIcon, ViewListIcon } from "@heroicons/react/solid";
-import React from "react";
+import React, { Fragment } from "react";
 import { useMutation, useQuery } from "react-query";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import { Tab } from "@headlessui/react";
 import { toast } from "react-toastify";
 import { addToFavorite, BASE_URL, copyNewSubscription, getSubscriptionById } from "../../api/api";
 import { useUserContext } from "../../context/user";
@@ -63,32 +64,98 @@ const SubscriptionDetailsPage = () => {
   if (isLoading) return <Loader />;
   return (
     <div className="flex flex-col mx-auto max-w-6xl w-full p-10 bg-white text-gray-800">
-      <div className="flex w-full justify-between justify-items-center">
-        <h1 className="text-3xl font-semibold">{subscription.name}</h1>
-        <div className="flex items-center">
-          <span className="mr-4">Xem: </span>
-          <button
-            onClick={() => setDisplayType("list")}
-            type="button"
-            className={`${displayType === "list" ? "text-gray-700" : "text-gray-300"} mr-4`}
-          >
-            <ViewListIcon className="w-6 h-6" />
-          </button>
-          <button
-            onClick={() => setDisplayType("grid")}
-            type="button"
-            className={`${displayType === "grid" ? "text-gray-700" : "text-gray-300"}`}
-          >
-            <ViewGridAddIcon className="w-6 h-6" />
-          </button>
-          <button onClick={() => handleAddToWishList} type="button" className="ml-4 hover:bg-orange-600 rounded-full hover:text-white p-1">
-            <HeartIcon className="w-6 h-6" />
-          </button>
+      <Tab.Group>
+        <div className="flex w-full justify-between justify-items-center">
+          <h1 className="text-3xl font-semibold">{subscription.name}</h1>
+
+          {/* Menu choose display type */}
+          <div className="flex items-center space-x-2">
+            <span>Xem: </span>
+
+            <Tab.List>
+              <Tab as={Fragment}>
+                {({ selected }) => (
+                  <button onClick={() => setDisplayType("list")} type="button" className={selected ? "text-gray-700" : "text-gray-300"}>
+                    <ViewListIcon className="w-6 h-6" />
+                  </button>
+                )}
+              </Tab>
+              <Tab as={Fragment}>
+                {({ selected }) => (
+                  <button onClick={() => setDisplayType("grid")} type="button" className={selected ? "text-gray-700" : "text-gray-300"}>
+                    <ViewGridAddIcon className="w-6 h-6" />
+                  </button>
+                )}
+              </Tab>
+            </Tab.List>
+
+            {/* Button add to wishlist */}
+            <button
+              onClick={() => handleAddToWishList(subscription.id)}
+              type="button"
+              className="ml-4 hover:bg-orange-600 rounded-full hover:text-white p-1"
+            >
+              <HeartIcon className="w-6 h-6" />
+            </button>
+          </div>
         </div>
-      </div>
-      {/**Display grid and list item layout */}
-      {displayType === "grid" && <GridLayout subscription={subscription.details} />}
-      {displayType === "list" && <ListLayout subscription={subscription.details} />}
+
+        {/*Display grid and list item layout */}
+
+        <Tab.Panels>
+          <Tab.Panel>
+            <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
+              {subscription.details.map((item) => (
+                <div key={item.id}>
+                  <div className="block h-64 rounded-lg shadow-lg bg-white">
+                    <Link to={`/products/${item.product.slug}`}>
+                      <img src={`${BASE_URL}/${item.product.image}`} alt="product" className="w-full h-full object-cover" />
+                    </Link>
+                  </div>
+                  <div className="flex items-center justify-between mt-3">
+                    <div>
+                      <Link to={`/products/${item.product.slug}`} className="font-medium">
+                        {item.product.name}
+                      </Link>
+                      <div className="flex items-center">
+                        <span className="text-sm font-medium text-gray-600">{item.quantity}</span>
+                        <span className="text-sm font-medium ml-1 text-orange-500"> sản phẩm</span>
+                      </div>
+                    </div>
+                    <span className="flex items-center h-8 bg-orange-200 text-orange-600 text-sm font-medium px-2 rounded">
+                      {formatPrice(item.price)}
+                    </span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Tab.Panel>
+          {/* Display product by list */}
+          <Tab.Panel>
+            <ul>
+              {subscription.details.map((item) => (
+                <li key={item.id} className="md:flex py-6 px-4">
+                  <div className="h-64 w-64 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
+                    <img className="w-full h-full object-cover" src={`${BASE_URL}/${item.product.image}`} alt="product" />
+                  </div>
+
+                  <div className="ml-4 flex flex-1 flex-col">
+                    <div className="flex flex-col justify-between text-base font-medium text-gray-900">
+                      <Link to={`/products/${item.product.slug}`} className="font-medium">
+                        <h3>{item.product.name}</h3>
+                      </Link>
+                      <p className="mt-12">{formatPrice(item.price)}</p>
+                    </div>
+                    <div className="flex flex-row items-center mt-2">
+                      <p className="text-gray-500 mr-2">Số lượng: {item.quantity}</p>
+                    </div>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </Tab.Panel>
+        </Tab.Panels>
+      </Tab.Group>
 
       <section>
         <div className="container max-w-7xl mx-auto mt-6 p-4 sm:p-6 lg:p-8 bg-white dark:bg-gray-800">
@@ -162,59 +229,3 @@ const SubscriptionDetailsPage = () => {
 };
 
 export default SubscriptionDetailsPage;
-
-const GridLayout = ({ subscription }) => {
-  return (
-    <div className="grid 2xl:grid-cols-5 xl:grid-cols-4 lg:grid-cols-3 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
-      {subscription.map((item) => (
-        <div key={item.id}>
-          <div className="block h-64 rounded-lg shadow-lg bg-white">
-            <Link to={`/products/${item.product.slug}`}>
-              <img src={`${BASE_URL}/${item.product.image}`} alt="product" className="w-full h-full object-cover" />
-            </Link>
-          </div>
-          <div className="flex items-center justify-between mt-3">
-            <div>
-              <Link to={`/products/${item.product.slug}`} className="font-medium">
-                {item.product.name}
-              </Link>
-              <div className="flex items-center">
-                <span className="text-sm font-medium text-gray-600">{item.quantity}</span>
-                <span className="text-sm font-medium ml-1 text-orange-500"> sản phẩm</span>
-              </div>
-            </div>
-            <span className="flex items-center h-8 bg-orange-200 text-orange-600 text-sm font-medium px-2 rounded">
-              {formatPrice(item.price)}
-            </span>
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
-
-const ListLayout = ({ subscription }) => {
-  return (
-    <ul>
-      {subscription.map((item) => (
-        <li key={item.id} className="md:flex py-6 px-4">
-          <div className="h-64 w-64 flex-shrink-0 overflow-hidden rounded-md border border-gray-200">
-            <img className="w-full h-full object-cover" src={`${BASE_URL}/${item.product.image}`} alt="product" />
-          </div>
-
-          <div className="ml-4 flex flex-1 flex-col">
-            <div className="flex flex-col justify-between text-base font-medium text-gray-900">
-              <Link to={`/products/${item.product.slug}`} className="font-medium">
-                <h3>{item.product.name}</h3>
-              </Link>
-              <p className="mt-12">{formatPrice(item.price)}</p>
-            </div>
-            <div className="flex flex-row items-center mt-2">
-              <p className="text-gray-500 mr-2">Số lượng: {item.quantity}</p>
-            </div>
-          </div>
-        </li>
-      ))}
-    </ul>
-  );
-};

@@ -1,16 +1,19 @@
 import React, { useState } from "react";
 import { useQuery } from "react-query";
+import _ from "lodash-es";
 import { getSubscriptionsByAdmin } from "../../api/api";
 import Loader from "../components/loader/Loader";
 import SubscriptionItem from "../components/subscription/SubscriptionItem";
 
 const SubscriptionListPage = () => {
   const [limitProduct, setLimitProduct] = useState(8);
-  const subscriptionList = useQuery("subscriptions", () => getSubscriptionsByAdmin());
-  if (subscriptionList.isLoading) return <Loader />;
-  if (subscriptionList.isError) return <p className="text-red-600">{subscriptionList.error}</p>;
-  const paginateData = subscriptionList.data?.slice(0, limitProduct);
-  const subscriptionListLength = subscriptionList.data?.length;
+  const { data, isLoading, isError, error } = useQuery("subscriptions", () => getSubscriptionsByAdmin());
+
+  if (isLoading) return <Loader />;
+  if (isError) return <p className="text-red-600">{error.message}</p>;
+
+  const paginateData = _.isArray(data.data) ? _.slice(data.data, 0, limitProduct) : [];
+  const subscriptionListLength = _.isArray(data.data) ? data.data.length : 0;
 
   return (
     <div className="bg-gray-100">
@@ -18,7 +21,7 @@ const SubscriptionListPage = () => {
         <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">Gói đăng ký</h2>
         <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {/* Display list subscription */}
-          {paginateData.map((subItem) => (
+          {paginateData.map((subItem, index) => (
             <SubscriptionItem key={subItem.id} item={subItem} />
           ))}
         </div>
