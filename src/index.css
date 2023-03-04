@@ -5,3 +5,7 @@
 .swiper {
   z-index: 0 !important;
 }
+
+path.a {
+  fill: rebeccapurple;
+}

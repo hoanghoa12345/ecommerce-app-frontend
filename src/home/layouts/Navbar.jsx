@@ -20,6 +20,7 @@ import { useMutation, useQuery } from "react-query";
 import useStore from "../states/state";
 import useCartStore from "../states/cartState";
 import user_icon from "../../assets/images/icon_user.png";
+import logo from "../../assets/images/logo-eclean.svg";
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -71,16 +72,8 @@ const Navbar = () => {
   const openCartSlide = useStore((state) => state.setCartSlideOpen);
   const cartItems = useCartStore((state) => state.cartItems);
 
-  // useEffect(() => {
-  //   if (isError) {
-  //     localStorage.removeItem("user");
-  //     userDispatch(setUser(initialUser));
-  //     navigate("/login");
-  //   }
-  // }, [isError, navigate, userDispatch]);
-
   return (
-    <Disclosure as="nav" className="bg-orange-600 shadow dark:bg-gray-800">
+    <Disclosure as="nav" className="bg-orange-500 shadow dark:bg-gray-800">
       <div className="container px-6 py-4 mx-auto max-w-6xl">
         <div className="md:flex md:items-center md:justify-between">
           <div className="flex items-center justify-between">
@@ -89,7 +82,7 @@ const Navbar = () => {
                 className="text-2xl font-bold text-white transition-colors duration-200 transform dark:text-white lg:text-3xl hover:text-gray-700 dark:hover:text-gray-300"
                 to="/"
               >
-                eClean
+                <img className="h-6" src={logo} alt="Eclean logo" />
               </Link>
             </div>
             <Menu as="div" className="hidden md:block relative ml-4">

@@ -1,14 +1,16 @@
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { MenuIcon, SearchIcon, LogoutIcon, UserCircleIcon } from "@heroicons/react/outline";
+import { MenuIcon, SearchIcon, LogoutIcon, UserCircleIcon, MoonIcon, SunIcon } from "@heroicons/react/outline";
 import { Link, useNavigate } from "react-router-dom";
-import { BellIcon, CheckCircleIcon } from "@heroicons/react/solid";
+import { BellIcon } from "@heroicons/react/solid";
 import React, { Fragment, useEffect, useRef, useState } from "react";
 import Axios from "axios";
+import { useMutation, useQuery } from "react-query";
+
 import { useUserContext } from "../../context/user";
 import { getProfileByUserId, BASE_URL, getSearchResult } from "../../api/api";
 import { setUser } from "./../../action/user";
 import { initialUser } from "../../constants/initialUser";
-import { useMutation, useQuery } from "react-query";
+import { useColorModeStore } from "../state/colorModeState";
 
 export default function AdminHeader() {
   const ref = useRef();
@@ -17,11 +19,13 @@ export default function AdminHeader() {
   const [searchInput, setSearchInput] = useState("");
   const [searchResult, setSearchResult] = useState([]);
   const { user, userDispatch } = useUserContext();
+  const { colorMode, toggleMode } = useColorModeStore();
   const { data } = useQuery("profile", () => getProfileByUserId(user.id, user.token), {
     retry: false,
     retryOnMount: false,
-    refetchOnReconnect: false,
+    refetchOnReconnect: true,
     refetchOnMount: false,
+    refetchOnWindowFocus: false,
   });
   const logoutMutation = useMutation(
     () => {
@@ -62,56 +66,6 @@ export default function AdminHeader() {
     sendSearchRequest(searchInput);
   }, [searchInput]);
 
-  // const handleLogout = async () => {
-  //   const headers = getFullHeader(user.token);
-  //   const res = await Axios.post("/api/v1/logout", {}, { headers });
-
-  //   if (res.status === 200) {
-  //     localStorage.removeItem("user");
-  //     userDispatch(setUser(initialUser));
-  //     navigate("/login");
-  //   }
-  // };
-
-  const adminNotifications = [
-    {
-      id: 1,
-      message: "Bao Nho has add new products",
-      status: 0,
-      created_at: "2022-04-27 14:08:26",
-    },
-    {
-      id: 2,
-      message: "Bao Nho has add new products",
-      status: 0,
-      created_at: "2022-04-27 14:08:26",
-    },
-    {
-      id: 3,
-      message: "Bao Nho has add new products",
-      status: 1,
-      created_at: "2022-04-27 14:08:26",
-    },
-    {
-      id: 4,
-      message: "Bao Nho has add new products",
-      status: 1,
-      created_at: "2022-04-27 14:08:26",
-    },
-    {
-      id: 5,
-      message: "Bao Nho has add new products",
-      status: 1,
-      created_at: "2022-04-27 14:08:26",
-    },
-    {
-      id: 6,
-      message: "Bao Nho has add new products",
-      status: 1,
-      created_at: "2022-04-27 14:08:26",
-    },
-  ];
-
   useEffect(() => {
     const checkIfClickedOutside = (e) => {
       if (isShowing && ref.current && !ref.current.contains(e.target)) {
@@ -125,6 +79,13 @@ export default function AdminHeader() {
       document.removeEventListener("mousedown", checkIfClickedOutside);
     };
   }, [isShowing]);
+
+  useEffect(() => {
+    if (colorMode === "dark") {
+      document.body.classList.add("dark");
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <header className="z-10 py-4 bg-white shadow-md dark:bg-gray-800">
@@ -178,7 +139,14 @@ export default function AdminHeader() {
         <ul className="flex items-center flex-shrink-0 space-x-6">
           {/* Theme toggler */}
           <li className="flex">
-            <button className="rounded-md focus:outline-none focus:shadow-outline-purple" aria-label="Toggle color mode"></button>
+            <button
+              onClick={toggleMode}
+              className="rounded-md focus:outline-none focus:shadow-outline-purple"
+              aria-label="Toggle color mode"
+              title="Toggle color mode"
+            >
+              {colorMode === "dark" ? <MoonIcon className="w-6 h-6" /> : <SunIcon className="w-6 h-6" />}
+            </button>
           </li>
           {/* Notifications menu */}
           <Menu as="li" className="relative">
@@ -189,12 +157,11 @@ export default function AdminHeader() {
             >
               <BellIcon className="w-5 h-5" />
               {/* Notification badge */}
-              {adminNotifications.length > 0 && (
-                <span
-                  aria-hidden="true"
-                  className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
-                />
-              )}
+
+              <span
+                aria-hidden="true"
+                className="absolute top-0 right-0 inline-block w-3 h-3 transform translate-x-1 -translate-y-1 bg-red-600 border-2 border-white rounded-full dark:border-gray-800"
+              />
             </Menu.Button>
             <Transition
               as={Fragment}
@@ -206,23 +173,10 @@ export default function AdminHeader() {
               leaveTo="transform scale-95 opacity-0"
             >
               <Menu.Items className="absolute right-0 w-64 h-80 overflow-y-auto mt-2 flex flex-col items-center justify-center origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
-                {adminNotifications.length > 0 ? (
-                  adminNotifications.map((item) => (
-                    <Menu.Item
-                      key={item.id}
-                      as="div"
-                      className={`flex flex-row px-2 py-2 text-sm ${item.status === 0 ? "text-gray-700" : "text-gray-400"}`}
-                    >
-                      {item.status === 0 ? <BellIcon className="mr-2 w-5 h-5" /> : <CheckCircleIcon className="mr-2 w-5 h-5" />}
-                      {item.message}
-                    </Menu.Item>
-                  ))
-                ) : (
-                  <Menu.Item as="div" className="flex flex-col items-center">
-                    <BellIcon className="w-8 h-8" />
-                    <div>Not have notifications yet!</div>
-                  </Menu.Item>
-                )}
+                <Menu.Item as="div" className="flex flex-col items-center">
+                  <BellIcon className="w-8 h-8" />
+                  <div>Not have notifications yet!</div>
+                </Menu.Item>
               </Menu.Items>
             </Transition>
           </Menu>
@@ -238,7 +192,7 @@ export default function AdminHeader() {
                 <img
                   className="object-cover w-8 h-8 rounded-full"
                   src={data ? `${BASE_URL}/${data.avatar}` : ""}
-                  alt=""
+                  alt="user avatar"
                   aria-hidden="true"
                 />
               </Menu.Button>

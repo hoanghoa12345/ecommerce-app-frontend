@@ -65,7 +65,7 @@ const OrdersPage = () => {
     <div className="container grid px-6 mx-auto">
       <Modal show={isOpenView} onClose={() => setIsOpenView(false)} title={`Order ID: ${itemView.order_number}`} maxWidth={"3xl"}>
         <div className="mx-2 my-4">
-          <ul className="text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg">
+          <ul className="text-sm font-medium text-gray-900 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 rounded-lg">
             <li className="w-full px-4 py-2 border-b border-gray-200 rounded-t-lg">Total price: {formatPrice(itemView.total_price)}</li>
             <li className="w-full px-4 py-2 border-b border-gray-200">Total qty: {itemView.total_qty}</li>
             <li className="w-full px-4 py-2 border-b border-gray-200">Status: {itemView.status}</li>
@@ -137,11 +137,11 @@ const OrdersPage = () => {
         isDelete
       />
       <div className="flex justify-between items-center">
-        <h2 className="my-6 text-2xl font-semibold text-gray-700">Orders</h2>
+        <h2 className="my-6 text-2xl font-semibold text-gray-700 dark:text-gray-200">Orders</h2>
       </div>
-      <table className="w-full whitespace-nowrap shadow sm:rounded-lg bg-white">
+      <table className="w-full whitespace-nowrap shadow sm:rounded-lg bg-white dark:bg-gray-700">
         <thead>
-          <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 uppercase border-b bg-gray-50">
+          <tr className="text-xs font-semibold tracking-wide text-left text-gray-500 dark:text-gray-400 uppercase border-b dark:border-gray-700 bg-gray-50 dark:bg-gray-800">
             <th className="px-4 py-3">Order Number</th>
             <th className="px-4 py-3">Total Price</th>
             <th className="px-4 py-3">Qty</th>
@@ -151,9 +151,9 @@ const OrdersPage = () => {
             <th className="px-4 py-3">Action</th>
           </tr>
         </thead>
-        <tbody className="bg-white divide-y">
+        <tbody className="bg-white dark:bg-gray-800 divide-y dark:divide-gray-700">
           {currentTableData.map((item) => (
-            <tr key={item.id} className="text-gray-700">
+            <tr key={item.id} className="text-gray-700 dark:text-gray-400" onClick={() => handleOpenModelView(item)}>
               <td className="px-4 py-3 text-sm">{item.order_number}</td>
               <td className="px-4 py-3 text-sm">{formatPrice(item.total_price)}</td>
               <td className="px-4 py-3 text-sm">{item.total_qty}</td>
