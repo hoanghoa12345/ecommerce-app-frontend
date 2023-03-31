@@ -10,7 +10,7 @@ import { convertUserFromRes } from "./../../../utils/convertFromRes";
 import { useMutation } from "react-query";
 import Modal from "../../../home/components/modal/Modal";
 import { AtSymbolIcon } from "@heroicons/react/outline";
-import { forgotPassword } from "../../../api/api";
+import { BASE_URL, forgotPassword } from "../../../api/api";
 import { toast, ToastContainer } from "react-toastify";
 
 const schema = yup
@@ -89,32 +89,6 @@ const Login = () => {
       email: formData.email,
       password: formData.password,
     });
-    //call api
-    /*const { data } = await Axios.post(
-      "/api/v1/login",
-      {
-        email: formData.email,
-        password: formData.password,
-      },
-      {
-        headers,
-      }
-    );
-
-    if (data.token) {
-      // console.log('success',data);
-      localStorage.setItem("user", JSON.stringify(data));
-      const dataContext = convertUserFromRes(data);
-      userDispatch(setUser(dataContext));
-      navigateByRole(data.user.roles);
-    } else {
-      // console.log('error',data);
-      if (data.message.includes("The email")) {
-        setMessageErr({ email: data.message, password: "" });
-      } else {
-        setMessageErr({ email: "", password: data.message });
-      }
-    }*/
   };
 
   const openResetModal = () => {
@@ -150,8 +124,7 @@ const Login = () => {
         <div
           className="hidden h-auto bg-cover lg:block lg:w-1/2"
           style={{
-            backgroundImage:
-              "url('https://images.pexels.com/photos/3408744/pexels-photo-3408744.jpeg?cs=srgb&dl=pexels-stein-egil-liland-3408744.jpg&fm=jpg')",
+            backgroundImage: `url('${BASE_URL}/assets/images/e-clean-banner-login.png')`,
           }}
         ></div>
 
