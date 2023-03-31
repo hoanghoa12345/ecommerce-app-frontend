@@ -3,12 +3,9 @@ import { addToFavorite, getTopProduct } from "../../../api/api";
 import Product from "../../components/product/Product";
 import { useMutation, useQuery } from "react-query";
 import Loader from "../../components/loader/Loader";
-import { useUserContext } from "../../../context/user";
 import { toast } from "react-toastify";
 
 function TopProducts() {
-  const { user } = useUserContext();
-
   const [topProducts, setTopProducts] = useState([]);
 
   useEffect(() => {
@@ -22,27 +19,6 @@ function TopProducts() {
 
   const topProductsQuery = useQuery("topproducts", getTopProduct);
 
-  const addToWishListMutation = useMutation(addToFavorite);
-
-  const handleAddToWishList = (productId) => {
-    if (user.token.length > 0)
-      addToWishListMutation.mutate(
-        {
-          formData: {
-            user_id: user.id,
-            product_id: productId,
-          },
-          token: user.token,
-        },
-        {
-          onSuccess: (wish) => {
-            toast.success(wish.message);
-          },
-          onError: (err) => toast.error(err.message),
-        }
-      );
-  };
-
   if (topProductsQuery.isLoading) return <Loader />;
   return (
     <section>
@@ -53,7 +29,7 @@ function TopProducts() {
         </div>
         <div className="grid grid-cols-2 mt-8 lg:grid-cols-4 gap-x-4 gap-y-8">
           {topProducts.map((item) => (
-            <Product key={item.id} product={item} addToWishList={handleAddToWishList} />
+            <Product key={item.id} product={item} />
           ))}
         </div>
       </div>

@@ -9,3 +9,16 @@
 path.a {
   fill: rebeccapurple;
 }
+
+::-webkit-scrollbar {
+  width: 0.6rem;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #cfd2d4;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: #fff;
+}
