@@ -1,5 +1,5 @@
 import { Disclosure, Menu, Transition } from "@headlessui/react";
-import { MenuIcon, SearchIcon, LogoutIcon, UserCircleIcon, MoonIcon, SunIcon } from "@heroicons/react/outline";
+import { MenuIcon, SearchIcon, LogoutIcon, UserCircleIcon, MoonIcon, SunIcon, HomeIcon } from "@heroicons/react/outline";
 import { Link, useNavigate } from "react-router-dom";
 import { BellIcon } from "@heroicons/react/solid";
 import React, { Fragment, useEffect, useRef, useState } from "react";
@@ -208,6 +208,18 @@ export default function AdminHeader() {
                 <Menu.Items className="absolute z-10 right-0 w-56 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                   <div className="px-1 py-1 ">
                     <Menu.Item as={Link} to={"/"}>
+                      {({ active }) => (
+                        <button
+                          className={`${
+                            active ? "bg-gray-100 text-gray-900" : "text-gray-900"
+                          } group flex rounded-md items-center w-full px-2 py-2 text-sm`}
+                        >
+                          <HomeIcon className="w-5 h-5 mr-2" aria-hidden="true" />
+                          Quay về trang chính
+                        </button>
+                      )}
+                    </Menu.Item>
+                    <Menu.Item as={Link} to={"/profile"}>
                       {({ active }) => (
                         <button
                           className={`${

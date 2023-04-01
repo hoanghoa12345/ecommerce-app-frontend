@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useForm } from "react-hook-form";
 import { toast } from "react-toastify";
+import { formatPrice } from "../../utils/formatType";
 const CreateSubscriptionPage = () => {
   const schema = yup.object({
     name: yup.string().required("Vui lòng nhập tên gói đăng ký"),
@@ -143,14 +144,14 @@ const CreateSubscriptionPage = () => {
         <div className="mt-2 px-10 lg:px-0">
           <button
             onClick={createSubscription}
-            className="text-white bg-orange-600 hover:bg-orange-700 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 focus:outline-none dark:focus:ring-orange-800"
+            className="text-white bg-orange-500 hover:bg-orange-400 focus:ring-4 focus:ring-orange-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-orange-600 dark:hover:bg-orange-700 focus:outline-none dark:focus:ring-orange-800"
           >
             Tạo gói mới
           </button>
         </div>
-        <div className="grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-3 px-10 lg:px-0 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-12 w-full mt-6">
+        <div className="grid 2xl:grid-cols-4 xl:grid-cols-4 lg:grid-cols-3 px-10 lg:px-0 sm:grid-cols-2 grid-cols-1 gap-x-6 gap-y-6 w-full mt-6">
           {subscriptions.map((item, i) => (
-            <div key={i} className="cursor-pointer group bg-orange-600 h-64 rounded-md flex relative overflow-hidden">
+            <div key={i} className="cursor-pointer group bg-orange-400 h-64 rounded-md flex relative overflow-hidden bg-cover">
               <button
                 type="button"
                 className="hidden group-hover:block z-10 absolute top-2 right-2 p-0.5 text-white hover:bg-gray-500/80 rounded-full"
@@ -174,7 +175,7 @@ const CreateSubscriptionPage = () => {
                 onClick={() => navigate("/create-subscription/" + item.id)}
                 className="text-white w-full h-full flex justify-center items-center text-center absolute font-semibold text-md max-w-xs hover:scale-110 transition duration-300 ease-in-out"
               >
-                {item.name}
+                {item.name} <br /> {item.duration} tháng <br /> {formatPrice(item.total_price)}
               </button>
             </div>
           ))}
