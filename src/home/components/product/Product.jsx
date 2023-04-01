@@ -11,7 +11,7 @@ const Product = ({ product }) => {
   return (
     <Link to={`/products/${product.slug}`}>
       <div className="bg-white shadow-md rounded-md overflow-hidden flex flex-col justify-items-center">
-        <img className="h-52 w-full object-cover" src={`${BASE_URL}/${product.image}`} alt={product.name} />
+        <img className="h-52 w-full object-contain" src={`${BASE_URL}/${product.image}`} alt={product.name} />
         <div className="px-4 mt-4">
           <div className="px-2 py-3 h-14">
             <h3 className="text-black text-sm leading-4 overflow-ellipsis overflow-hidden">{product.name}</h3>

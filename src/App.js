@@ -30,6 +30,7 @@ import ProfilePage from "./home/pages/ProfilePage";
 import ResetPassword from "./auth/pages/resetPassword";
 import WishListPage from "./home/pages/WishListPage";
 import PaymentResultPage from "./home/pages/PaymentResultPage";
+import ShoppingCart from "./home/pages/ShoppingCart";
 
 const App = () => {
   useEffect(() => {
@@ -55,6 +56,7 @@ const App = () => {
           <Route path="profile" element={<ProfilePage />} />
           <Route path="wishlist" element={<WishListPage />} />
           <Route path="payment-result" element={<PaymentResultPage />} />
+          <Route path="cart" element={<ShoppingCart />} />
         </Route>
         {user.roles === "admin" && (
           <Route path="/admin" element={<AdminLayout />}>

@@ -218,12 +218,12 @@ const Navbar = () => {
           </div>
           <div className="hidden md:flex items-center mt-4 md:mt-0 space-x-4">
             <button
-              onClick={openCartSlide}
+              onClick={() => navigate("/cart")}
               className="relative hidden mx-4 text-white transition-colors duration-200 transform md:block"
-              aria-label="show notifications"
+              aria-label="Shopping Cart"
             >
               <ShoppingBagIcon className="w-6 h-6" />
-              <span className="absolute -bottom-2 -right-3 px-1 text-xs text-white bg-blue-500 rounded-full">{cartItems.length}</span>
+              <span className="absolute -bottom-2 -right-3 px-1 text-xs text-orange-500 bg-white rounded-full">{cartItems.length}</span>
             </button>
             {user.id !== "" ? (
               <Menu as="div" className="relative inline-block text-left">
