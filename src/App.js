@@ -35,7 +35,7 @@ import ShoppingCart from "./home/pages/ShoppingCart";
 const App = () => {
   useEffect(() => {
     document.title = "eClean - Cung cấp sản phẩm vệ sinh dành cho gia đình";
-  });
+  }, []);
   const queryClient = new QueryClient();
   const { user } = useUserContext();
   return (

@@ -14,7 +14,7 @@ const Product = ({ product }) => {
         <img className="h-52 w-full object-contain" src={`${BASE_URL}/${product.image}`} alt={product.name} />
         <div className="px-4 mt-4">
           <div className="px-2 py-3 h-14">
-            <h3 className="text-black text-sm leading-4 overflow-ellipsis overflow-hidden">{product.name}</h3>
+            <h3 className="text-black text-sm leading-4 overflow-ellipsis overflow-hidden text-ellipsis--2">{product.name}</h3>
           </div>
           <div>
             <div className="px-2 py-2 h-12 overflow-hidden">

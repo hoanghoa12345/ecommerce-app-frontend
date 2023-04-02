@@ -4,6 +4,8 @@ import _ from "lodash-es";
 import { getSubscriptionsByAdmin } from "../../api/api";
 import Loader from "../components/loader/Loader";
 import SubscriptionItem from "../components/subscription/SubscriptionItem";
+import { Link } from "react-router-dom";
+import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/outline";
 
 const SubscriptionListPage = () => {
   const [limitProduct, setLimitProduct] = useState(8);
@@ -18,7 +20,10 @@ const SubscriptionListPage = () => {
   return (
     <div className="bg-gray-100">
       <div className="max-w-2xl mx-auto py-2 px-4 sm:py-8 sm:px-6 lg:max-w-7xl lg:px-8">
-        <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">Gói đăng ký</h2>
+        <h2 className="text-sm uppercase flex text-gray-900">
+          <Link to="/">eClean</Link>
+          <ChevronRightIcon className="w-5 h-5" /> Gói đăng ký
+        </h2>
         <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
           {/* Display list subscription */}
           {paginateData.map((subItem, index) => (
@@ -33,9 +38,9 @@ const SubscriptionListPage = () => {
                 setLimitProduct(subscriptionListLength);
               }}
               type="button"
-              className="py-2 px-4  bg-orange-600 hover:bg-orange-700 focus:ring-orange-500 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base font-semibold shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
+              className="py-2 px-4 inline-flex bg-orange-500 hover:bg-orange-400 focus:ring-orange-400 focus:ring-offset-indigo-200 text-white transition ease-in duration-200 text-center text-base shadow-md focus:outline-none focus:ring-2 focus:ring-offset-2 rounded-lg"
             >
-              Xem thêm gói
+              <ChevronDownIcon className="w-6 h-6" /> Xem thêm gói
             </button>
           )}
         </div>
