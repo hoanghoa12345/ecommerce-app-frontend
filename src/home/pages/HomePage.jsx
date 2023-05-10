@@ -1,13 +1,12 @@
-import React, { useEffect, useState } from "react";
-import { useQuery, useQueries } from "react-query";
-import BannerBrand from "../components/home-page/BannerBrand";
-import HeroSlide from "../components/home-page/HeroSide";
+import React from "react";
+import { useQuery } from "react-query";
 import TopProducts from "../components/home-page/TopProducts";
 import { Tab } from "@headlessui/react";
 import { BASE_URL, getAllCategory } from "../../api/api";
-import { TagIcon } from "@heroicons/react/outline";
 import ShoppingItems from "../../assets/images/shopping_items.svg";
 import { Link } from "react-router-dom";
+import ErrorCard from "../components/error-card/ErrorCard";
+import Loader from "../components/loader/Loader";
 
 function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
@@ -19,6 +18,10 @@ const HomePage = () => {
     console.log("Changed selected tab to:", index);
     console.log(categories);
   };
+
+  if (isLoadingCategories) return <Loader />;
+
+  if (errorCategories) return <ErrorCard title="Lỗi" message="Không thể kết nối với máy chủ" errors={errorCategories} />;
 
   return (
     <div>
@@ -36,7 +39,7 @@ const HomePage = () => {
                           "w-full py-2 text-base leading-5 text-white",
                           selected
                             ? "bg-orange-500 font-bold border-b-4 border-white"
-                            : "font-thin border-b-2 border-orange-300 hover:bg-orange-200"
+                            : "font-light border-b-2 border-orange-300 hover:bg-orange-200"
                         )
                       }
                     >

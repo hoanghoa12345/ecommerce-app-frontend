@@ -6,13 +6,14 @@ import Loader from "../components/loader/Loader";
 import SubscriptionItem from "../components/subscription/SubscriptionItem";
 import { Link } from "react-router-dom";
 import { ChevronDownIcon, ChevronRightIcon } from "@heroicons/react/outline";
+import ErrorCard from "../components/error-card/ErrorCard";
 
 const SubscriptionListPage = () => {
   const [limitProduct, setLimitProduct] = useState(8);
   const { data, isLoading, isError, error } = useQuery("subscriptions", () => getSubscriptionsByAdmin());
 
   if (isLoading) return <Loader />;
-  if (isError) return <p className="text-red-600">{error.message}</p>;
+  if (isError) return <ErrorCard title="Lỗi" message="Không tìm thấy danh mục sản phẩm" errors={error} />;
 
   const paginateData = _.isArray(data.data) ? _.slice(data.data, 0, limitProduct) : [];
   const subscriptionListLength = _.isArray(data.data) ? data.data.length : 0;

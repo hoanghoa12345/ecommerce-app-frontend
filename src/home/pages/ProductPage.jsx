@@ -9,6 +9,7 @@ import { useMutation, useQuery } from "react-query";
 import useStore from "../states/cartState";
 import { toast, ToastContainer } from "react-toastify";
 import { useUserContext } from "../../context/user";
+import ErrorCard from "../components/error-card/ErrorCard";
 
 export default function ProductPage() {
   const [isLiked, setIsLiked] = useState(false);
@@ -55,7 +56,7 @@ export default function ProductPage() {
   };
 
   if (isLoading) return <Loader />;
-  if (isError) return <p>{error}</p>;
+  if (isError) return <ErrorCard title="Lỗi" message="Không tìm thấy sản phẩm" errors={error} />;
   return (
     <section className="text-gray-600 body-font overflow-hidden bg-gray-100">
       <ToastContainer />
@@ -64,7 +65,7 @@ export default function ProductPage() {
           <img alt="product name" className="lg:w-1/3 w-full h-auto object-contain p-4" src={`${BASE_URL}/${product.image}`} />
           <div className="lg:w-2/3 w-full lg:pl-10 lg:py-6 mt-6 lg:mt-0">
             <h2 className="text-sm font-medium leading-4 px-2">{product.category.name}</h2>
-            <h1 className="text-gray-900 text-2xl font-thin translate-x-2 py-2">{product.name}</h1>
+            <h1 className="text-gray-900 text-2xl font-light translate-x-2 py-2">{product.name}</h1>
             <h2 className="text-xl text-orange-500 font-semibold mt-20 mb-2">Mô tả sản phẩm</h2>
             <p className="text-sm text-gray-800">{product.description}</p>
             <div className="mt-6 mb-2">

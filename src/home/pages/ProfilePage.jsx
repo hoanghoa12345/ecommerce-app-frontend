@@ -15,13 +15,14 @@ import Loader from "../components/loader/Loader";
 import { useForm } from "react-hook-form";
 import { useDropzone } from "react-dropzone";
 import { Link } from "react-router-dom";
+import ErrorCard from "../components/error-card/ErrorCard";
 
 const ProfilePage = () => {
   const [isUpdated, setIsUpdated] = useState(false);
   const [avatar, setAvatar] = useState(null);
   const { user } = useUserContext();
   const QueryClient = useQueryClient();
-  const { data: profile, isLoading, isError } = useQuery("profile", () => getProfileByUserId(user.id, user.token));
+  const { data: profile, isLoading, isError, error } = useQuery("profile", () => getProfileByUserId(user.id, user.token));
   const { register, handleSubmit, setValue } = useForm();
 
   const mutationUpdateProfile = useMutation(updateProfile);
@@ -96,7 +97,7 @@ const ProfilePage = () => {
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop });
   if (isLoading) return <Loader />;
-  if (isError) return <p>Có lỗi xảy ra</p>;
+  if (isError) return <ErrorCard title="Lỗi" message="Không tìm thấy người dùng" errors={error} />;
   return (
     <section className="bg-gray-50">
       <div className="max-w-screen-xl px-4 py-16 mx-auto sm:px-6 lg:px-8">
