@@ -104,7 +104,7 @@ const Navbar = () => {
                     leaveTo="transform opacity-0 scale-95"
                   >
                     <Menu.Items className="absolute -left-20 z-20 w-80 py-2 mt-2 overflow-hidden bg-white rounded-md shadow-md dark:bg-gray-800">
-                      {categoryQuery.isFetched &&
+                      {categoryQuery.isSuccess &&
                         categoryQuery.data.map(({ id, name, slug }) => (
                           <Menu.Item
                             as={Link}
@@ -341,7 +341,7 @@ const Navbar = () => {
         <Disclosure.Panel>
           <div className="px-2 pt-2 pb-3 space-y-1 md:hidden">
             <p className="text-gray-100 uppercase text-sm font-semibold">Danh mục sản phẩm</p>
-            {categoryQuery.isFetched &&
+            {categoryQuery.isSuccess &&
               categoryQuery.data.map(({ id, name, slug }) => (
                 <Link
                   key={id}
